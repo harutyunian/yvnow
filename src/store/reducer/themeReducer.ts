@@ -21,9 +21,9 @@ const themeReducer: Reducer<themeReducerState, CounterAction> = (
 ) => {
     switch (action.type) {
         case DARK:
-            return {...state, mode: styles.DARK};
+            return {...state, mode: JSON.parse(JSON.stringify(styles.DARK))};
         case LIGHT:
-            return {...state, mode: styles.LIGHT};
+            return {...state,  mode: JSON.parse(JSON.stringify(styles.LIGHT))};
         default:
             return state;
     }
