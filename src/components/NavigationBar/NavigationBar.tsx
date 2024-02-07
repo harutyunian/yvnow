@@ -1,33 +1,29 @@
 import React, {useState} from 'react'
-import {Text, View, StyleSheet} from "react-native";
+import {View, StyleSheet} from "react-native";
 import {useTheme} from "../../hook/themeMode";
-import {HomeIcon, LocationNavigationIcon, SettingIcon} from "../Svg/Svg";
+import {CalendarIcon, HomeIcon, LocationNavigationIcon, SettingIcon} from "../Svg/Svg";
 import NavButton from "./NavButton/NavButton";
-import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
-import {setDarkMod, setLightMode} from "../../store/reducer/actions";
 
 export default function NavigationBar() {
     const colors = useTheme()
-    const dispatch = useAppDispatch()
     const [activeIcon, setActiveIcon] = useState(0)
     const icons = [
-        {Icon: LocationNavigationIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON},
-        {Icon: HomeIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON},
-        {Icon: SettingIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON},
+        {Icon: LocationNavigationIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON, name: 'Map'},
+        {Icon: HomeIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON, name: 'Home'},
+        {Icon: SettingIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON, name: 'Settings'},
+        {Icon: CalendarIcon, activeFill: colors.PRIMARY.MAIN, inactiveFill: colors.ICON, name: 'Today'},
     ];
 
     const handlePress = (index: number) => {
         setActiveIcon(index)
-        if (index === 0) setDarkMod(dispatch)
-        if (index === 1) setLightMode(dispatch)
     }
 
     return <View style={{...style.navigationBarContainer, backgroundColor: colors.ACCENT['1']}}>
-        {icons.map(({Icon, activeFill, inactiveFill}, index) => (
+        {icons.map(({Icon, activeFill, inactiveFill,name}, index) => (
             <NavButton
+                name={name}
                 key={index}
-                icon={<Icon style={{width: 25, height: 25}} fill={activeIcon === index ? activeFill : inactiveFill}
-                />}
+                icon={<Icon style={{width: 25, height: 25}} fill={activeIcon === index ? activeFill : inactiveFill} />}
                 isActive={activeIcon === index}
                 onPress={() => handlePress(index)}
             />

@@ -1,5 +1,5 @@
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Provider} from 'react-redux';
 import {store} from "./src/store";
 import NavigationBar from "./src/components/NavigationBar/NavigationBar";
@@ -19,7 +19,7 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'grey',
         alignItems: 'center',
         justifyContent: 'center',
     }

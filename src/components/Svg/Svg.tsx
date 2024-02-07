@@ -49,7 +49,7 @@ export const HomeIcon = (props: IIconColor) => {
 
 export const SettingIcon = (props: IIconColor) => {
     const {fill = "#fff"} = props
-    return <Svg fill="none" {...props}>
+    return <Svg fill={fill} {...props}>
         <Path
             fill={fill}
             fillRule="evenodd"
@@ -103,6 +103,34 @@ export const LocationNavigationIcon = (props: IIconColor) => {
         </Mask>
         <G mask="url(#a)">
             <Path fill={fill} d="M-1.5.5h24v24h-24z"/>
+        </G>
+    </Svg>
+}
+export const CalendarIcon = (props: SvgProps) => {
+    const {fill = '#fff'} = props
+    return <Svg fill={fill} {...props}>
+        <Path
+            fill={fill}
+            fillRule="evenodd"
+            d="M3.5 22.5a3 3 0 0 1-3-3v-14a3 3 0 0 1 3-3h2v-1a1 1 0 0 1 2 0v1h6v-1a1 1 0 1 1 2 0v1h2a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3h-14Zm-1-3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9h-16v9Zm16-14v3h-16v-3a1 1 0 0 1 1-1h2v1a1 1 0 0 0 2 0v-1h6v1a1 1 0 1 0 2 0v-1h2a1 1 0 0 1 1 1Z"
+            clipRule="evenodd"
+        />
+        <Mask
+            id="a"
+            width={21}
+            height={23}
+            x={0}
+            y={0}
+            maskUnits="userSpaceOnUse">
+            <Path
+                fill={fill}
+                fillRule="evenodd"
+                d="M3.5 22.5a3 3 0 0 1-3-3v-14a3 3 0 0 1 3-3h2v-1a1 1 0 0 1 2 0v1h6v-1a1 1 0 1 1 2 0v1h2a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3h-14Zm-1-3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9h-16v9Zm16-11v-3a1 1 0 0 0-1-1h-2v1a1 1 0 1 1-2 0v-1h-6v1a1 1 0 0 1-2 0v-1h-2a1 1 0 0 0-1 1v3h16Z"
+                clipRule="evenodd"
+            />
+        </Mask>
+        <G mask="url(#a)">
+            <Path fill={fill} d="M-1.5-.5h24v24h-24z"/>
         </G>
     </Svg>
 }

@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.1.1",
+    "@types/axios": "^0.14.0",
     "@types/react-native-svg-animated-linear-gradient": "^0.4.3",
     "@types/redux-devtools-extension": "^2.13.2",
     "@types/redux-persist": "^4.3.1",
+    "axios": "^1.6.7",
     "expo": "~50.0.3",
     "expo-linear-gradient": "~12.7.1",
     "expo-status-bar": "~1.11.1",

@@ -1,24 +1,25 @@
 import React from 'react'
-import {StyleSheet, TouchableOpacity, TouchableOpacityProps} from "react-native";
+import {StyleSheet, TouchableOpacity, TouchableOpacityProps, Text} from "react-native";
 import {useTheme} from "../../../hook/themeMode";
 
 interface INavButton extends TouchableOpacityProps {
     icon: React.ReactNode,
-    isActive: boolean
+    isActive: boolean,
+    name?: string
 }
 
 export default function NavButton(props: INavButton) {
-    const {icon, isActive = false} = props
+    const {icon, isActive = false,name} = props
     const color = useTheme()
+    const switchColor = isActive ? color.PRIMARY.MAIN : 'transparent'
     return <TouchableOpacity style={{
-        ...styles.buttonContainer,
-        borderBottomColor: isActive ? color.PRIMARY.MAIN : 'transparent'
-    }} {...props}>{icon}</TouchableOpacity>
+        ...styles.buttonContainer
+    }} {...props}>{icon}{name && <Text style={{color: switchColor}}>{name}</Text>}
+    </TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        width: 55,
         height: 55,
         display: 'flex',
         justifyContent: 'center',
