@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.1.1",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/stack": "^6.3.20",
     "@types/axios": "^0.14.0",
     "@types/react-native-svg-animated-linear-gradient": "^0.4.3",
     "@types/redux-devtools-extension": "^2.13.2",
@@ -21,7 +23,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.2",
+    "react-native-gesture-handler": "^2.15.0",
     "react-native-image-slider-box": "^2.0.7",
+    "react-native-safe-area-context": "^4.9.0",
     "react-native-svg": "^14.1.0",
     "react-native-swiper": "^1.6.0",
     "react-native-web": "^0.19.10",
