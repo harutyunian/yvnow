@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View, Image, StyleSheet,ScrollView } from "react-native";
 import Swiper from "react-native-swiper";
+import MapView, { Marker } from 'react-native-maps';
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
 
 export default function EventDetails() {
@@ -25,7 +26,7 @@ export default function EventDetails() {
             {images.map((uri) => (
               <View>
                 <Image
-                  key={uri}
+                  key={Math.random()}
                   style={eventDetailsStyle.image}
                   source={{ uri }}
                   onError={(err) => console.log(err.nativeEvent.error)}
