@@ -1,16 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, LayoutChangeEvent } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import { Marker, Callout } from "react-native-maps";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDecay,
-} from "react-native-reanimated";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+
 
 const SIZE = 120;
 
@@ -26,9 +17,6 @@ export default function CustomMarker(props: ICustomMarkerProps) {
   const {
     coordinates: { latitude = 37.79825, longitude = -122.4224 },avatar
   } = props;
-  const offset = useSharedValue(0);
-  const width = useSharedValue(0);
-
 
   return (
     <Marker coordinate={{ latitude, longitude }}>

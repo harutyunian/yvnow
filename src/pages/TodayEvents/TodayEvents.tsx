@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Image, View, ScrollView, StyleSheet } from "react-native";
+import {Image, View, ScrollView, StyleSheet, Text } from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import { EventService } from "../../services/EventService/EventService";
 import { IEventCart } from "../../types/event.type";
@@ -18,6 +18,9 @@ export default function TodayEvents() {
     })();
   }, []);
 
+  if(true){
+    return <View><Text>Hello today</Text></View>
+  }
   return (
     <ScrollView>
       <View style={[todayEventsStyle.contaienr]}>

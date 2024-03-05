@@ -1,15 +1,13 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import EventDetails from "./EventDetails/EventDetails";
-import TodayEvents from "./TodayEvents/TodayEvents";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import CustomMap from "../components/Map/CustomMap";
 import { CalendarIcon, HomeIcon, SettingIcon } from "../components/Svg/Svg";
 import { useTheme } from "../hook/themeMode";
 import Settings from "./Settings/Settings";
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +27,7 @@ export default function Route() {
           tabBarStyle: {
             backgroundColor: accent_1,
           },
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: () => {
             let iconComponent: JSX.Element | null = null;
             if (route.name === "Home") {
               iconComponent = (
@@ -57,8 +55,8 @@ export default function Route() {
           tabBarInactiveTintColor: accent_6,
         })}
       >
-        <Tab.Screen name="Home" component={CustomMap} />
-        <Tab.Screen name="Today" component={CustomMap} />
+        {/* <Tab.Screen name="Home" component={CustomMap} />*/}
+        <Tab.Screen name="Today" component={CustomMap} /> 
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     </NavigationContainer>

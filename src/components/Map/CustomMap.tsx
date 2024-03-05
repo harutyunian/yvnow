@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import MapView, { Marker, LatLng, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import { customMapStyleConfigs } from "./customMapStyle";
 import mockData from "./../../../mock/mockEvents.json";
@@ -22,10 +22,13 @@ export default function CustomMap() {
         customMapStyle={customMapStyleConfigs}
       >
         {mockData.map((event) => {
-          const {location:{lat,lng},avatar} = event;
+          const {
+            location: { lat, lng },
+            avatar,
+          } = event;
           return (
             <CustomMarker
-              key={lat+avatar}
+              key={lat + avatar}
               avatar={avatar}
               coordinates={{ latitude: lat, longitude: lng }}
             />
