@@ -21,7 +21,7 @@ export const styles = {
         },
         ICON: '#000',
         ACCENT:{
-            1: '#FFF',
+            1: '#FFFFFF',
             2: '#FFBF35',
             3: '#61656A',
             4: '#F65A5A',

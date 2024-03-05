@@ -1,32 +1,42 @@
-import {Reducer} from 'redux';
+import {createSlice} from "@reduxjs/toolkit";
 import {DARK, LIGHT} from "./types";
 import {styles} from "../../constants/styles";
-
-
-const initialState = {
-    mode: styles.DARK,
+type ColorPalette = {
+    MAIN: string;
+    SECOND: string;
 };
 
-interface themeReducerState  {
-    mode: typeof styles.LIGHT | typeof styles.DARK
+type AccentPalette = {
+    [key: number]: string;
+};
+
+type Theme = {
+    PRIMARY: ColorPalette;
+    ICON: string;
+    ACCENT: AccentPalette;
+};
+interface IInitialState extends Theme {
+    mode: 'DARK' | 'LIGHT'
 }
 
-interface CounterAction {
-    type: string
+const initialState:IInitialState = {
+    ...styles.DARK,mode: DARK
 }
 
-const themeReducer: Reducer<themeReducerState, CounterAction> = (
-    state = initialState,
-    action
-) => {
-    switch (action.type) {
-        case DARK:
-            return {...state, mode: JSON.parse(JSON.stringify(styles.DARK))};
-        case LIGHT:
-            return {...state,  mode: JSON.parse(JSON.stringify(styles.LIGHT))};
-        default:
-            return state;
+export const themeReducer = createSlice({
+    name: 'theme',
+    initialState,
+    reducers:{
+        setDarkMode(state){
+            state =  {...styles.DARK, mode: 'DARK'}
+            console.log({state})
+        },
+        setLightMode(state){
+            state =  {...styles.LIGHT, mode: 'LIGHT'}
+        }
     }
-};
-export default themeReducer;
+})
+export const {setDarkMode, setLightMode} = themeReducer.actions
+
+export default themeReducer.reducer;
 

@@ -14,28 +14,28 @@ export default function NavigationBar() {
   const [activeIcon, setActiveIcon] = useState(0);
   const icons = [
     {
-      Icon: LocationNavigationIcon,
-      activeFill: colors.PRIMARY.MAIN,
-      inactiveFill: colors.ICON,
-      name: "Map",
-    },
-    {
       Icon: HomeIcon,
       activeFill: colors.PRIMARY.MAIN,
       inactiveFill: colors.ICON,
       name: "Home",
     },
     {
-      Icon: SettingIcon,
+      Icon: LocationNavigationIcon,
       activeFill: colors.PRIMARY.MAIN,
       inactiveFill: colors.ICON,
-      name: "Settings",
+      name: "Map",
     },
     {
       Icon: CalendarIcon,
       activeFill: colors.PRIMARY.MAIN,
       inactiveFill: colors.ICON,
       name: "Today",
+    },
+    {
+      Icon: SettingIcon,
+      activeFill: colors.PRIMARY.MAIN,
+      inactiveFill: colors.ICON,
+      name: "Settings",
     },
   ];
 

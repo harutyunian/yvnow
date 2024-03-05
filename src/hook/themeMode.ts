@@ -1,6 +1,7 @@
-import {useAppDispatch, useAppSelector} from "./reduxHooks";
 import {useEffect} from "react";
-import {setDarkMod, setLightMode} from "../store/reducer/actions";
+import {useAppDispatch, useAppSelector} from "./reduxHooks";
+import { setDarkMode, setLightMode } from "../store/reducer/themeReducer";
+import { useSelector } from "react-redux";
 
 function isAfter8pm(): boolean {
     const currentHour = new Date().getHours();
@@ -8,12 +9,12 @@ function isAfter8pm(): boolean {
 }
 
 export const useTheme = () => {
-    const colors = useAppSelector(state => state.themeReducer.mode)
+    const colors = useAppSelector((state)=>state.theme)
     const dispatch = useAppDispatch()
     useEffect(() => {
         const result = isAfter8pm();
-        if (result) setDarkMod(dispatch)
-        else setLightMode(dispatch)
+        if (result) dispatch(setDarkMode())
+        else dispatch(setLightMode())
     }, [])
 
     return colors
