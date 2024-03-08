@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "../../hook/themeMode";
+import { useAppSelector } from "../../hook/reduxHooks";
 import {
   CalendarIcon,
   HomeIcon,
@@ -10,7 +10,7 @@ import {
 import NavButton from "./NavButton/NavButton";
 
 export default function NavigationBar() {
-  const colors = useTheme();
+  const colors = useAppSelector(state=>state.theme)
   const [activeIcon, setActiveIcon] = useState(0);
   const icons = [
     {

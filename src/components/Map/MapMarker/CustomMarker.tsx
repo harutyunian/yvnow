@@ -1,39 +1,33 @@
 import React from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import { Marker, Callout } from "react-native-maps";
-
-
-const SIZE = 120;
+import { IEventCart } from "../../../types/event.type";
+import EventCart from "../../EventCard/EventCart";
 
 interface ICustomMarkerProps {
   coordinates: {
     latitude: number;
     longitude: number;
   };
-  avatar: string
+  avatar: string;
 }
 
-export default function CustomMarker(props: ICustomMarkerProps) {
+export default function CustomMarker(props: IEventCart) {
+  const { user } = props;
   const {
-    coordinates: { latitude = 37.79825, longitude = -122.4224 },avatar
-  } = props;
+    location: { lat: latitude, lng: longitude },
+    avatar,
+  } = user;
 
   return (
-    <Marker coordinate={{ latitude, longitude }}>
-              <Image
-                source={require("./../../../../assets/icons/marker-96.png")}
-                style={[customMapStyle.markerIcon]}
-              />
-              <Image
-                source={{uri: avatar}}
-                style={[customMapStyle.partnerLogo]}
-              /> 
+    <Marker coordinate={{ latitude: +latitude, longitude: +longitude }}>
+      <Image
+        source={require("./../../../../assets/icons/marker-96.png")}
+        style={[customMapStyle.markerIcon]}
+      />
+      <Image source={{ uri: avatar }} style={[customMapStyle.partnerLogo]} />
       <Callout>
-        <View style={customMapStyle.calloutContainer}>
-          <Text style={customMapStyle.calloutText}>
-            Custom Callout Content 2
-          </Text>
-        </View>
+        <EventCart {...{event: props}}/>
       </Callout>
     </Marker>
   );

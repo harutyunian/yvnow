@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View} from "react-native";
-import {useTheme} from "../../hook/themeMode";
+import { useAppSelector } from '../../hook/reduxHooks';
 
 interface IButtonStyled extends TouchableOpacityProps {
     type: 'SECOND' | 'MAIN',
@@ -10,9 +10,7 @@ interface IButtonStyled extends TouchableOpacityProps {
 
 export default function ButtonStyled(props: IButtonStyled) {
     const {type,text, size='lg'} = props;
-    const colors = useTheme();
-
-
+    const colors = useAppSelector(state=>state.theme)
     return <TouchableOpacity style={{...style.container, backgroundColor: colors.PRIMARY[type], ...style[size]}}><Text style={{...style.text}}>{text}</Text></TouchableOpacity>
 }
 

@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import { customMapStyleConfigs } from "./customMapStyle";
 import mockData from "./../../../mock/mockEvents.json";
+import { IEventCart } from "../../types/event.type";
+import { EventService } from "../../services/EventService/EventService";
 
 export default function CustomMap() {
+  //Yerevan coordinates
   const coordinates = { lat: 40.1680387, lng: 44.5057575 };
+  const [events, setEvents] = useState<IEventCart[]>([]);
+
+  useEffect(() => {
+    (async function () {
+      try {
+        const eventService = new EventService();
+        const result = await eventService.toDaysEvents();
+        setEvents(result);
+      } catch (e: { message: string }) {}
+    })();
+  }, []);
 
   return (
     <View style={mapStyle.container}>
@@ -21,18 +35,8 @@ export default function CustomMap() {
         }}
         customMapStyle={customMapStyleConfigs}
       >
-        {mockData.map((event) => {
-          const {
-            location: { lat, lng },
-            avatar,
-          } = event;
-          return (
-            <CustomMarker
-              key={lat + avatar}
-              avatar={avatar}
-              coordinates={{ latitude: lat, longitude: lng }}
-            />
-          );
+        {events.map((event) => {
+          return <CustomMarker key={event.id} {...event} />;
         })}
       </MapView>
     </View>
