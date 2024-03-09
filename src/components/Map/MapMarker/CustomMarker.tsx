@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Image } from "react-native";
 import { Marker, Callout } from "react-native-maps";
 import { IEventCart } from "../../../types/event.type";
 import EventCart from "../../EventCard/EventCart";
+import MiniProfile from "../../MiniProfile/MiniProfile";
 
 interface ICustomMarkerProps {
   coordinates: {
@@ -15,6 +16,9 @@ interface ICustomMarkerProps {
 export default function CustomMarker(props: IEventCart) {
   const { user } = props;
   const {
+    id,
+    partner,
+    address,
     location: { lat: latitude, lng: longitude },
     avatar,
   } = user;
@@ -26,8 +30,10 @@ export default function CustomMarker(props: IEventCart) {
         style={[customMapStyle.markerIcon]}
       />
       <Image source={{ uri: avatar }} style={[customMapStyle.partnerLogo]} />
-      <Callout>
-        <EventCart {...{event: props}}/>
+      <Callout  tooltip style={[customMapStyle.calloutContainer]}>
+        <MiniProfile  {...{
+          avatar,id,partner,address
+        }}/>
       </Callout>
     </Marker>
   );
@@ -58,8 +64,6 @@ const customMapStyle = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   calloutContainer: {
-    backgroundColor: "white",
-    padding: 10,
     borderRadius: 5,
   },
   calloutText: {
