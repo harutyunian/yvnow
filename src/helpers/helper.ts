@@ -4,3 +4,7 @@ export function isBetweenDates(startDateStr: string, endDateStr: string) {
     const endDate = new Date(endDateStr);
     return currentDate >= startDate && currentDate <= endDate;
 }
+export function isAfter8pm(): boolean {
+    const currentHour = new Date().getHours();
+    return currentHour >= 20 || currentHour < 8;
+  }

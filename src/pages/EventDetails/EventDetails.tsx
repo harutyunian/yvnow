@@ -1,16 +1,14 @@
 import React from "react";
 import { Text, View, Image, StyleSheet,ScrollView } from "react-native";
 import Swiper from "react-native-swiper";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useAppSelector } from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
+import { customMapStyleConfigs } from "../../components/Map/customMapStyle";
 
 export default function EventDetails() {
-  const images = [
-    "https://i.ibb.co/jTJvVpd/download.jpg",
-    "https://i.ibb.co/F8HG64F/logo-v1.jpg",
-    "https://i.ibb.co/5hYFcwm/minion.webp",
-  ];
-
+  const eventDetails = useAppSelector(state=>state.eventDetails)
+  const {imageUrls,title,description, user:{location:{lat,lng}}} = eventDetails
 
   const sliderSettings = {
     autoplay: true,
@@ -23,7 +21,7 @@ export default function EventDetails() {
       <View>
         <View style={[eventDetailsStyle.sliderContainer]}>
           <Swiper {...sliderSettings}>
-            {images.map((uri) => (
+            {imageUrls.map((uri) => (
               <View>
                 <Image
                   key={Math.random()}
@@ -39,23 +37,27 @@ export default function EventDetails() {
         <View style={[eventDetailsStyle.descrtiptionContainer]}>
           <View style={[eventDetailsStyle.content]}>
             <Text style={[eventDetailsStyle.eventTitle]}>
-              Eminem music concert in WW
+              {title}
             </Text>
             <Text style={[eventDetailsStyle.description]}>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam
-              tempore assumenda repellat doloribus inventore deleniti expedita
-              tempora hic eum tenetur repellendus suscipit in dicta, quaerat
-              dolorum molestiae consectetur pariatur provident corporis
-              distinctio minus illo. Facilis architecto asperiores nobis rerum
-              eum quibusdam, dolores soluta, nisi magnam ut debitis doloribus
-              fugiat delectus et voluptas voluptatem ipsum. Nam, doloremque?
-              Nulla sit itaque fuga cum omnis id ratione quo qui, nihil minus
-              amet ipsa tempore veniam debitis, a alias incidunt eaque nesciunt.
-              Reprehenderit sit nobis magni fugit similique assumenda nulla
-              dicta nisi debitis, voluptatem, accusantium fugiat est incidunt
-              eligendi. Reprehenderit ea fugit at aut.
+              {description}
             </Text>
           </View>
+        </View>
+        <View style={[eventDetailsStyle.mapConatiner]}>
+        <MapView
+           initialRegion={{
+            latitude: +lat,
+            longitude: +lng,
+            latitudeDelta: 0.4922,
+            longitudeDelta: 0.0421,
+          }}
+           style={[eventDetailsStyle.map]}
+           provider={PROVIDER_GOOGLE}
+           customMapStyle={customMapStyleConfigs}
+        >
+        <Marker coordinate={{ latitude: +lat, longitude: +lng }}/>
+        </MapView>
         </View>
       </View>
     </ScrollView>
@@ -65,6 +67,16 @@ const eventDetailsStyle = StyleSheet.create({
   image: {
     width: "100%",
     height: 340,
+  },
+  mapConatiner:{
+      width: '100%',
+      height: 400,
+      display: 'flex',
+      justifyContent: 'center'
+  },
+  map:{
+    width: '100%',
+    height: 300
   },
   sliderContainer:{
     width: "100%",

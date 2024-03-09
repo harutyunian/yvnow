@@ -1,24 +1,37 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import { useTheme } from "../../hook/themeMode";
 import { LocationIcon } from "../Svg/Svg";
 import ImageSlider from "./Slider2";
 import { IEventCart } from "../../types/event.type";
 import { isBetweenDates } from "../../helpers/helper";
+import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
+import { setEventDetails } from "../../store/reducer/eventDetails/eventDetailsReducer";
 
-
-interface IIEventCartProps extends IEventCart{
-
+interface IIEventCartProps {
+  event: IEventCart;
 }
+
 export default function EventCart(props: IIEventCartProps) {
-  const { imageUrls, startDate, endDate, title, description } = props;
-  const colors = useTheme();
+  const { event } = props;
+  const { imageUrls, startDate, endDate, title, user:{address} } = event;
+  const colors = useAppSelector((state) => state.theme);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigation();
+
+  const handlePressEvent = () => {
+    navigate.navigate("Event Details" as never);
+    dispatch(setEventDetails(event));
+  };
 
   return (
     <>
-      <TouchableOpacity style={{ ...style.container }}>
+      <TouchableOpacity
+        style={{ ...style.container }}
+        onPress={handlePressEvent}
+      >
         <ImageSlider {...{ imageUrls }} />
         <LinearGradient
           style={{ ...style.gradient }}
@@ -46,7 +59,7 @@ export default function EventCart(props: IIEventCartProps) {
               <Text style={{ ...style.eventTitle }}>{title}</Text>
               <View style={{ ...style.addressContainer }}>
                 <LocationIcon style={{ ...style.locationIcon }} />
-                <Text style={{ ...style.address }}>{description}</Text>
+                <Text style={{ ...style.address }}>{address}</Text>
               </View>
             </View>
           </View>

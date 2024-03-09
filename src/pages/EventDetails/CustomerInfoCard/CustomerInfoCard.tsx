@@ -1,17 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import dayjs from "dayjs";
-import { useTheme } from "../../../hook/themeMode";
 import { LocationIcon } from "../../../components/Svg/Svg";
+import { useAppSelector } from "../../../hook/reduxHooks";
 
-interface ICustomerInfoCardProps {
-  title?: string;
-  startDate?: string;
-}
-
-export default function CustomerInfoCard(props: ICustomerInfoCardProps) {
-  const colors = useTheme();
-  const { title, startDate } = props;
+export default function CustomerInfoCard() {
+  const colors = useAppSelector((state) => state.theme);
+  const eventDetails = useAppSelector((state) => state.eventDetails);
+  const {
+    title,
+    startDate,
+    user: { address },
+  } = eventDetails;
 
   return (
     <View style={[customerInfoCardStyle.container]}>
@@ -22,9 +22,7 @@ export default function CustomerInfoCard(props: ICustomerInfoCardProps) {
         ]}
       >
         <View style={[customerInfoCardStyle.titleContainer]}>
-          <Text style={[customerInfoCardStyle.title]}>
-            Stop Club kam Jelifish
-          </Text>
+          <Text style={[customerInfoCardStyle.title]}>{title}</Text>
           <View style={[customerInfoCardStyle.dateContainer]}>
             <Text
               style={[
@@ -32,15 +30,13 @@ export default function CustomerInfoCard(props: ICustomerInfoCardProps) {
                 { color: colors.PRIMARY.MAIN },
               ]}
             >
-              {dayjs().format("DD MMM YYYY")}
+              {dayjs(startDate).format("DD MMM YYYY")}
             </Text>
           </View>
         </View>
         <View style={[customerInfoCardStyle.address]}>
           <LocationIcon style={[customerInfoCardStyle.locationIcon]} />
-          <Text style={[customerInfoCardStyle.addressTitle]}>
-            Spa center at San Jose, Californi
-          </Text>
+          <Text style={[customerInfoCardStyle.addressTitle]}>{address}</Text>
         </View>
       </View>
     </View>
@@ -49,15 +45,15 @@ export default function CustomerInfoCard(props: ICustomerInfoCardProps) {
 
 const customerInfoCardStyle = StyleSheet.create({
   main: {
-    width: '90%',
+    width: "90%",
     height: 90,
     borderRadius: 15,
     paddingTop: 11,
     paddingRight: 15,
     paddingBottom: 10,
     paddingLeft: 20,
-    display: 'flex',
-    justifyContent: "space-between"
+    display: "flex",
+    justifyContent: "space-between",
   },
   address: {
     display: "flex",
@@ -65,9 +61,9 @@ const customerInfoCardStyle = StyleSheet.create({
     columnGap: 10,
   },
   addressTitle: {
-    fontWeight: '400',
+    fontWeight: "400",
     fontSize: 14,
-    color: 'white'
+    color: "white",
   },
   locationIcon: {
     width: 12,
