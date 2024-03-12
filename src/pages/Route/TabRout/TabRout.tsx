@@ -2,7 +2,7 @@ import React from "react";
 import { View,StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { CalendarIcon, HomeIcon, SettingIcon } from "../../../components/Svg/Svg";
+import { CalendarIcon, HomeIcon, LocationIcon, SettingIcon } from "../../../components/Svg/Svg";
 import TodayEvents from "../../TodayEvents/TodayEvents";
 import CustomMap from "../../../components/Map/CustomMap";
 import Settings from "../../Settings/Settings";
@@ -36,19 +36,18 @@ export default function TabRoute(){
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerStyle: {
-          backgroundColor: accent_1, // Background color of the header
+          backgroundColor: accent_5, // Background color of the header
         },
-        cardStyle: { backgroundColor: '#yellow' },
-        headerTintColor: accent_6,
+        headerTintColor: accent_1,
         tabBarStyle: {
-          backgroundColor: accent_1,
+          backgroundColor: accent_5,
         },
         tabBarIcon: () => {
           let iconComponent: JSX.Element | null = null;
           if (route.name === routes.home) {
             iconComponent = (
-              <View style={[styles.icon]}>
-                <HomeIcon fill={iconColor} />
+              <View style={[styles.locationIcon]}>
+                <LocationIcon fill={iconColor} width={25} height={25} />
               </View>
             );
           } else if (route.name === routes.settings) {
@@ -68,7 +67,7 @@ export default function TabRoute(){
           return iconComponent;
         },
         tabBarActiveTintColor: PRIMARY.MAIN,
-        tabBarInactiveTintColor: accent_6,
+        tabBarInactiveTintColor: accent_1,
       })}
     >
       <Tab.Screen name={routes.today} component={TodayEvents} />
@@ -85,5 +84,10 @@ const styles = StyleSheet.create({
       width: 25,
       height: 25,
     },
+    locationIcon:{
+        display: 'flex',
+        alignItems:'center',
+        left: 5
+    }
   });
   

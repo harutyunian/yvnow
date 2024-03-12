@@ -8,6 +8,9 @@ import { customMapStyleConfigs } from "../../components/Map/customMapStyle";
 
 export default function EventDetails() {
   const eventDetails = useAppSelector(state=>state.eventDetails)
+  const colors = useAppSelector(state=>state.theme)
+  const text_color = colors.ACCENT['1']
+
   const {imageUrls,title,description, user:{location:{lat,lng}}} = eventDetails
 
   const sliderSettings = {
@@ -24,7 +27,7 @@ export default function EventDetails() {
             {imageUrls.map((uri) => (
               <View>
                 <Image
-                  key={Math.random()}
+                  key={uri}
                   style={eventDetailsStyle.image}
                   source={{ uri }}
                   onError={(err) => console.log(err.nativeEvent.error)}
@@ -36,10 +39,10 @@ export default function EventDetails() {
         <CustomerInfoCard />
         <View style={[eventDetailsStyle.descrtiptionContainer]}>
           <View style={[eventDetailsStyle.content]}>
-            <Text style={[eventDetailsStyle.eventTitle]}>
+            <Text style={[eventDetailsStyle.eventTitle,{color: text_color}]}>
               {title}
             </Text>
-            <Text style={[eventDetailsStyle.description]}>
+            <Text style={[eventDetailsStyle.description,{color: text_color}]}>
               {description}
             </Text>
           </View>

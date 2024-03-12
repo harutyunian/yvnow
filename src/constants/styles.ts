@@ -4,7 +4,7 @@ export const styles = {
             MAIN: '#1CAE81',
             SECOND: '#FFA26B'
         },
-        ICON: '#000',
+        ICON: '#FFF',
       
         ACCENT:{
             1: '#FFFFFF',
@@ -20,7 +20,7 @@ export const styles = {
             MAIN: '#1CAE81',
             SECOND: '#FFA26B'
         },
-        ICON: '#FFF',
+        ICON: '#000',
         ACCENT:{
             1: '#333333',
             2: '#FFBF35',
