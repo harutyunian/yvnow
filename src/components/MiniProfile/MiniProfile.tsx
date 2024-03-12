@@ -2,25 +2,19 @@ import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Svg, Image as ImageSvg } from "react-native-svg";
 import { useAppSelector } from "../../hook/reduxHooks";
+import { IUser } from "../../types/event.type";
 
 interface IMiniProfileProps {
-  id: number;
-  avatar: string;
-  partner: string;
-  address: string;
+  user: IUser;
 }
 
 export default function MiniProfile(props: IMiniProfileProps) {
-  const { avatar, partner, address } = props;
+  const { user } = props;
+  const { avatar, partner, address } = user;
   const colors = useAppSelector((state) => state.theme);
-
-    const handlePress = ()=>{
-        //TODO: on press switch partner profile and show all active events∂
-    }
 
   return (
     <TouchableOpacity
-      onPress={handlePress}
       style={[
         miniProfileStyles.container,
         { backgroundColor: colors.ACCENT["6"] },

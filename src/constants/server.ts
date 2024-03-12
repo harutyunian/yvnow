@@ -1,4 +1,4 @@
-export const SERVER_URL = 'https://yvnow-backend-dd881ec4a27b.herokuapp.com/api/'
+export const SERVER_URL = 'http://localhost:3000/api/'
 
 const IMAGE_MAIN = 'images'
 
@@ -8,5 +8,6 @@ export const IMAGES = {
 }
 export const EVENTS = {
     TODAY: `${EVENT_MAIN}/today`,
-    ALL: `${EVENT_MAIN}/all`
+    ALL: `${EVENT_MAIN}/all`,
+    BY_USER_ID: `${EVENT_MAIN}/user/`
 }

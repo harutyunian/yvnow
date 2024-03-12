@@ -5,13 +5,14 @@ export const styles = {
             SECOND: '#FFA26B'
         },
         ICON: '#FFF',
+      
         ACCENT:{
-            1: '#333333',
+            1: '#FFFFFF',
             2: '#FFBF35',
             3: '#61656A',
             4: '#F65A5A',
-            5: '#F9F9FF',
-            6: '#FFFFFF'
+            5: '#111229',
+            6: '#1A1B30'
         }
     },
     LIGHT:{
@@ -21,12 +22,12 @@ export const styles = {
         },
         ICON: '#000',
         ACCENT:{
-            1: '#FFFFFF',
+            1: '#333333',
             2: '#FFBF35',
             3: '#61656A',
             4: '#F65A5A',
-            5: '#111229',
-            6: '#1A1B30'
+            5: '#F9F9FF',
+            6: '#FFFFFF'
         }
     }
 }

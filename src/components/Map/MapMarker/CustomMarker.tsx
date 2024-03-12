@@ -1,27 +1,26 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import { Marker, Callout } from "react-native-maps";
+import { useNavigation } from "@react-navigation/native";
+import { useAppDispatch } from "../../../hook/reduxHooks";
 import { IEventCart } from "../../../types/event.type";
-import EventCart from "../../EventCard/EventCart";
 import MiniProfile from "../../MiniProfile/MiniProfile";
-
-interface ICustomMarkerProps {
-  coordinates: {
-    latitude: number;
-    longitude: number;
-  };
-  avatar: string;
-}
+import { setUser } from "../../../store/reducer/user/user";
+import { routes } from "../../../routes/routes";
 
 export default function CustomMarker(props: IEventCart) {
   const { user } = props;
   const {
-    id,
-    partner,
-    address,
     location: { lat: latitude, lng: longitude },
     avatar,
   } = user;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigation();
+
+  const handlePressCallout = () => {
+    dispatch(setUser(user));
+    navigate.navigate(routes.partnerProfile as never);
+  };
 
   return (
     <Marker coordinate={{ latitude: +latitude, longitude: +longitude }}>
@@ -30,10 +29,12 @@ export default function CustomMarker(props: IEventCart) {
         style={[customMapStyle.markerIcon]}
       />
       <Image source={{ uri: avatar }} style={[customMapStyle.partnerLogo]} />
-      <Callout  tooltip style={[customMapStyle.calloutContainer]}>
-        <MiniProfile  {...{
-          avatar,id,partner,address
-        }}/>
+      <Callout
+        tooltip
+        style={[customMapStyle.calloutContainer]}
+        onPress={() => handlePressCallout()}
+      >
+        <MiniProfile {...{ user }} />
       </Callout>
     </Marker>
   );
