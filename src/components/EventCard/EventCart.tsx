@@ -9,6 +9,7 @@ import { IEventCart } from "../../types/event.type";
 import { isBetweenDates } from "../../helpers/helper";
 import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
 import { setEventDetails } from "../../store/reducer/eventDetails/eventDetailsReducer";
+import { routes } from "../../routes/routes";
 
 interface IIEventCartProps {
   event: IEventCart;
@@ -22,13 +23,11 @@ export default function EventCart(props: IIEventCartProps) {
   const navigate = useNavigation();
 
   const handlePressEvent = () => {
-    navigate.navigate('Event Details' as never);
+    navigate.navigate(routes.eventDetails as never);
     dispatch(setEventDetails(event));
   };
 
-  return (
-    <>
-      <TouchableOpacity
+  return (<TouchableOpacity
         style={{ ...style.container }}
         onPress={handlePressEvent}
       >
@@ -65,7 +64,6 @@ export default function EventCart(props: IIEventCartProps) {
           </View>
         </LinearGradient>
       </TouchableOpacity>
-    </>
   );
 }
 

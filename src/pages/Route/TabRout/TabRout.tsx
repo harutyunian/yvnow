@@ -9,6 +9,7 @@ import Settings from "../../Settings/Settings";
 import EventDetails from "../../EventDetails/EventDetails";
 import PartnerProfile from "../../PartnerProfile/PartnerProfile";
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { routes } from "../../../routes/routes";
 
 
 
@@ -44,19 +45,19 @@ export default function TabRoute(){
         },
         tabBarIcon: () => {
           let iconComponent: JSX.Element | null = null;
-          if (route.name === "Home") {
+          if (route.name === routes.home) {
             iconComponent = (
               <View style={[styles.icon]}>
                 <HomeIcon fill={iconColor} />
               </View>
             );
-          } else if (route.name === "Settings") {
+          } else if (route.name === routes.settings) {
             iconComponent = (
               <View style={[styles.icon]}>
                 <SettingIcon fill={iconColor} />
               </View>
             );
-          } else if (route.name === "Today") {
+          } else if (route.name === routes.today) {
             iconComponent = (
               <View style={[styles.icon]}>
                 <CalendarIcon fill={iconColor} />
@@ -70,11 +71,11 @@ export default function TabRoute(){
         tabBarInactiveTintColor: accent_6,
       })}
     >
-      <Tab.Screen name="Today" component={TodayEvents} />
-      <Tab.Screen name="Home" component={CustomMap} />
-      <Tab.Screen name="Settings" component={Settings} />
-      <Tab.Screen name="Partner Profile" component={PartnerProfile}  options={{ tabBarButton: () => null }} />
-      <Tab.Screen name="Event Details" component={EventDetails}  options={{ tabBarButton: () => null }} />
+      <Tab.Screen name={routes.today} component={TodayEvents} />
+      <Tab.Screen name={routes.home} component={CustomMap} />
+      <Tab.Screen name={routes.settings} component={Settings} />
+      <Tab.Screen name={routes.partnerProfile} component={PartnerProfile}  options={{ tabBarButton: () => null }} />
+      <Tab.Screen name={routes.eventDetails} component={EventDetails}  options={{ tabBarButton: () => null }} />
     </Tab.Navigator>
   </NavigationContainer>
 }

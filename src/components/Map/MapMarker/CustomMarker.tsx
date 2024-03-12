@@ -6,6 +6,7 @@ import { useAppDispatch } from "../../../hook/reduxHooks";
 import { IEventCart } from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import { setUser } from "../../../store/reducer/user/user";
+import { routes } from "../../../routes/routes";
 
 export default function CustomMarker(props: IEventCart) {
   const { user } = props;
@@ -18,7 +19,7 @@ export default function CustomMarker(props: IEventCart) {
 
   const handlePressCallout = () => {
     dispatch(setUser(user));
-    navigate.navigate("Partner Profile" as never);
+    navigate.navigate(routes.partnerProfile as never);
   };
 
   return (
