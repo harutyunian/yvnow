@@ -1,13 +1,15 @@
 import React from "react";
 import { View,StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native"
 import { useAppSelector } from "../../../hook/reduxHooks";
 import { CalendarIcon, HomeIcon, SettingIcon } from "../../../components/Svg/Svg";
 import TodayEvents from "../../TodayEvents/TodayEvents";
 import CustomMap from "../../../components/Map/CustomMap";
 import Settings from "../../Settings/Settings";
 import EventDetails from "../../EventDetails/EventDetails";
+import PartnerProfile from "../../PartnerProfile/PartnerProfile";
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -18,14 +20,24 @@ export default function TabRoute(){
     const { ICON: iconColor, ACCENT, PRIMARY } = colors;
     const accent_1 = ACCENT["1"];
     const accent_6 = ACCENT["6"];
+    const accent_5 = ACCENT["5"];
 
       
-    return <NavigationContainer>
+    const MyTheme = {
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        background: accent_5
+      },
+    }
+
+    return <NavigationContainer theme={MyTheme}>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerStyle: {
           backgroundColor: accent_1, // Background color of the header
         },
+        cardStyle: { backgroundColor: '#yellow' },
         headerTintColor: accent_6,
         tabBarStyle: {
           backgroundColor: accent_1,
@@ -61,6 +73,7 @@ export default function TabRoute(){
       <Tab.Screen name="Today" component={TodayEvents} />
       <Tab.Screen name="Home" component={CustomMap} />
       <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen name="Partner Profile" component={PartnerProfile}  options={{ tabBarButton: () => null }} />
       <Tab.Screen name="Event Details" component={EventDetails}  options={{ tabBarButton: () => null }} />
     </Tab.Navigator>
   </NavigationContainer>

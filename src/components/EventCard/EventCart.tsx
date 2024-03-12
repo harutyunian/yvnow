@@ -22,7 +22,7 @@ export default function EventCart(props: IIEventCartProps) {
   const navigate = useNavigation();
 
   const handlePressEvent = () => {
-    navigate.navigate("Event Details" as never);
+    navigate.navigate('Event Details' as never);
     dispatch(setEventDetails(event));
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import { Text, View, ScrollView, StyleSheet, Button } from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import { EventService } from "../../services/EventService/EventService";
 import { IEventCart } from "../../types/event.type";

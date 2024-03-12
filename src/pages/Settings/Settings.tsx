@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Radio } from "native-base";
-import { useAppDispatch} from "../../hook/reduxHooks";
+import { useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {
   setDarkMode,
   setDynamicsMode,
@@ -10,6 +10,8 @@ import {
 
 export default function Settings() {
   const [value, setValue] = useState("one");
+  const colors = useAppSelector(state=>state.theme)
+
   const dispatch = useAppDispatch();
   
   const handleChangeMode = (nextValue: string) => {
@@ -27,7 +29,7 @@ export default function Settings() {
   return (
     <View style={[settingsStyle.container]}>
       <View style={[settingsStyle.themeModeContainer]}>
-        <Text>Theme</Text>
+        <Text style={[{color: colors.ACCENT["1"]}]}>Theme</Text>
         <Radio.Group
           name="myRadioGroup"
           accessibilityLabel="favorite number"
@@ -35,13 +37,13 @@ export default function Settings() {
           onChange={handleChangeMode}
         >
           <Radio value="one" my="2" colorScheme="green">
-            Dynamic
+           <Text style={[{color: colors.ACCENT["1"]}]}>Dynamic</Text>
           </Radio>
-          <Radio value="two" my="2" colorScheme="green">
-            Dark
+          <Radio value="two" my="2" colorScheme="green"  style={[]}>
+          <Text style={[{color: colors.ACCENT["1"]}]}>Dark</Text>
           </Radio>
-          <Radio value="tree" my="2" colorScheme="green">
-            Light
+          <Radio value="tree" my="2" colorScheme="green"  style={[]}>
+          <Text style={[{color: colors.ACCENT["1"]}]}>Light</Text>
           </Radio>
         </Radio.Group>
       </View>
