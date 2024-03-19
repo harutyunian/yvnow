@@ -1,5 +1,5 @@
 import React from "react";
-import {View, StyleSheet, Text} from "react-native";
+import {View, StyleSheet} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAppSelector } from "../../../hook/reduxHooks";
 import { CalendarIcon, LocationIcon, SettingIcon } from "../../../components/Svg/Svg";
@@ -16,7 +16,6 @@ export default function TabRoute(){
     const colors = useAppSelector(state=>state.theme)
     const { ICON: iconColor, ACCENT, PRIMARY } = colors;
     const accent_1 = ACCENT["1"];
-    const accent_6 = ACCENT["6"];
     const accent_5 = ACCENT["5"];
 
 

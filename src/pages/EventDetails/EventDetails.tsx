@@ -1,15 +1,20 @@
-import React from "react";
+import React, {useRef} from "react";
 import { Text, View, Image, StyleSheet,ScrollView } from "react-native";
 import Swiper from "react-native-swiper";
-import MapView, {Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {Marker,Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { useAppSelector } from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
 import { customMapStyleConfigs } from "../../components/Map/customMapStyle";
+
+function MapViewDirections(props: { strokeWidth: number, apikey: string, origin: { latitude: any; longitude: any }, destination: any, strokeColor: string }) {
+  return null;
+}
 
 export default function EventDetails() {
   const eventDetails = useAppSelector(state=>state.eventDetails)
   const colors = useAppSelector(state=>state.theme)
   const text_color = colors.ACCENT['1']
+  const mapRef = useRef(null);
 
   const {imageUrls,title,description, user:{location:{lat,lng}}} = eventDetails
 
@@ -17,7 +22,7 @@ export default function EventDetails() {
     autoplay: true,
     showsPagination: false,
     autoplayTimeout: 3,
-    loop: true 
+    loop: true
   }
   return (
     <ScrollView>
@@ -49,16 +54,40 @@ export default function EventDetails() {
         </View>
         <View style={[eventDetailsStyle.mapConatiner]}>
         <MapView
+            ref={mapRef}
            initialRegion={{
             latitude: +lat,
             longitude: +lng,
-            latitudeDelta: 0.4922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.006,
+            longitudeDelta: 0.005,
           }}
+           showsUserLocation={true}
+           followsUserLocation={true}
+           showsMyLocationButton={true}
+           rotateEnabled={true}
+           loadingEnabled={true}
+           region={{
+             latitude: 40.170292863987406,
+             longitude: 44.56435298608088,
+             latitudeDelta: 0.006,
+             longitudeDelta: 0.005,
+           }}
            style={[eventDetailsStyle.map]}
            provider={PROVIDER_GOOGLE}
            customMapStyle={customMapStyleConfigs}
         >
+          <MapViewDirections
+              origin={{ latitude:40.170292863987406, longitude: 44.56435298608088}}
+              destination={{
+                latitude: 40.170292863987406,
+                longitude: 44.56435298608088,
+                latitudeDelta: 0.006,
+                longitudeDelta: 0.005,
+              }}
+              apikey="YOUR_GOOGLE_MAPS_API_KEY"
+              strokeWidth={4}
+              strokeColor="blue"
+          />
         <Marker coordinate={{ latitude: +lat, longitude: +lng }}/>
         </MapView>
         </View>

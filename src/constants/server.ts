@@ -1,6 +1,6 @@
 export const SERVER_URL = 'http://localhost:3000/api/'
 
-const IMAGE_MAIN = 'images'
+export const IMAGE_MAIN = 'images'
 
 const EVENT_MAIN = 'event'
 export const IMAGES = {
