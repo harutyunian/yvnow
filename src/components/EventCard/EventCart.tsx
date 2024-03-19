@@ -73,7 +73,7 @@ const main = {
   borderRadius: 12,
 };
 const style = StyleSheet.create({
-  container: main,
+  container: {...main, marginBottom: 20},
   cartInfoContainer: {
     height: "100%",
     display: "flex",
