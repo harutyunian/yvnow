@@ -5,7 +5,7 @@ export const styles = {
             SECOND: '#FFA26B'
         },
         ICON: '#FFF',
-      
+
         ACCENT:{
             1: '#FFFFFF',
             2: '#FFBF35',
@@ -17,7 +17,8 @@ export const styles = {
     },
     LIGHT:{
         PRIMARY:{
-            MAIN: '#1CAE81',
+            MAIN: '#871F78',
+
             SECOND: '#FFA26B'
         },
         ICON: '#000',
