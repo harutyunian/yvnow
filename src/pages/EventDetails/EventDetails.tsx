@@ -10,14 +10,13 @@ export default function EventDetails() {
   const eventDetails = useAppSelector(state=>state.eventDetails)
   const colors = useAppSelector(state=>state.theme)
   const text_color = colors.ACCENT['1']
-
   const {imageUrls,title,description, user:{location:{lat,lng}}} = eventDetails
 
   const sliderSettings = {
     autoplay: true,
     showsPagination: false,
     autoplayTimeout: 3,
-    loop: true 
+    loop: true
   }
   return (
     <ScrollView>
@@ -37,7 +36,7 @@ export default function EventDetails() {
           </Swiper>
         </View>
         <CustomerInfoCard />
-        <View style={[eventDetailsStyle.descrtiptionContainer]}>
+        <View style={[eventDetailsStyle.descriptionContainer]}>
           <View style={[eventDetailsStyle.content]}>
             <Text style={[eventDetailsStyle.eventTitle,{color: text_color}]}>
               {title}
@@ -91,7 +90,7 @@ const eventDetailsStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  descrtiptionContainer: {
+  descriptionContainer: {
     display: "flex",
     alignItems: "center",
   },

@@ -38,24 +38,25 @@ export default function TabRoute(){
         tabBarStyle: {
           backgroundColor: accent_5,
         },
-        tabBarIcon: () => {
+        tabBarIcon: ({ focused }) => {
           let iconComponent: JSX.Element | null = null;
-          if (route.name === routes.home) {
+          const focusedIcon = focused ?PRIMARY.MAIN:iconColor
+          if (route.name === routes.map) {
             iconComponent = (
               <View style={[styles.locationIcon]}>
-                <LocationIcon fill={iconColor} width={25} height={25} />
+                <LocationIcon fill={focusedIcon} width={25} height={25} />
               </View>
             );
           } else if (route.name === routes.settings) {
             iconComponent = (
               <View style={[styles.icon]}>
-                <SettingIcon fill={iconColor} />
+                <SettingIcon fill={focusedIcon} />
               </View>
             );
           } else if (route.name === routes.today) {
             iconComponent = (
               <View style={[styles.icon]}>
-                <CalendarIcon fill={iconColor} />
+                <CalendarIcon fill={focusedIcon} />
               </View>
             );
           }
@@ -67,7 +68,7 @@ export default function TabRoute(){
       })}
     >
       <Tab.Screen name={routes.today} component={TodayEvents} />
-      <Tab.Screen name={routes.home} component={CustomMap} />
+      <Tab.Screen name={routes.map} component={CustomMap} />
       <Tab.Screen name={routes.settings} component={Settings} />
       <Tab.Screen name={routes.partnerProfile} component={PartnerProfile}  options={{ tabBarButton: () => null }} />
       <Tab.Screen name={routes.eventDetails} component={EventDetails}  options={{ tabBarButton: () => null }} />
