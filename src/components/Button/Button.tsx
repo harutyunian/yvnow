@@ -7,8 +7,6 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { useAppSelector } from "../../hook/reduxHooks";
-
 interface IButtonStyled extends TouchableOpacityProps {
   text: string;
   size?: "lg" | "md" | "sm";

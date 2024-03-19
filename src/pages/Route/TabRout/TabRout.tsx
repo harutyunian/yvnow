@@ -1,8 +1,8 @@
 import React from "react";
-import { View,StyleSheet } from "react-native";
+import {View, StyleSheet, Text} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { CalendarIcon, HomeIcon, LocationIcon, SettingIcon } from "../../../components/Svg/Svg";
+import { CalendarIcon, LocationIcon, SettingIcon } from "../../../components/Svg/Svg";
 import TodayEvents from "../../TodayEvents/TodayEvents";
 import CustomMap from "../../../components/Map/CustomMap";
 import Settings from "../../Settings/Settings";
@@ -10,11 +10,7 @@ import EventDetails from "../../EventDetails/EventDetails";
 import PartnerProfile from "../../PartnerProfile/PartnerProfile";
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { routes } from "../../../routes/routes";
-
-
-
 const Tab = createBottomTabNavigator();
-
 
 export default function TabRoute(){
     const colors = useAppSelector(state=>state.theme)
@@ -23,7 +19,7 @@ export default function TabRoute(){
     const accent_6 = ACCENT["6"];
     const accent_5 = ACCENT["5"];
 
-      
+
     const MyTheme = {
       ...DefaultTheme,
       colors: {
@@ -90,4 +86,3 @@ const styles = StyleSheet.create({
         left: 5
     }
   });
-  

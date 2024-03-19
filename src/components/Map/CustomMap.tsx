@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import { customMapStyleConfigs } from "./customMapStyle";
-import mockData from "./../../../mock/mockEvents.json";
 import { IEventCart } from "../../types/event.type";
 import { EventService } from "../../services/EventService/EventService";
 

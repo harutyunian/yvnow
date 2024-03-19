@@ -3,14 +3,12 @@ import { Text, Image, View, StyleSheet, ScrollView } from "react-native";
 import { useAppSelector } from "../../hook/reduxHooks";
 import {
   CalendarIcon,
-  ClockIcon,
   LocationIcon,
 } from "../../components/Svg/Svg";
 import ButtonStyled from "../../components/Button/Button";
-import { IEventCart, IUser } from "../../types/event.type";
+import { IEventCart } from "../../types/event.type";
 import EventCardSmall from "./EventCardSmall/EventCardSmall";
 import { EventService } from "../../services/EventService/EventService";
-import { useSelector } from "react-redux";
 
 enum ProfileContens {
   event = "event",
@@ -132,9 +130,13 @@ export default function PartnerProfile() {
         />
       </View>
       <ScrollView contentContainerStyle={[{ paddingBottom: 90 }]}>
-        {partnerEvents.passed.map((el) => (
+        {isPastActive &&  partnerEvents.passed.map((el) => (
           <EventCardSmall {...el} key={el.id} />
         ))}
+         {isEventActive &&  partnerEvents.notStarted.map((el) => (
+          <EventCardSmall {...el} key={el.id} />
+        ))}
+
       </ScrollView>
     </View>
   );

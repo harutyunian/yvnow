@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, ScrollView, StyleSheet, Button } from "react-native";
+import { Text, View, ScrollView, StyleSheet, } from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import { EventService } from "../../services/EventService/EventService";
 import { IEventCart } from "../../types/event.type";
@@ -18,8 +18,8 @@ export default function TodayEvents() {
         const eventService = new EventService();
         const result = await eventService.toDaysEvents();
         setTodaysEvents(result);
-      } catch (e: { message: string }) {
-        if (e.message) {
+      } catch (e:any) {
+        if (e && e.message) {
           setErrorMessage(e.message);
         }
       }

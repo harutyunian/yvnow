@@ -1,9 +1,6 @@
 import {createSlice,PayloadAction} from "@reduxjs/toolkit"
 import { IUser } from "../../../types/event.type"
 
-interface Aper{
-
-}
 const initialState:IUser = {
     id: 0,
     avatar: '',

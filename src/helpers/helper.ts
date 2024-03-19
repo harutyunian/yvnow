@@ -9,19 +9,11 @@ export function isAfter8pm(): boolean {
   return currentHour >= 20 || currentHour < 8;
 }
 
-interface IRegion {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
+export function shuffleArray<T>(array: T[]): T[] {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
 }
-export const calculateViewportCorners = (region: IRegion) => {
-  const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
-
-  const north = latitude + latitudeDelta / 2;
-  const south = latitude - latitudeDelta / 2;
-  const east = longitude + longitudeDelta / 2;
-  const west = longitude - longitudeDelta / 2;
-
-  return { north, south, east, west };
-};
