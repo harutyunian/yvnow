@@ -11,6 +11,8 @@ export default function CustomerInfoCard() {
         endDate
     } = eventDetails;
 
+    const today = dayjs(startDate).format('DD-MM-YYYY')
+    const endDay = dayjs(endDate).format('DD-MM-YYYY')
     return (
         <View style={[customerInfoCardStyle.container]}>
             <View
@@ -26,7 +28,8 @@ export default function CustomerInfoCard() {
                     />
                     <View style={[customerInfoCardStyle.dateWrapper]}>
                         <Text style={[customerInfoCardStyle.iconNameText]}>Date</Text>
-                        <Text style={[customerInfoCardStyle.date,{color: colors.ACCENT['1']}]}>{dayjs(startDate).format('DD-MM-YYYY')}</Text>
+                        <Text style={[customerInfoCardStyle.date,{color: colors.ACCENT['1']}]}>{today}</Text>
+                        {today !== endDay && <Text style={[customerInfoCardStyle.date, {color: colors.ACCENT['1']}]}>{}</Text>}
                     </View>
                 </View>
                 <View style={[customerInfoCardStyle.iconContainer]}>
@@ -37,8 +40,8 @@ export default function CustomerInfoCard() {
                     <View style={[customerInfoCardStyle.dateWrapper]}>
                         <Text style={[customerInfoCardStyle.iconNameText]}>Time</Text>
                         <Text style={[customerInfoCardStyle.date,{color: colors.ACCENT['1']}]}>
-                            {dayjs(startDate).format('hh:ss')}-
-                            {dayjs(endDate).format('hh:ss')}
+                            {dayjs(startDate).format('HH:mm')}-
+                            {dayjs(endDate).format('HH:mm')}
                         </Text>
                     </View>
                 </View>

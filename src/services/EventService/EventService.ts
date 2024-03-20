@@ -10,21 +10,16 @@ export class EventService {
         this.httpService = new HttpService();
     }
 
-    async toDaysEvents(): Promise<IEventCart[]> {
+    async toDaysEvents(page: number, limit: number): Promise<{ events: IEventCart[], total: number }> {
         try {
             const url = EVENTS.TODAY;
-            const result = await this.httpService.get(url, {
+            return await this.httpService.get<Promise<{ events: IEventCart[], total: number }>>(url, {
                 params: {
-                    currentTime: new Date().toISOString() // Pass current time as a query parameter
+                    currentTime: new Date().toISOString(),
+                    page,
+                    limit
                 }
             });
-            // live events move to start and not live move to end with shuffle
-            const events = Array.isArray(result) && result.reduce((acc, el) => {
-                if (isBetweenDates(el.startDate, el.endDate)) acc.live.push(el)
-                else acc.noLive.push(el)
-                return acc
-            }, {live: [], noLive: []})
-            return [...shuffleArray<IEventCart>(events.live), ...shuffleArray<IEventCart>(events.noLive),]
         } catch (e) {
             console.log("Something went wrong trying to get today events", e);
             return Promise.reject(e);
