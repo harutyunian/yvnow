@@ -15,8 +15,8 @@ export default function CustomMap() {
     (async function () {
       try {
         const eventService = new EventService();
-        const result = await eventService.toDaysEvents();
-        setEvents(result);
+        const result = await eventService.toDaysEvents(1,100);
+        setEvents(result.events);
       } catch (e: { message: string }) {}
     })();
   }, []);

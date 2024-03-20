@@ -51,8 +51,8 @@ export default function EventDetails() {
            initialRegion={{
             latitude: +lat,
             longitude: +lng,
-            latitudeDelta: 0.4922,
-            longitudeDelta: 0.0421,
+             latitudeDelta: 0.0922,
+             longitudeDelta: 0.0421,
           }}
            style={[eventDetailsStyle.map]}
            provider={PROVIDER_GOOGLE}

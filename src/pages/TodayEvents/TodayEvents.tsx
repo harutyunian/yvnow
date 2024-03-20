@@ -56,7 +56,7 @@ export default function TodayEvents() {
                 keyExtractor={(item) => item.id.toString()}
                 onEndReached={fetchTodayEvents}
                 onEndReachedThreshold={0.1}
-                ListFooterComponent={total !== todaysEvents.length ? <View style={[todayEventsStyle.loading]}><Loader/></View>:null}
+                ListFooterComponent={<View style={[todayEventsStyle.loading]}><Loader/></View>}
             />
         </View>
     );
