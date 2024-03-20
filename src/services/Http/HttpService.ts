@@ -6,7 +6,7 @@ class HttpService {
 
     constructor() {
         this.axiosInstance = axios.create({
-            baseURL: SERVER_URL,
+            baseURL: 'https://yvnow-backend-dd881ec4a27b.herokuapp.com/api',
         });
     }
 
