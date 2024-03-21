@@ -3,10 +3,10 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import { LocationIcon } from "../Svg/Svg";
+import {EyeIcon, LocationIcon} from "../Svg/Svg";
 import ImageSlider from "./Slider2";
 import { IEventCart } from "../../types/event.type";
-import { isBetweenDates } from "../../helpers/helper";
+import {formatNumber, isBetweenDates} from "../../helpers/helper";
 import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
 import { setEventDetails } from "../../store/reducer/eventDetails/eventDetailsReducer";
 import { routes } from "../../routes/routes";
@@ -17,7 +17,7 @@ interface IIEventCartProps {
 
 export default function EventCart(props: IIEventCartProps) {
   const { event } = props;
-  const { imageUrls, startDate, endDate, title, user:{address} } = event;
+  const { imageUrls,view, startDate, endDate, title, user:{address,partner} } = event;
   const colors = useAppSelector((state) => state.theme);
   const dispatch = useAppDispatch();
   const navigate = useNavigation();
@@ -55,10 +55,15 @@ export default function EventCart(props: IIEventCartProps) {
               )}
             </View>
             <View style={{ ...style.description }}>
+              <Text style={{ ...style.eventTitle }}>{partner}</Text>
               <Text style={{ ...style.eventTitle }}>{title}</Text>
               <View style={{ ...style.addressContainer }}>
                 <LocationIcon style={{ ...style.locationIcon }} />
                 <Text style={{ ...style.address }}>{address}</Text>
+              </View>
+              <View style={{ ...style.addressContainer, right: 5, top: 5 }}>
+                <EyeIcon style={{ ...style.locationIcon }} />
+                <Text style={{ ...style.address }}>{formatNumber(view+1)}</Text>
               </View>
             </View>
           </View>

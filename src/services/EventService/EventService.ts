@@ -1,6 +1,7 @@
 import HttpService from "../Http/HttpService";
 import {EVENTS} from "../../constants/server";
 import {IEventCart} from "../../types/event.type";
+
 export class EventService {
     private readonly httpService;
 
@@ -28,6 +29,16 @@ export class EventService {
         try {
             const url = EVENTS.BY_USER_ID + userId;
             return await this.httpService.get(url);
+        } catch (e) {
+            console.log("Something went wrong trying to get events by user id", e);
+            return Promise.reject(e);
+        }
+    }
+
+    async addView(eventId: number) {
+        try {
+            const url = EVENTS.INCREMENT_View;
+            return await this.httpService.post(url, {id: eventId});
         } catch (e) {
             console.log("Something went wrong trying to get events by user id", e);
             return Promise.reject(e);
