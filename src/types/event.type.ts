@@ -16,6 +16,7 @@ export interface IEventCart {
     startDate: string,
     endDate: string,
     title: string,
+    type: string,
     description: string,
     user: IUser
 }

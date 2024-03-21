@@ -1,6 +1,7 @@
-export const SERVER_URL = 'http://localhost:3000/api/'
 
-const IMAGE_MAIN = 'images'
+let SERVER_URL = 'https://yvnow-backend-dd881ec4a27b.herokuapp.com/api/'
+
+export {SERVER_URL}
 
 const EVENT_MAIN = 'event'
 export const IMAGES = {
