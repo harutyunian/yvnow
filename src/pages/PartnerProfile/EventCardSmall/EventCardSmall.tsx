@@ -3,17 +3,18 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
 import dayjs from "dayjs"
 import {useNavigation} from "@react-navigation/native";
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHooks";
-import {CalendarIcon, ClockIcon, LocationIcon} from "../../../components/Svg/Svg";
+import {CalendarIcon, ClockIcon, EyeIcon, LocationIcon} from "../../../components/Svg/Svg";
 import {IEventCart} from "../../../types/event.type";
 import {routes} from "../../../routes/routes";
 import {setEventDetails} from "../../../store/reducer/eventDetails/eventDetailsReducer";
+import {formatNumber} from "../../../helpers/helper";
 
 interface EventCardSmall{
     event: IEventCart
 }
 export default function EventCardSmall(props: EventCardSmall) {
     const  {event} = props
-    const  {imageUrls, title, startDate, endDate}= event
+    const  {view, imageUrls, title, startDate, endDate}= event
 
     const colors = useAppSelector((state) => state.theme);
     const {address} = useAppSelector(state => state.user)
@@ -24,7 +25,6 @@ export default function EventCardSmall(props: EventCardSmall) {
         navigate.navigate(routes.eventDetails as never);
         dispatch(setEventDetails(event));
     }
-
     return (
         <TouchableOpacity
             onPress={handlePress}
@@ -65,6 +65,10 @@ export default function EventCardSmall(props: EventCardSmall) {
                 <View style={[eventCardSmallStyle.locationIcon]}>
                     <LocationIcon fill="#64748B" width={12} height={18}/>
                     <Text style={[eventCardSmallStyle.mainText]}>{address}</Text>
+                </View>
+                <View style={[eventCardSmallStyle.locationIcon,{right:5}]}>
+                    <EyeIcon fill="#64748B" width={25} height={18}/>
+                    <Text style={[eventCardSmallStyle.mainText]}>{formatNumber(view+1)}</Text>
                 </View>
             </View>
         </TouchableOpacity>

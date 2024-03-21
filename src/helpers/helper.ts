@@ -17,3 +17,13 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffledArray;
 }
+
+export function formatNumber(number:number) {
+  if (number >= 1000000) {
+    return (number / 1000000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'm';
+  } else if (number >= 1000) {
+    return (number / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'k';
+  } else {
+    return number.toLocaleString();
+  }
+}

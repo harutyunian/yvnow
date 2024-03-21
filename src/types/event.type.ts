@@ -12,6 +12,7 @@ export interface IUser{
 
 export interface IEventCart {
     id: number,
+    view: number,
     imageUrls: string[],
     startDate: string,
     endDate: string,

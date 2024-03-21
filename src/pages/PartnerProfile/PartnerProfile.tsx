@@ -131,14 +131,16 @@ export default function PartnerProfile() {
                     }}
                 />
             </View>
-            <ScrollView contentContainerStyle={[{paddingBottom: 90}]}>
-                {isPastActive && partnerEvents.passed.map((el) => (
-                    <EventCardSmall event={{...el, user}} key={el.id}/>
-                ))}
-                {isEventActive && partnerEvents.notStarted.map((el) => (
-                    <EventCardSmall event={{...el, user}} key={el.id}/>
-                ))}
-
+            <ScrollView>
+                {/*To see last event on bottom not outside a screen*/}
+                <View style={[{paddingBottom: 250}]}>
+                    {isPastActive && partnerEvents.passed.map((el) => (
+                        <EventCardSmall event={{...el, user}} key={el.id}/>
+                    ))}
+                    {isEventActive && partnerEvents.notStarted.map((el) => (
+                        <EventCardSmall event={{...el, user}} key={el.id}/>
+                    ))}
+                </View>
             </ScrollView>
         </View>
     );
@@ -152,6 +154,7 @@ const partnerProfileStyle = StyleSheet.create({
     },
     buttons: {
         paddingTop: 20,
+        paddingBottom: 10,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",

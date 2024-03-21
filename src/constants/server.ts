@@ -10,5 +10,6 @@ export const IMAGES = {
 export const EVENTS = {
     TODAY: `${EVENT_MAIN}/today`,
     ALL: `${EVENT_MAIN}/all`,
-    BY_USER_ID: `${EVENT_MAIN}/user/`
+    BY_USER_ID: `${EVENT_MAIN}/user/`,
+    INCREMENT_View: `${EVENT_MAIN}/incrementView`
 }
