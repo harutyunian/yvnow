@@ -27,7 +27,6 @@ export class EventService {
     async getEventByUserId(userId: number): Promise<{ notStarted: IEventCart[], passed: IEventCart[] }> {
         try {
             const url = EVENTS.BY_USER_ID + userId;
-            console.log(url)
             return await this.httpService.get(url);
         } catch (e) {
             console.log("Something went wrong trying to get events by user id", e);
