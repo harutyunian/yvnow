@@ -7,6 +7,7 @@ const initialState:IEventCart = {
     imageUrls: [],
     startDate: '',
     endDate: '',
+    type: 'event',
     title: '',
     description: '',
     user: {
