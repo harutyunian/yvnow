@@ -1,8 +1,6 @@
 import HttpService from "../Http/HttpService";
 import {EVENTS} from "../../constants/server";
 import {IEventCart} from "../../types/event.type";
-import {isBetweenDates, shuffleArray} from "../../helpers/helper";
-
 export class EventService {
     private readonly httpService;
 
@@ -10,7 +8,7 @@ export class EventService {
         this.httpService = new HttpService();
     }
 
-    async toDaysEvents(page: number, limit: number): Promise<{ events: IEventCart[], total: number }> {
+    async toDaysEvents(page: number, limit: number = 10): Promise<{ events: IEventCart[], total: number }> {
         try {
             const url = EVENTS.TODAY;
             return await this.httpService.get<Promise<{ events: IEventCart[], total: number }>>(url, {
