@@ -3,6 +3,8 @@ export interface IUser{
     avatar: string,
     partner: string
     address: string,
+    profilePictures: string[],
+    description: string,
     location:{
         lat: string | number,
         lng: string | number

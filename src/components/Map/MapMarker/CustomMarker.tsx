@@ -25,7 +25,7 @@ export default function CustomMarker(props: IEventCart) {
   return (
     <Marker coordinate={{ latitude: +latitude, longitude: +longitude }}>
       <Image
-        source={require("./../../../../assets/icons/marker-96.png")}
+        source={require("../../../../assets/icons/marker-96.png")}
         style={[customMapStyle.markerIcon]}
       />
       <Image source={{ uri: avatar }} style={[customMapStyle.partnerLogo]} />
@@ -55,7 +55,6 @@ const customMapStyle = StyleSheet.create({
     height: 30,
     left: 7,
     bottom: 40,
-    backgroundColor: "yellow",
   },
   markerIcon: {
     width: 45,

@@ -11,7 +11,7 @@ export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT['1']
-    const {id, imageUrls, title, description, user: {location: {lat, lng}}} = eventDetails
+    const {id, imageUrls, title, description, user: {location: {lat, lng}, address}} = eventDetails
 
     const sliderSettings = {
         autoplay: true,
@@ -60,6 +60,8 @@ export default function EventDetails() {
                     </View>
                 </View>
                 <View style={[eventDetailsStyle.mapConatiner]}>
+                    <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, borderWidth: 1}]}></View>
+                    <Text style={[eventDetailsStyle.description, {color: text_color, left: 10}]}>Address - {address}</Text>
                     <MapView
                         initialRegion={{
                             latitude: +lat,
