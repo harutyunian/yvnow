@@ -29,7 +29,7 @@ export function About(props: IAboutProps) {
 
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT["1"]
-    const image_view_background = colors.PRIMARY.MAIN
+    const image_view_background = colors.ACCENT["6"]
 
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
@@ -39,7 +39,7 @@ export function About(props: IAboutProps) {
     }
 
     return <View>
-        <Text style={{color: text_color}}>{description}</Text>
+        <Text style={{color: text_color, fontSize: 16, fontWeight: '400'}}>{description}</Text>
         <View style={[aboutStyle.imagesContainer]}>
             {
                 profilePictures.length && profilePictures.map((uri, index) => (
@@ -58,15 +58,15 @@ export function About(props: IAboutProps) {
                 ))
             }
         </View>
-        <ImageView
-            backgroundColor={'#61656A'}
+        {profilePictures && <ImageView
+            backgroundColor={'image_view_background'}
             images={modifiedPictures}
             presentationStyle={'formSheet'}
             animationType={'slide'}
             imageIndex={imageIndex}
             visible={showModal}
             onRequestClose={closeModal}
-        />
+        />}
     </View>
 }
 
