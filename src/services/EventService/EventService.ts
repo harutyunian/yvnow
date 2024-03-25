@@ -12,13 +12,15 @@ export class EventService {
     async toDaysEvents(page: number, limit: number = 10): Promise<{ events: IEventCart[], total: number }> {
         try {
             const url = EVENTS.TODAY;
-            return await this.httpService.get<Promise<{ events: IEventCart[], total: number }>>(url, {
+            const result =  await this.httpService.get<Promise<{ events: IEventCart[], total: number }>>(url, {
                 params: {
                     currentTime: new Date().toISOString(),
                     page,
                     limit
                 }
             });
+            console.log(result)
+            return result
         } catch (e) {
             console.log("Something went wrong trying to get today events", e);
             return Promise.reject(e);

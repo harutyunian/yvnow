@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import {EyeIcon, LocationIcon} from "../Svg/Svg";
+import {EyeIcon} from "../Svg/Svg";
 import ImageSlider from "./Slider2";
 import { IEventCart } from "../../types/event.type";
 import {formatNumber, isBetweenDates} from "../../helpers/helper";
@@ -14,10 +14,12 @@ import { routes } from "../../routes/routes";
 interface IIEventCartProps {
   event: IEventCart;
 }
-
+function getRandomViews() {
+  return Math.floor(Math.random() * 3000) + 555; // Generates a random number between 1 and 10000
+}
 export default function EventCart(props: IIEventCartProps) {
   const { event } = props;
-  const { imageUrls,view, startDate, endDate, title, user:{address,partner} } = event;
+  const { imageUrls,view, startDate, endDate, title, user:{partner} } = event;
   const colors = useAppSelector((state) => state.theme);
   const dispatch = useAppDispatch();
   const navigate = useNavigation();
@@ -25,6 +27,7 @@ export default function EventCart(props: IIEventCartProps) {
   const handlePressEvent = () => {
     navigate.navigate(routes.eventDetails as never);
     dispatch(setEventDetails(event));
+    console.log(view);
   };
 
   return (<TouchableOpacity
@@ -45,7 +48,8 @@ export default function EventCart(props: IIEventCartProps) {
             <View style={{ ...style.top }}>
               <View style={{ ...style.date }}>
                 <Text style={{ ...style.dateText }}>
-                  {dayjs(startDate).format("DD MMM YYYY")}
+                  {dayjs(startDate).format("DD MMM YYYY HH:MM - ")}
+                  {dayjs(endDate).format("HH:MM")}
                 </Text>
               </View>
               {isBetweenDates(startDate, endDate) && (
@@ -57,13 +61,9 @@ export default function EventCart(props: IIEventCartProps) {
             <View style={{ ...style.description }}>
               <Text style={{ ...style.eventTitle }}>{partner}</Text>
               <Text style={{ ...style.eventTitle }}>{title}</Text>
-              <View style={{ ...style.addressContainer }}>
-                <LocationIcon style={{ ...style.locationIcon }} />
-                <Text style={{ ...style.address }}>{address}</Text>
-              </View>
               <View style={{ ...style.addressContainer, right: 5, top: 5 }}>
                 <EyeIcon style={{ ...style.locationIcon }} />
-                <Text style={{ ...style.address }}>{formatNumber(view+1)}</Text>
+                <Text style={{ ...style.address }}>{formatNumber(getRandomViews())}</Text>
               </View>
             </View>
           </View>
@@ -130,7 +130,7 @@ const style = StyleSheet.create({
   date: {
     backgroundColor: "#6C63FF",
     borderRadius: 12,
-    width: 81,
+    width: 90,
     height: 24,
     display: "flex",
     justifyContent: "center",

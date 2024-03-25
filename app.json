@@ -23,7 +23,9 @@
       }
     },
     "android": {
-      "permissions": ["INTERNET"],
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -32,19 +34,26 @@
         "googleMaps": {
           "apiKey": "YOUR_API_KEY_HERE"
         }
-      }
+      },
+      "package": "com.harutyunian.yvnow"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-         ["expo-build-properties",
-         {
-          "android":{
+      [
+        "expo-build-properties",
+        {
+          "android": {
             "usesCleartextTraffic": true
           }
         }
-     ] 
-   ]
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69fc1d42-082a-4320-9870-9eb9a306e0fd"
+      }
+    }
   }
 }

@@ -9,17 +9,18 @@ import ButtonStyled from "../../components/Button/Button";
 import {IEventCart} from "../../types/event.type";
 import EventCardSmall from "./EventCardSmall/EventCardSmall";
 import {EventService} from "../../services/EventService/EventService";
+import {About} from "./About/About";
 
-enum ProfileContens {
+enum ProfileContent {
     event = "event",
     past = "past",
     about = "about",
 }
 
-type ProfileContensType =
-    | ProfileContens.event
-    | ProfileContens.past
-    | ProfileContens.about;
+type ProfileContentType =
+    | ProfileContent.event
+    | ProfileContent.past
+    | ProfileContent.about;
 
 export default function PartnerProfile() {
     const colors = useAppSelector((state) => state.theme);
@@ -32,8 +33,8 @@ export default function PartnerProfile() {
         notStarted: IEventCart[];
         passed: IEventCart[];
     }>({notStarted: [], passed: []});
-    const [profileTypes, setProfileTypes] = useState<ProfileContensType>(
-        ProfileContens.event
+    const [profileTypes, setProfileTypes] = useState<ProfileContentType>(
+        ProfileContent.event
     );
 
     useEffect(() => {
@@ -48,12 +49,12 @@ export default function PartnerProfile() {
         })();
     }, []);
 
-    const handlePressProfileButtons = (type: ProfileContensType) =>
+    const handlePressProfileButtons = (type: ProfileContentType) =>
         setProfileTypes(type);
 
-    const isEventActive = profileTypes === ProfileContens.event;
-    const isAboutActive = profileTypes === ProfileContens.about;
-    const isPastActive = profileTypes === ProfileContens.past;
+    const isEventActive = profileTypes === ProfileContent.event;
+    const isAboutActive = profileTypes === ProfileContent.about;
+    const isPastActive = profileTypes === ProfileContent.past;
 
     return (
         <View style={[partnerProfileStyle.container]}>
@@ -101,7 +102,7 @@ export default function PartnerProfile() {
             </View>
             <View style={[partnerProfileStyle.buttons]}>
                 <ButtonStyled
-                    onPress={() => handlePressProfileButtons(ProfileContens.event)}
+                    onPress={() => handlePressProfileButtons(ProfileContent.event)}
                     text="Events"
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     style={{
@@ -111,7 +112,7 @@ export default function PartnerProfile() {
                     }}
                 />
                 <ButtonStyled
-                    onPress={() => handlePressProfileButtons(ProfileContens.past)}
+                    onPress={() => handlePressProfileButtons(ProfileContent.past)}
                     text="Past"
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
                     style={{
@@ -121,7 +122,7 @@ export default function PartnerProfile() {
                     }}
                 />
                 <ButtonStyled
-                    onPress={() => handlePressProfileButtons(ProfileContens.about)}
+                    onPress={() => handlePressProfileButtons(ProfileContent.about)}
                     text="About"
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
                     style={{
@@ -132,7 +133,6 @@ export default function PartnerProfile() {
                 />
             </View>
             <ScrollView>
-                {/*To see last event on bottom not outside a screen*/}
                 <View style={[{paddingBottom: 250}]}>
                     {isPastActive && partnerEvents.passed.map((el) => (
                         <EventCardSmall event={{...el, user}} key={el.id}/>
@@ -140,6 +140,7 @@ export default function PartnerProfile() {
                     {isEventActive && partnerEvents.notStarted.map((el) => (
                         <EventCardSmall event={{...el, user}} key={el.id}/>
                     ))}
+                    {isAboutActive && <About user={user}/>}
                 </View>
             </ScrollView>
         </View>
