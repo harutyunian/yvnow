@@ -2,17 +2,15 @@ import React from "react";
 import {StyleSheet, Image} from "react-native";
 import {Marker, Callout} from "react-native-maps";
 import {useNavigation} from "@react-navigation/native";
-import Animated, {useSharedValue, useAnimatedStyle, withTiming, interpolate, withRepeat} from 'react-native-reanimated';
 import {useAppDispatch} from "../../../hook/reduxHooks";
 import {IEventCart} from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {routes} from "../../../routes/routes";
-import LottieView from 'lottie-react-native';
-import {isBetweenDates} from "../../../helpers/helper";
+import Animated, {useSharedValue, useAnimatedStyle, withTiming, interpolate, withRepeat} from 'react-native-reanimated';
 
-export default function CustomMarker(props: IEventCart) {
-    const {user,startDate,endDate} = props;
+export default function CustomAnimatedMarker(props: IEventCart) {
+    const {user} = props;
     const {
         location: {lat: latitude, lng: longitude},
         avatar,
@@ -24,12 +22,11 @@ export default function CustomMarker(props: IEventCart) {
         dispatch(setUser(user));
         navigate.navigate(routes.partnerProfile as never);
     };
-
-    const topPosition = useSharedValue(1);
+    const topPosition = useSharedValue(-1);
 
     React.useEffect(() => {
         const loopAnimation = () => {
-            topPosition.value = withRepeat(withTiming(20, {reduceMotion: 'system'}), -1, true);
+            topPosition.value = withRepeat(withTiming(10, {duration: 600}), -1, true);
         };
 
 
@@ -41,26 +38,19 @@ export default function CustomMarker(props: IEventCart) {
         };
     });
 
+
+
     return (
         <Marker coordinate={{latitude: +latitude, longitude: +longitude}}>
-            {isBetweenDates(startDate, endDate) && <><LottieView
-                autoPlay
-                style={{
-                    width: 45,
-                    height: 45,
-                }}
-                source={require('./../../../../assets/lottie/animated_marker.json')}
-            >
-                <Animated.Image source={{uri: avatar}} style={[customMapStyle.animatedPartnerLogo]}/>
-            </LottieView>
-            </>}
-            {!isBetweenDates(startDate, endDate) && <>
+            <Animated.View style={[{height: 50}, imageAnimatedStyle]}>
                 <Image
                     source={require("../../../../assets/icons/marker-96.png")}
                     style={[customMapStyle.markerIcon]}
                 />
-                <Image source={{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
-            </>}
+                <Image source={{uri: avatar}}
+                       style={[customMapStyle.animatedPartnerLogo]}
+                />
+            </Animated.View>
             <Callout
                 tooltip
                 style={[customMapStyle.calloutContainer]}
@@ -83,12 +73,12 @@ const customMapStyle = StyleSheet.create({
     },
     animatedPartnerLogo: {
         borderRadius: 1000,
-        width: 25,
-        height: 25,
-        left: 10,
-        top: 4,
+        width: 30,
+        height: 30,
+        left: 7,
         position: 'absolute',
-        zIndex: 1
+        zIndex: 1,
+        // bottom: -25,
     },
     partnerLogo: {
         borderRadius: 1000,
@@ -98,6 +88,7 @@ const customMapStyle = StyleSheet.create({
         bottom: 35,
     },
     markerIcon: {
+        // backgroundColor: 'yellow',
         width: 45,
         height: 45,
     },
