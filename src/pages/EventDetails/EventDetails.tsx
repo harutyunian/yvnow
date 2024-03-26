@@ -23,7 +23,6 @@ export default function EventDetails() {
     useEffect(() => {
         (function () {
             try {
-                console.log({id})
                 const eventService = new EventService()
                 eventService.addView(id)
             } catch (e) {

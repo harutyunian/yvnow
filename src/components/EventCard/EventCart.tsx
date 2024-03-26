@@ -14,9 +14,7 @@ import { routes } from "../../routes/routes";
 interface IIEventCartProps {
   event: IEventCart;
 }
-function getRandomViews() {
-  return Math.floor(Math.random() * 3000) + 555; // Generates a random number between 1 and 10000
-}
+
 export default function EventCart(props: IIEventCartProps) {
   const { event } = props;
   const { imageUrls,view, startDate, endDate, title, user:{partner} } = event;
@@ -27,7 +25,6 @@ export default function EventCart(props: IIEventCartProps) {
   const handlePressEvent = () => {
     navigate.navigate(routes.eventDetails as never);
     dispatch(setEventDetails(event));
-    console.log(view);
   };
 
   return (<TouchableOpacity
@@ -63,7 +60,7 @@ export default function EventCart(props: IIEventCartProps) {
               <Text style={{ ...style.eventTitle }}>{title}</Text>
               <View style={{ ...style.addressContainer, right: 5, top: 5 }}>
                 <EyeIcon style={{ ...style.locationIcon }} />
-                <Text style={{ ...style.address }}>{formatNumber(getRandomViews())}</Text>
+                <Text style={{ ...style.address }}>{formatNumber(view+1)}</Text>
               </View>
             </View>
           </View>

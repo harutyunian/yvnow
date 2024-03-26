@@ -20,7 +20,6 @@ export default function EventCardSmall(props: EventCardSmall) {
     const {address} = useAppSelector(state => state.user)
     const dispatch = useAppDispatch()
     const navigate = useNavigation()
-
     const handlePress = () => {
         navigate.navigate(routes.eventDetails as never);
         dispatch(setEventDetails(event));
@@ -33,13 +32,13 @@ export default function EventCardSmall(props: EventCardSmall) {
                 {backgroundColor: colors.ACCENT["6"]},
             ]}
         >
-            <Image
+            {imageUrls && imageUrls[0] && <Image
                 style={[eventCardSmallStyle.image]}
                 resizeMode="cover"
                 source={{
                     uri: imageUrls[0],
                 }}
-            />
+            />}
             <View style={[eventCardSmallStyle.infoWrapper]}>
                 <Text
                     style={[eventCardSmallStyle.title, {color: colors.ACCENT["1"]}]}

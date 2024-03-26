@@ -12,7 +12,6 @@ export const useTheme = () => {
   const { mode } = colors;
   const dispatch = useAppDispatch();
   useEffect(() => {
-    console.log({mode})
     if (mode === "DYNAMIC") {
       const result = isAfter8pm();
       if (result) dispatch(setDarkMode());

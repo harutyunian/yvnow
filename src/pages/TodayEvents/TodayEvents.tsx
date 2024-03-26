@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Text, View, StyleSheet, FlatList, ScrollView} from "react-native";
+import {Text, View, StyleSheet,  ScrollView} from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart} from "../../types/event.type";
@@ -16,7 +16,6 @@ export default function TodayEvents() {
     const [filteredEvents, setFilteredEvents] = useState<IEventCart[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
-    const [total, setTotal] = useState(0)
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [activeButton, setActiveButton] = useState(TodayButtons.all)
     const colors = useAppSelector(state => state.theme)
@@ -31,8 +30,7 @@ export default function TodayEvents() {
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
-            const {events, total} = result
-            setTotal(total)
+            const {events} = result
             const shuffledEvents = events.reduce((acc, event) => {
                 if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
                 else acc.noLive.push(event)
@@ -59,6 +57,8 @@ export default function TodayEvents() {
         else setFilteredEvents(() => [...todaysEvents.filter(({type: eventType}) => eventType.toLowerCase() === type.toLowerCase())])
     }
 
+    // @ts-ignore
+    // TODO: IMPLEMENT BOTTOM SCROLL REQUEST
     const handleScroll = ({nativeEvent}: {
         nativeEvent: {
             contentOffset: { y: number };
