@@ -20,7 +20,6 @@ export class EventService {
                     limit
                 }
             });
-            console.log(result)
             return result
         } catch (e) {
             console.log("Something went wrong trying to get today events", e);
