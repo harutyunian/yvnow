@@ -10,6 +10,8 @@ import {IEventCart} from "../../types/event.type";
 import EventCardSmall from "./EventCardSmall/EventCardSmall";
 import {EventService} from "../../services/EventService/EventService";
 import {About} from "./About/About";
+import {isBetweenDates} from "../../helpers/helper";
+import EventCart from "../../components/EventCard/EventCart";
 
 enum ProfileContent {
     event = "event",
@@ -49,9 +51,7 @@ export default function PartnerProfile() {
         })();
     }, []);
 
-    const handlePressProfileButtons = (type: ProfileContentType) =>
-        setProfileTypes(type);
-
+    const handlePressProfileButtons = (type: ProfileContentType) => setProfileTypes(type);
     const isEventActive = profileTypes === ProfileContent.event;
     const isAboutActive = profileTypes === ProfileContent.about;
     const isPastActive = profileTypes === ProfileContent.past;
@@ -133,11 +133,14 @@ export default function PartnerProfile() {
                 />
             </View>
             <ScrollView>
-                <View style={[{paddingBottom: 250}]}>
+                <View style={[{paddingBottom: 250, display: 'flex', alignItems: 'center'}]}>
+                    {isEventActive && partnerEvents.notStarted.map((el) => {
+                        if (isBetweenDates(el.startDate, el.endDate)) {
+                            return <EventCart event={el} key={el.id}/>
+                        }
+                        return <EventCardSmall event={{...el, user}} key={el.id}/>
+                    })}
                     {isPastActive && partnerEvents.passed.map((el) => (
-                        <EventCardSmall event={{...el, user}} key={el.id}/>
-                    ))}
-                    {isEventActive && partnerEvents.notStarted.map((el) => (
                         <EventCardSmall event={{...el, user}} key={el.id}/>
                     ))}
                     {isAboutActive && <About user={user}/>}
