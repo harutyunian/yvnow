@@ -58,9 +58,10 @@ export default function EventDetails() {
                         </Text>
                     </View>
                 </View>
+                <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
+                    <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address - {address}</Text>
+                </View>
                 <View style={[eventDetailsStyle.mapConatiner]}>
-                    <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, borderWidth: 1}]}></View>
-                    <Text style={[eventDetailsStyle.description, {color: text_color, left: 10}]}>Address - {address}</Text>
                     <MapView
                         initialRegion={{
                             latitude: +lat,
