@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import {View, StyleSheet} from "react-native";
+import {View, StyleSheet, Text} from "react-native";
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
@@ -11,7 +11,7 @@ import {Button} from "native-base";
 
 enum MapSwitchButtons {
     all = 'All',
-    events = 'Events',
+    events = 'Event',
     show = 'Show',
     concert = 'Concert'
 }
@@ -25,7 +25,6 @@ type ActiveTabType =
 export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
-    const [mounted, setMounted] = useState(false)
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [activeTab, setActiveTab] = useState<ActiveTabType>(MapSwitchButtons.all)
     const colors = useAppSelector(state => state.theme)
@@ -34,14 +33,11 @@ export default function CustomMap() {
 
     const filteredEvents = useMemo(() => {
         if (activeTab === MapSwitchButtons.all) return events
-        return events.filter(({type}) => type.toLowerCase() === activeTab.toLowerCase())
+        return events.filter(({type}) =>
+            type.toLowerCase() === activeTab.toLowerCase()
+        )
     }, [events, activeTab])
 
-    useEffect(() => {
-        if (!mounted) {
-            setMounted(true)
-        }
-    }, []);
     useEffect(() => {
         (async function () {
             try {
@@ -65,23 +61,32 @@ export default function CustomMap() {
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.all)}
                     style={[mapStyle.buttonStyle,
-                        {backgroundColor: isAllActive ? btn_active : btn_inactive}]}
-                >All</Button>
+                        {backgroundColor: isAllActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isAllActive ? "white" : colors.ACCENT["1"]}]}
+                    >All</Text>
+                </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.events)}
-                    style={[mapStyle.buttonStyle,
-                        {backgroundColor: isEventActive ? btn_active : btn_inactive}]}
-                >Events</Button>
+                    style={[mapStyle.buttonStyle, {backgroundColor: isEventActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isEventActive ? "white" : colors.ACCENT["1"]}]}
+                    >Events</Text>
+                </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.show)}
-                    style={[mapStyle.buttonStyle,
-                        {backgroundColor: isShowActive ? btn_active : btn_inactive}]}
-                >Show</Button>
+                    style={[mapStyle.buttonStyle, {backgroundColor: isShowActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isShowActive ? "white" : colors.ACCENT["1"]}]}
+                    >Show</Text>
+                </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.concert)}
-                    style={[mapStyle.buttonStyle,
-                        {backgroundColor: isConcertActive ? btn_active : btn_inactive}]}
-                >Concert</Button>
+                    style={[mapStyle.buttonStyle, {backgroundColor: isConcertActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isConcertActive ? "white" : colors.ACCENT["1"]}]}
+                    >Concert</Text>
+                </Button>
             </View>
             <MapView
                 style={mapStyle.map}
@@ -94,14 +99,13 @@ export default function CustomMap() {
                 }}
                 customMapStyle={customMapStyleConfigs}
             >{
-                    filteredEvents.map((event) => {
-                        return <CustomMarker key={event.id} {...event} />;
-                    })
-                }
+                filteredEvents.map((event) => {
+                    return <CustomMarker key={event.id} {...event} />;
+                })
+            }
             </MapView>
         </View>
     )
-        ;
 }
 
 const mapStyle = StyleSheet.create({
@@ -125,8 +129,8 @@ const mapStyle = StyleSheet.create({
         alignItems: 'center',
     },
     tabsContainer: {
-        position: 'absolute',
-        zIndex: 1,
+        position: 'absolute', // Position the buttons absolutely
+        zIndex: 1, // Increase zIndex to bring it to the front
         paddingTop: 25,
         width: '100%',
         display: "flex",
