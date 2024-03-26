@@ -8,12 +8,15 @@ const initialState:IEventCart = {
     startDate: '',
     endDate: '',
     type: 'event',
+    view: 0,
     title: '',
     description: '',
     user: {
         id: 0,
         avatar: '',
         partner: '',
+        description: '',
+        profilePictures:[],
         address: '',
         location: {
             lat: '',

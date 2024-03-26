@@ -24,12 +24,11 @@ export function About(props: IAboutProps) {
     const [imageIndex,setImageIndex] = useState(0)
 
     const modifiedPictures = useMemo(()=>{
-        return profilePictures.map((uri)=>({uri}))
+        return profilePictures?.map((uri)=>({uri}))
     },[])
 
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT["1"]
-    const image_view_background = colors.ACCENT["6"]
 
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
@@ -42,7 +41,7 @@ export function About(props: IAboutProps) {
         <Text style={{color: text_color, fontSize: 16, fontWeight: '400'}}>{description}</Text>
         <View style={[aboutStyle.imagesContainer]}>
             {
-                profilePictures.length && profilePictures.map((uri, index) => (
+                profilePictures && profilePictures.map((uri, index) => (
                     <TouchableOpacity
                         key={uri}
                         style={aboutStyle.imageWrapper}
@@ -58,7 +57,7 @@ export function About(props: IAboutProps) {
                 ))
             }
         </View>
-        {profilePictures && <ImageView
+        {profilePictures &&<ImageView
             backgroundColor={'image_view_background'}
             images={modifiedPictures}
             presentationStyle={'formSheet'}

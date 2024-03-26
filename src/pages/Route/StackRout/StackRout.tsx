@@ -34,6 +34,7 @@ export function TodayEventStackScreen() {
             })}
         >
             <Stack.Screen name={routes.today} component={TodayEvents} />
+            <Stack.Screen name={routes.partnerProfile}  component={PartnerProfile} />
             <Stack.Screen name={routes.eventDetails}  component={EventDetails} />
         </Stack.Navigator>
     );
