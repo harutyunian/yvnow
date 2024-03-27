@@ -1,8 +1,6 @@
 import React, {useMemo, useState} from "react";
 import {Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
-import {Modal} from "native-base";
 import ImageView from "react-native-image-viewing";
-import Swiper from 'react-native-swiper';
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {IUser} from "../../../types/event.type";
 

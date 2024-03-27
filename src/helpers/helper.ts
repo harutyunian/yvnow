@@ -1,3 +1,5 @@
+import {IEventCart} from "../types/event.type";
+
 export function isBetweenDates(startDateStr: string, endDateStr: string) {
   const currentDate = new Date(); // Current date and time
   const startDate = new Date(startDateStr);
@@ -26,4 +28,18 @@ export function formatNumber(number:number) {
   } else {
     return number.toLocaleString();
   }
+}
+export function removeDuplicateUsers(events: IEventCart[]) {
+  const uniqueUsers:any = {};
+  const result = [];
+
+  for (const event of events) {
+    const userId = event.user.id;
+    if (!uniqueUsers[userId]) {
+      uniqueUsers[userId] = true;
+      result.push(event);
+    }
+  }
+
+  return result;
 }

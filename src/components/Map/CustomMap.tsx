@@ -5,6 +5,7 @@ import CustomMarker from "./MapMarker/CustomMarker";
 import { customMapStyleConfigs } from "./customMapStyle";
 import { IEventCart } from "../../types/event.type";
 import { EventService } from "../../services/EventService/EventService";
+import {removeDuplicateUsers} from "../../helpers/helper";
 
 export default function CustomMap() {
   //Yerevan coordinates
@@ -16,7 +17,7 @@ export default function CustomMap() {
       try {
         const eventService = new EventService();
         const result = await eventService.toDaysEvents(1,100);
-        setEvents(result.events);
+        setEvents(removeDuplicateUsers(result.events));
       } catch (e: any) {}
     })();
   }, []);
