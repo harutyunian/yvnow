@@ -9,9 +9,17 @@ import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {routes} from "../../../routes/routes";
 import {isBetweenDates} from "../../../helpers/helper";
+import {locationType} from "../CustomMap";
 
-export default function CustomMarker(props: IEventCart) {
-    const {user, startDate, endDate} = props;
+type DestinationSetter = React.Dispatch<React.SetStateAction<locationType>>;
+
+interface ICustomMarkerProps extends IEventCart {
+    setDestination: DestinationSetter
+}
+
+export default function CustomMarker(props: ICustomMarkerProps) {
+    const {user, startDate, endDate, setDestination} = props;
+
     const {
         location: {lat: latitude, lng: longitude},
         avatar,
@@ -24,9 +32,18 @@ export default function CustomMarker(props: IEventCart) {
         navigate.navigate(routes.partnerProfile as never);
     };
 
+
+    const handlePressMarker = () => {
+        const destination = {
+            latitude: +latitude,
+            longitude: +longitude
+        }
+        setDestination(destination)
+    }
+
     return (
-        <Marker coordinate={{latitude: +latitude, longitude: +longitude}}>
-            {isBetweenDates(startDate, endDate)?
+        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} onPress={handlePressMarker}>
+            {isBetweenDates(startDate, endDate) ?
                 <>
                     <LottieView
                         autoPlay
@@ -34,7 +51,7 @@ export default function CustomMarker(props: IEventCart) {
                         source={require('./../../../../assets/lottie/animated_marker.json')}
                     />
                     <Image source={{uri: avatar}} style={[customMapStyle.lottieAvatar]}/>
-                </>:
+                </> :
                 <>
                     <Image
                         source={require("../../../../assets/icons/marker-96.png")}
@@ -47,9 +64,7 @@ export default function CustomMarker(props: IEventCart) {
                 tooltip
                 style={[customMapStyle.calloutContainer]}
                 onPress={() => handlePressCallout()}
-            >
-                <MiniProfile {...{user}} />
-            </Callout>
+            ><MiniProfile {...{user}} /></Callout>
         </Marker>
     );
 }
@@ -60,11 +75,11 @@ const customMapStyle = StyleSheet.create({
         justifyContent: "flex-end",
         alignItems: "center",
     },
-    lottieIcon:{
+    lottieIcon: {
         width: 45,
         height: 45
     },
-    lottieAvatar:{
+    lottieAvatar: {
         borderRadius: 1000,
         width: 22,
         height: 22,

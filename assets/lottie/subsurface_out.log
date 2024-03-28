@@ -1,0 +1,29 @@
+
+Subsurface v5.0.1,
+built with libdivecomputer v0.7.0-devel-Subsurface-NG (81f95d388019d1283f5e0b4dbed108b4ab10946a)
+built with Qt Version 5.15.1, runtime from Qt Version 5.15.1
+built with libgit2 1.0.0
+"validateGL(): created OpenGLContext."
+"validateGL(): obtained QOpenGLFunctions."
+"validateGL(): detected OpenGL version 4.6."
+loading dive data from ("C:\\Users\\jdayton\\AppData\\Roaming\\Subsurface\\JDAYTON.xml")
+
+File locations:
+
+Cloud email:jdayton4946@gmail.com
+cloud URL set as "https://cloud.subsurface-divelog.org//git/jdayton4946@gmail.com[jdayton4946@gmail.com]"
+Local git storage: C:\Users\jdayton\AppData\Roaming\Subsurface/cloudstorage/adf71fcb37f5b140
+Cloud URL: https://cloud.subsurface-divelog.org//git/jdayton4946@gmail.com[jdayton4946@gmail.com]
+Image filename table: C:\Users\jdayton\AppData\Roaming\Subsurface/hashes
+Local picture directory: C:\Users\jdayton\AppData\Roaming\Subsurface/picturedata/
+
+cloud URL set as "https://cloud.subsurface-divelog.org//git/jdayton4946@gmail.com[jdayton4946@gmail.com]"
+Opening cloud storage from: "https://cloud.subsurface-divelog.org//git/jdayton4946@gmail.com[jdayton4946@gmail.com]"
+git storage: Synchronising data file
+git storage: Sync with cloud storage
+git storage: Successful cloud connection, fetch remote
+git storage: Done syncing with cloud storage
+git storage: Load dives from local cache
+git storage: Successfully opened dive data
+Set the current dive site: 2222594775
+Profile calculation for dive  36 took 81 ms  -- calculated ceiling preference is false

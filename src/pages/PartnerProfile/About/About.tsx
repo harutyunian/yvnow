@@ -8,13 +8,6 @@ interface IAboutProps {
     user: IUser
 }
 
-const sliderSettings = {
-    autoplay: true,
-    showsPagination: false,
-    autoplayTimeout: 3,
-    loop: true
-}
-
 export function About(props: IAboutProps) {
     const {user: {description, profilePictures}} = props
 
@@ -27,7 +20,6 @@ export function About(props: IAboutProps) {
 
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT["1"]
-    const image_view_background = colors.ACCENT["6"]
 
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
