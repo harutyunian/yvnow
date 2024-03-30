@@ -5,9 +5,9 @@ import {useNavigation} from "@react-navigation/native";
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHooks";
 import {CalendarIcon, ClockIcon, EyeIcon, LocationIcon} from "../../../components/Svg/Svg";
 import {IEventCart} from "../../../types/event.type";
-import {routes} from "../../../routes/routes";
 import {setEventDetails} from "../../../store/reducer/eventDetails/eventDetailsReducer";
 import {formatNumber} from "../../../helpers/helper";
+import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 
 interface EventCardSmall{
     event: IEventCart
@@ -20,6 +20,7 @@ export default function EventCardSmall(props: EventCardSmall) {
     const {address} = useAppSelector(state => state.user)
     const dispatch = useAppDispatch()
     const navigate = useNavigation()
+    const routes = useTranslatedRoutes()
     const handlePress = () => {
         navigate.navigate(routes.eventDetails as never);
         dispatch(setEventDetails(event));

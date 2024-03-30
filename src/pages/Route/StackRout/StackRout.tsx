@@ -5,8 +5,8 @@ import CustomMap from "../../../components/Map/CustomMap";
 import TodayEvents from "../../TodayEvents/TodayEvents";
 import PartnerProfile from "../../PartnerProfile/PartnerProfile";
 import EventDetails from "../../EventDetails/EventDetails";
-import {routes} from "../../../routes/routes";
 import {useAppSelector} from "../../../hook/reduxHooks";
+import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +17,10 @@ function useOptions(){
     const accent_5 = ACCENT["5"];
     return {
         headerStyle: {
-            backgroundColor: accent_5, // Background color of the header
+            backgroundColor: accent_5,
+        },
+        headerTitleStyle: {
+            fontWeight: '900'
         },
         headerTintColor: accent_1,
         tabBarStyle: {
@@ -27,6 +30,7 @@ function useOptions(){
 }
 export function TodayEventStackScreen() {
     const screenOptionsSettings = useOptions()
+    const routes = useTranslatedRoutes()
     return (
         <Stack.Navigator
             screenOptions={() => ({
@@ -40,6 +44,7 @@ export function TodayEventStackScreen() {
 }
 export function MapStackScreen(){
     const screenOptionsSettings = useOptions()
+    const routes = useTranslatedRoutes()
 
     return (
         <Stack.Navigator
@@ -54,6 +59,8 @@ export function MapStackScreen(){
 
 export function SettingsStackScreen() {
     const screenOptionsSettings = useOptions()
+    const routes = useTranslatedRoutes()
+
     return (
         <Stack.Navigator
             screenOptions={() => ({

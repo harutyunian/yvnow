@@ -12,6 +12,7 @@ import {EventService} from "../../services/EventService/EventService";
 import {About} from "./About/About";
 import {isBetweenDates} from "../../helpers/helper";
 import EventCart from "../../components/EventCard/EventCart";
+import {useTranslation} from "../../hook/translationHook";
 
 enum ProfileContent {
     event = "event",
@@ -38,6 +39,7 @@ export default function PartnerProfile() {
     const [profileTypes, setProfileTypes] = useState<ProfileContentType>(
         ProfileContent.event
     );
+    const {t} = useTranslation()
 
     useEffect(() => {
         (async function () {
@@ -103,7 +105,7 @@ export default function PartnerProfile() {
             <View style={[partnerProfileStyle.buttons]}>
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.event)}
-                    text="Events"
+                    text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     style={{
                         width: 104,
@@ -113,7 +115,7 @@ export default function PartnerProfile() {
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.past)}
-                    text="Past"
+                    text={t('types.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
                     style={{
                         width: 104,
@@ -123,7 +125,7 @@ export default function PartnerProfile() {
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.about)}
-                    text="About"
+                    text={t('types.about')}
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
                     style={{
                         width: 104,

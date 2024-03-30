@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Text, View, StyleSheet,  ScrollView} from "react-native";
+import {Text, View, StyleSheet, ScrollView} from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart} from "../../types/event.type";
@@ -8,6 +8,7 @@ import {isBetweenDates, shuffleArray} from "../../helpers/helper";
 import ButtonStyled from "../../components/Button/Button";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
+import {useTranslation} from "../../hook/translationHook";
 
 type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
 
@@ -19,6 +20,7 @@ export default function TodayEvents() {
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [activeButton, setActiveButton] = useState(TodayButtons.all)
     const colors = useAppSelector(state => state.theme)
+    const {t} = useTranslation()
 
     useEffect(() => {
         setLoading(() => true);
@@ -37,11 +39,11 @@ export default function TodayEvents() {
                 return acc
             }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
             const withLiveOrder = [...shuffleArray<IEventCart>(shuffledEvents.live), ...shuffleArray<IEventCart>(shuffledEvents.noLive)]
-            setTodaysEvents(prev =>[...prev, ...withLiveOrder]);
+            setTodaysEvents(prev => [...prev, ...withLiveOrder]);
 
             setFilteredEvents(prev => {
-               if( activeButton === TodayButtons.all) return  [...prev, ...withLiveOrder]
-               return  [...prev, ...withLiveOrder].filter(({type}) => type.toLowerCase() === activeButton.toLowerCase())
+                if (activeButton === TodayButtons.all) return [...prev, ...withLiveOrder]
+                return [...prev, ...withLiveOrder].filter(({type}) => type.toLowerCase() === activeButton.toLowerCase())
             })
             setPage(prev => prev + 1)
         } catch (e: any) {
@@ -87,36 +89,33 @@ export default function TodayEvents() {
         <View style={[todayEventsStyle.contaienr]}>
             <View style={[todayEventsStyle.buttonWrapper]}>
                 <ButtonStyled
-                    text={'All'}
+                    text={t('types.all')}
                     onPress={() => handleChangeEventTabs(TodayButtons.all)}
                     textColor={isAllActive ? "white" : colors.ACCENT["1"]}
-                    size='sm'
                     style={[todayEventsStyle.button, {
                         backgroundColor: isAllActive ? btn_active : btn_inactive,
                     }]}
                 />
                 <ButtonStyled
-                    text={'Event'}
+                    text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
-                    size='sm'
                     onPress={() => handleChangeEventTabs(TodayButtons.event)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isEventActive ? btn_active : btn_inactive,
+                        flex: 1
                     }]}
                 />
                 <ButtonStyled
-                    text={'Show'}
+                    text={t('types.show')}
                     textColor={isShowActive ? "white" : colors.ACCENT["1"]}
-                    size='sm'
                     onPress={() => handleChangeEventTabs(TodayButtons.show)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isShowActive ? btn_active : btn_inactive,
                     }]}
                 />
                 <ButtonStyled
-                    text={'Concert'}
+                    text={t('types.concert')}
                     textColor={isConcertActive ? "white" : colors.ACCENT["1"]}
-                    size='sm'
                     onPress={() => handleChangeEventTabs(TodayButtons.concert)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isConcertActive ? btn_active : btn_inactive,

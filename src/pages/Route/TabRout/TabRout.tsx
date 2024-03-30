@@ -4,16 +4,17 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {CalendarIcon, LocationIcon, SettingIcon} from "../../../components/Svg/Svg";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {routes} from "../../../routes/routes";
 import {
     MapStackScreen,
     SettingsStackScreen,
     TodayEventStackScreen
 } from "../StackRout/StackRout";
+import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 
 const Tab = createBottomTabNavigator();
 
 export default function TabRoute() {
+    const routes = useTranslatedRoutes()
     const colors = useAppSelector(state => state.theme)
     const {ICON: iconColor, ACCENT, PRIMARY} = colors;
     const accent_1 = ACCENT["1"];
