@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./reduxHooks";
 import { setDarkMode, setLightMode } from "../store/reducer/theme/themeReducer";
 

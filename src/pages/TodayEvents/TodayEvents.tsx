@@ -148,8 +148,6 @@ const todayEventsStyle = StyleSheet.create({
         backgroundColor: 'green',
         width: 90,
         height: 40,
-
-
     },
     buttonWrapper: {
         display: 'flex',

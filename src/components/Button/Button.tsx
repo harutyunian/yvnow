@@ -9,13 +9,12 @@ import {
 } from "react-native";
 interface IButtonStyled extends TouchableOpacityProps {
   text: string;
-  size?: "lg" | "md" | "sm";
   textColor: string;
   style?: StyleProp<ViewStyle>;
 }
 
 export default function ButtonStyled(props: IButtonStyled) {
-  const { text, size = "lg", style, textColor, ...rest } = props;
+  const { text,style, textColor, ...rest } = props;
   return (
     <TouchableOpacity style={[style, styles.container]} {...rest}>
       <Text style={[{ color: textColor }]}>{text}</Text>
@@ -49,5 +48,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
     color: "white",
+    textAlign: "center", // Center-align the text
+    flexWrap: "wrap",
   },
 });
