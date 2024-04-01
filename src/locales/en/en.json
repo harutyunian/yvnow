@@ -1,0 +1,26 @@
+{
+  "types": {
+    "all": "All",
+    "event":  "Event",
+    "show": "Show",
+    "concert": "Concert"
+  },
+  "tabs": {
+    "today": "Today",
+    "map": "Map",
+    "settings": "Settings"
+  },
+  "theme": {
+    "theme": "Theme",
+    "dynamic": "Dynamic",
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "partner": {
+    "see_partner_profile": "See partner profile",
+    "description": "Description",
+    "partner_profile": "Partner profile",
+    "event_details": "Event Details"
+  },
+  "loading": "Loading"
+}

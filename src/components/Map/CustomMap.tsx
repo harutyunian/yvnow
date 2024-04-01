@@ -16,7 +16,6 @@ export default function CustomMap() {
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [userLocation, setUserLocation] = useState<locationType>(null);
-
     const [destination, setDestination] = useState<locationType>(null);
 
     useEffect(() => {
@@ -32,13 +31,6 @@ export default function CustomMap() {
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
                 });
-
-                console.log('my location')
-                console.log({
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                })
-                console.log('my location')
             } catch (error) {
                 console.error("Error getting user's location:", error);
             }

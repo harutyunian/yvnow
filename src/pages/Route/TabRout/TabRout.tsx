@@ -4,16 +4,17 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {CalendarIcon, LocationIcon, SettingIcon} from "../../../components/Svg/Svg";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {routes} from "../../../routes/routes";
 import {
     MapStackScreen,
     SettingsStackScreen,
     TodayEventStackScreen
 } from "../StackRout/StackRout";
+import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 
 const Tab = createBottomTabNavigator();
 
 export default function TabRoute() {
+    const routes = useTranslatedRoutes()
     const colors = useAppSelector(state => state.theme)
     const {ICON: iconColor, ACCENT, PRIMARY} = colors;
     const accent_1 = ACCENT["1"];
@@ -30,47 +31,51 @@ export default function TabRoute() {
 
     return <NavigationContainer theme={MyTheme}>
         <Tab.Navigator
-            screenOptions={({route}) => ({
-                headerStyle: {
-                    backgroundColor: accent_5, // Background color of the header
-                },
-                headerTintColor: accent_1,
-                tabBarStyle: {
-                    backgroundColor: accent_5,
-                },
-                headerShown: false,
-                tabBarIcon: ({focused}) => {
-                    let iconComponent: JSX.Element | null = null;
-                    const focusedIcon = focused ? PRIMARY.MAIN : iconColor
-                    if (route.name === routes.map) {
-                        iconComponent = (
-                            <View style={[styles.locationIcon]}>
-                                <LocationIcon fill={focusedIcon} width={25} height={25}/>
-                            </View>
-                        );
-                    } else if (route.name === routes.settings) {
-                        iconComponent = (
-                            <View style={[styles.icon]}>
-                                <SettingIcon fill={focusedIcon}/>
-                            </View>
-                        );
-                    } else if (route.name === routes.today) {
-                        iconComponent = (
-                            <View style={[styles.icon]}>
-                                <CalendarIcon fill={focusedIcon}/>
-                            </View>
-                        );
-                    }
+            screenOptions={({route}) => {
+                return ({
+                    headerStyle: {
+                        backgroundColor: accent_5, // Background color of the header
+                    },
+                    headerTintColor: accent_1,
+                    tabBarStyle: {
+                        backgroundColor: accent_5,
+                    },
+                    headerShown: false,
+                    tabBarIcon: ({focused}) => {
+                        let iconComponent: JSX.Element | null = null;
+                        const focusedIcon = focused ? PRIMARY.MAIN : iconColor
+                        console.log({route})
+                        if (route.name === routes.map.key) {
+                            iconComponent = (
+                                <View style={[styles.locationIcon]}>
+                                    <LocationIcon fill={focusedIcon} width={25} height={25}/>
+                                </View>
+                            );
+                        } else if (route.name === routes.settings.key) {
+                            iconComponent = (
+                                <View style={[styles.icon]}>
+                                    <SettingIcon fill={focusedIcon}/>
+                                </View>
+                            );
+                        } else if (route.name === routes.today.key) {
+                            iconComponent = (
+                                <View style={[styles.icon]}>
+                                    <CalendarIcon fill={focusedIcon}/>
+                                </View>
+                            );
+                        }
 
-                    return iconComponent;
-                },
-                tabBarActiveTintColor: PRIMARY.MAIN,
-                tabBarInactiveTintColor: accent_1,
-            })}
+                        return iconComponent;
+                    },
+                    tabBarActiveTintColor: PRIMARY.MAIN,
+                    tabBarInactiveTintColor: accent_1,
+                })
+            }}
         >
-            <Tab.Screen name={routes.today} component={TodayEventStackScreen}/>
-            <Tab.Screen name={routes.map} component={MapStackScreen}/>
-            <Tab.Screen name={routes.settings} component={SettingsStackScreen}/>
+            <Tab.Screen name={routes.today.key} options={{title: routes.today.name}} component={TodayEventStackScreen}/>
+            <Tab.Screen name={routes.map.key} options={{title: routes.map.name}} component={MapStackScreen}/>
+            <Tab.Screen name={routes.settings.key} options={{title: routes.settings.name}}
+                        component={SettingsStackScreen}/>
         </Tab.Navigator>
     </NavigationContainer>
 }

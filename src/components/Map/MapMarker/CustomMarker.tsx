@@ -7,9 +7,9 @@ import {useAppDispatch} from "../../../hook/reduxHooks";
 import {IEventCart} from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
-import {routes} from "../../../routes/routes";
 import {isBetweenDates} from "../../../helpers/helper";
 import {locationType} from "../CustomMap";
+import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 
 type DestinationSetter = React.Dispatch<React.SetStateAction<locationType>>;
 
@@ -26,10 +26,11 @@ export default function CustomMarker(props: ICustomMarkerProps) {
     } = user;
     const dispatch = useAppDispatch();
     const navigate = useNavigation();
+    const routes = useTranslatedRoutes()
 
     const handlePressCallout = () => {
         dispatch(setUser(user));
-        navigate.navigate(routes.partnerProfile as never);
+        navigate.navigate(routes.partnerProfile.key as never);
     };
 
 
