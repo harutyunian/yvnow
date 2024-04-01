@@ -22,7 +22,7 @@ export default function EventCardSmall(props: EventCardSmall) {
     const navigate = useNavigation()
     const routes = useTranslatedRoutes()
     const handlePress = () => {
-        navigate.navigate(routes.eventDetails as never);
+        navigate.navigate(routes.eventDetails.key as never);
         dispatch(setEventDetails(event));
     }
     return (

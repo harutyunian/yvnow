@@ -27,12 +27,10 @@ export const translationReducer = createSlice({
     name: "translation",
     initialState,
     reducers: {
-        setLanguages(_, action: PayloadAction<langs.EN | langs.RU | langs.AM>) {
+        setLanguages(state, action: PayloadAction<langs.EN | langs.RU | langs.AM>) {
             const {payload} = action
-            return {
-                translation: languages[payload],
-                lang: payload
-            }
+            state.translation = languages[payload]
+            state.lang = payload
         }
     }
 })

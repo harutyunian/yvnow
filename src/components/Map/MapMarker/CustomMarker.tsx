@@ -30,7 +30,7 @@ export default function CustomMarker(props: ICustomMarkerProps) {
 
     const handlePressCallout = () => {
         dispatch(setUser(user));
-        navigate.navigate(routes.partnerProfile as never);
+        navigate.navigate(routes.partnerProfile.key as never);
     };
 
 

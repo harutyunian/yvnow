@@ -3,11 +3,26 @@ import {useTranslation} from "./translationHook";
 export function useTranslatedRoutes() {
     const {t} = useTranslation()
     return {
-        today: t('tabs.today'),
-        home: 'Home',
-        map: t('tabs.map'),
-        settings: t('tabs.settings'),
-        partnerProfile: t('partner.partner_profile'),
-        eventDetails: t('partner.event_details')
+        today: {
+            name: t('tabs.today'),
+            key: "today"
+        },
+        home: {name: 'Home', key: "home"},
+        map: {
+            name: t('tabs.map'),
+            key: "map"
+        },
+        settings: {
+            name: t('tabs.settings'),
+            key: "settings"
+        },
+        partnerProfile: {
+            name: t('partner.partner_profile'),
+            key: 'profile'
+        },
+        eventDetails: {
+            name: t('partner.event_details'),
+            key: 'event_details'
+        }
     }
 }

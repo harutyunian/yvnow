@@ -24,7 +24,7 @@ export default function EventCart(props: IIEventCartProps) {
     const routes = useTranslatedRoutes()
 
     const handlePressEvent = () => {
-        navigate.navigate(routes.eventDetails as never);
+        navigate.navigate(routes.eventDetails.key as never);
         dispatch(setEventDetails(event));
     };
 

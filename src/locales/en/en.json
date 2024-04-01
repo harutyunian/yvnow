@@ -1,7 +1,7 @@
 {
   "types": {
     "all": "All",
-    "event": "Event",
+    "event":  "Event",
     "show": "Show",
     "concert": "Concert"
   },
