@@ -32,7 +32,7 @@ export default function EventCart(props: IIEventCartProps) {
             style={{...style.container}}
             onPress={handlePressEvent}
         >
-            <ImageSlider {...{imageUrls}} />
+            {imageUrls && imageUrls.length && <ImageSlider {...{imageUrls}} />}
             <LinearGradient
                 style={{...style.gradient}}
                 colors={[

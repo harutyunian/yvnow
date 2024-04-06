@@ -2,17 +2,19 @@ import React, {useEffect, useState} from "react";
 import {Text, View, StyleSheet, ScrollView} from "react-native";
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
-import {IEventCart} from "../../types/event.type";
+import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
-import {isBetweenDates, shuffleArray} from "../../helpers/helper";
+import {compareArrayObjects, isBetweenDates, shuffleArray} from "../../helpers/helper";
 import ButtonStyled from "../../components/Button/Button";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {useTranslation} from "../../hook/translationHook";
+import {FilterActionsSheet} from "../../components/FiltersActionsSheet/FilterActionsSheet";
 
 type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
 
 export default function TodayEvents() {
+    const [selectedFilters, setSelectedFilters] = useState<IFilters[]>([])
     const [todaysEvents, setTodaysEvents] = useState<IEventCart[]>([]);
     const [filteredEvents, setFilteredEvents] = useState<IEventCart[]>([]);
     const [loading, setLoading] = useState(false);
@@ -28,7 +30,20 @@ export default function TodayEvents() {
         setLoading(() => false);
     }, []);
 
-    async function getTodayEvents(page: number, count: number = 10) {
+    useEffect(() => {
+        if (selectedFilters.length) {
+            const filter = todaysEvents.filter(({filters}) => {
+                //comparing filters with object id
+                return compareArrayObjects(filters, selectedFilters, "id")
+            })
+            setFilteredEvents(filter)
+        } else {
+            handleChangeEventTabs(activeButton)
+        }
+    }, [selectedFilters, activeButton]);
+
+
+    async function getTodayEvents(page: number, count: number = 100) {
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
@@ -40,7 +55,6 @@ export default function TodayEvents() {
             }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
             const withLiveOrder = [...shuffleArray<IEventCart>(shuffledEvents.live), ...shuffleArray<IEventCart>(shuffledEvents.noLive)]
             setTodaysEvents(prev => [...prev, ...withLiveOrder]);
-
             setFilteredEvents(prev => {
                 if (activeButton === TodayButtons.all) return [...prev, ...withLiveOrder]
                 return [...prev, ...withLiveOrder].filter(({type}) => type.toLowerCase() === activeButton.toLowerCase())
@@ -123,6 +137,8 @@ export default function TodayEvents() {
                 />
             </View>
             <ScrollView
+                style={[{height: "100%"}]}
+                showsVerticalScrollIndicator={false}
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
             >
@@ -130,18 +146,28 @@ export default function TodayEvents() {
                     <EventCart key={`${event.id}_${index}`} event={event}/>
                 ))}
             </ScrollView>
+            <FilterActionsSheet todaysEvents={todaysEvents} setFilteredEvents={setFilteredEvents}
+                                setSelectedFilters={setSelectedFilters}/>
         </View>
     );
 }
 
 const todayEventsStyle = StyleSheet.create({
     contaienr: {
+        flex: 1,
         display: "flex",
         marginTop: 10,
         marginBottom: 10,
         rowGap: 10,
         alignItems: "center",
         width: "100%",
+    },
+    scrollViewContainer: {
+        // flex: 1,
+    },
+    scrollViewContent: {
+        flex: 1,
+        // paddingBottom: 400
     },
     button: {
         backgroundColor: 'green',

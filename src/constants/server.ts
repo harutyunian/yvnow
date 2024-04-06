@@ -18,3 +18,6 @@ export const EVENTS = {
     BY_USER_ID: `${EVENT_MAIN}/user/`,
     INCREMENT_View: `${EVENT_MAIN}/incrementView`
 }
+export const FILTERS = {
+    GET_ALL: 'filter'
+}

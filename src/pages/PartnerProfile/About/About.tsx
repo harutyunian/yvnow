@@ -12,11 +12,11 @@ export function About(props: IAboutProps) {
     const {user: {description, profilePictures}} = props
 
     const [showModal, setShowModal] = useState(false);
-    const [imageIndex,setImageIndex] = useState(0)
+    const [imageIndex, setImageIndex] = useState(0)
 
-    const modifiedPictures = useMemo(()=>{
-        return profilePictures.map((uri)=>({uri}))
-    },[])
+    const modifiedPictures = useMemo(() => {
+        return profilePictures.map((uri) => ({uri}))
+    }, [])
 
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT["1"]
@@ -32,7 +32,7 @@ export function About(props: IAboutProps) {
         <Text style={{color: text_color, fontSize: 16, fontWeight: '400'}}>{description}</Text>
         <View style={[aboutStyle.imagesContainer]}>
             {
-                profilePictures.length && profilePictures.map((uri, index) => (
+                profilePictures && profilePictures.length && profilePictures.map((uri, index) => (
                     <TouchableOpacity
                         key={uri}
                         style={aboutStyle.imageWrapper}

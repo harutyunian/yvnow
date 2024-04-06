@@ -11,7 +11,12 @@ export interface IUser{
     }
 }
 
-
+export interface IFilters{
+    id: number,
+    am: string,
+    ru: string,
+    en: string
+}
 export interface IEventCart {
     id: number,
     view: number,
@@ -19,6 +24,7 @@ export interface IEventCart {
     startDate: string,
     endDate: string,
     title: string,
+    filters: IFilters[],
     type: string,
     description: string,
     user: IUser

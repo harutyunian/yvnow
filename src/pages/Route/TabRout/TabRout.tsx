@@ -44,7 +44,6 @@ export default function TabRoute() {
                     tabBarIcon: ({focused}) => {
                         let iconComponent: JSX.Element | null = null;
                         const focusedIcon = focused ? PRIMARY.MAIN : iconColor
-                        console.log({route})
                         if (route.name === routes.map.key) {
                             iconComponent = (
                                 <View style={[styles.locationIcon]}>

@@ -1,4 +1,6 @@
 {
+  "live": "Live",
+  "upcoming": "Ожидаемые",
   "types": {
     "all": "Все",
     "event": "Мероприятие",

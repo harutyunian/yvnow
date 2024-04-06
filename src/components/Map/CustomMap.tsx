@@ -70,8 +70,8 @@ export default function CustomMap() {
                     origin={userLocation}
                     destination={destination}
                     apikey="AIzaSyDdKBO9i_C_7Q3hlOr5eEwz3ohklp7gbqg"
-                    strokeWidth={4}
-                    strokeColor="red"
+                    strokeWidth={8}
+                    strokeColor="#1b73e8"
                 />}
                 {events.map((event) => {
                     return <CustomMarker key={event.id} {...event} {...{setDestination}}/>;

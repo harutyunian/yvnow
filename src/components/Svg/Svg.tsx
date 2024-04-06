@@ -205,3 +205,31 @@ export const EyeIcon = (props: SvgProps) => {
         />
     </Svg>
 }
+
+export const PlusIcon = (props: SvgProps) => {
+    const {fill = "#fff"} = props;
+    return <Svg
+        fill="none"
+        viewBox="0 0 24 24"
+        {...props}
+    >
+        <Path
+            stroke={fill}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 12h16m-8-8v16"
+        />
+    </Svg>
+}
+export const AcceptIcon = (props: SvgProps) => {
+    const {fill = "#fff"} = props;
+    return <Svg viewBox="0 0 32 32" {...props}>
+        <Path
+            d="M12.16 28a3 3 0 0 1-2.35-1.13l-6.59-8.25a1 1 0 0 1 1.56-1.24l6.59 8.24a1 1 0 0 0 1.63-.06L27.17 4.44a1 1 0 1 1 1.66 1.12L14.67 26.67A3 3 0 0 1 12.29 28Z"
+            style={{
+                fill,
+            }}
+        />
+    </Svg>
+}

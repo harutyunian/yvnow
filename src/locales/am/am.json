@@ -1,4 +1,6 @@
 {
+  "live": "Live",
+  "upcoming": "Սպասվող",
   "types": {
     "all": "Բոլորը",
     "event": "Իվենթ",
