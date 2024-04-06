@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {View, StyleSheet} from "react-native";
+import {View, StyleSheet, Text} from "react-native";
 import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
@@ -8,15 +8,35 @@ import {IEventCart} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
 import {removeDuplicateUsers} from "../../helpers/helper";
 import MapViewDirections from "react-native-maps-directions";
+import {Button} from "native-base";
+import {useAppSelector} from "../../hook/reduxHooks";
 
+
+enum MapSwitchButtons {
+    all = 'All',
+    events = 'Event',
+    show = 'Show',
+    concert = 'Concert'
+}
+
+type ActiveTabType =
+    MapSwitchButtons.all |
+    MapSwitchButtons.concert |
+    MapSwitchButtons.events |
+    MapSwitchButtons.show
 
 export type locationType = { latitude: number; longitude: number } | null
 export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
+    const [activeTab, setActiveTab] = useState<ActiveTabType>(MapSwitchButtons.all)
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [userLocation, setUserLocation] = useState<locationType>(null);
     const [destination, setDestination] = useState<locationType>(null);
+    const colors = useAppSelector(state => state.theme)
+    const btn_inactive = colors.ACCENT["6"];
+    const btn_active = colors.PRIMARY.MAIN;
+
 
     useEffect(() => {
         // Fetch user's location
@@ -49,9 +69,46 @@ export default function CustomMap() {
         })();
     }, []);
 
+    const handlePressMapTabs = (type: ActiveTabType) => setActiveTab(type)
+    const isAllActive = activeTab === MapSwitchButtons.all
+    const isEventActive = activeTab === MapSwitchButtons.events
+    const isShowActive = activeTab === MapSwitchButtons.show
+    const isConcertActive = activeTab === MapSwitchButtons.concert
+
 
     return (
         <View style={mapStyle.container}>
+            <View style={[mapStyle.tabsContainer]}>
+                <Button
+                    onPress={() => handlePressMapTabs(MapSwitchButtons.all)}
+                    style={[mapStyle.buttonStyle,
+                        {backgroundColor: isAllActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isAllActive ? "white" : colors.ACCENT["1"]}]}
+                    >All</Text>
+                </Button>
+                <Button
+                    onPress={() => handlePressMapTabs(MapSwitchButtons.events)}
+                    style={[mapStyle.buttonStyle, {backgroundColor: isEventActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isEventActive ? "white" : colors.ACCENT["1"]}]}
+                    >Events</Text>
+                </Button>
+                <Button
+                    onPress={() => handlePressMapTabs(MapSwitchButtons.show)}
+                    style={[mapStyle.buttonStyle, {backgroundColor: isShowActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isShowActive ? "white" : colors.ACCENT["1"]}]}
+                    >Show</Text>
+                </Button>
+                <Button
+                    onPress={() => handlePressMapTabs(MapSwitchButtons.concert)}
+                    style={[mapStyle.buttonStyle, {backgroundColor: isConcertActive ? btn_active : btn_inactive}]}>
+                    <Text
+                        style={[{color: isConcertActive ? "white" : colors.ACCENT["1"]}]}
+                    >Concert</Text>
+                </Button>
+            </View>
             <MapView
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
@@ -84,8 +141,31 @@ export default function CustomMap() {
 const mapStyle = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
-        justifyContent: "flex-end",
+        justifyContent: "flex-start",
         alignItems: "center",
+    },
+    buttonStyle: {
+        width: 90,
+        height: 40,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textTabWrapper: {
+        width: '100%',
+        height: 100,
+        display: "flex",
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    tabsContainer: {
+        position: 'absolute', // Position the buttons absolutely
+        zIndex: 1, // Increase zIndex to bring it to the front
+        paddingTop: 25,
+        width: '100%',
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
     },
     map: {
         ...StyleSheet.absoluteFillObject,

@@ -10,6 +10,7 @@ import {useAppSelector} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {useTranslation} from "../../hook/translationHook";
 import {FilterActionsSheet} from "../../components/FiltersActionsSheet/FilterActionsSheet";
+import {NoData} from "../../components/NoData/NoData";
 
 type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
 
@@ -96,7 +97,7 @@ export default function TodayEvents() {
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
-    if (loading) return (<View style={[todayEventsStyle.loading]}> <Loader/> </View>);
+    if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
 
     return (
@@ -136,7 +137,7 @@ export default function TodayEvents() {
                     }]}
                 />
             </View>
-            <ScrollView
+            {(!todaysEvents.length || !filteredEvents.length) ? <NoData/> : <ScrollView
                 style={[{height: "100%"}]}
                 showsVerticalScrollIndicator={false}
                 onScroll={handleScroll}
@@ -145,9 +146,12 @@ export default function TodayEvents() {
                 {filteredEvents.map((event, index) => (
                     <EventCart key={`${event.id}_${index}`} event={event}/>
                 ))}
-            </ScrollView>
-            <FilterActionsSheet todaysEvents={todaysEvents} setFilteredEvents={setFilteredEvents}
-                                setSelectedFilters={setSelectedFilters}/>
+            </ScrollView>}
+            <FilterActionsSheet
+                todaysEvents={todaysEvents}
+                setFilteredEvents={setFilteredEvents}
+                setSelectedFilters={setSelectedFilters}
+            />
         </View>
     );
 }

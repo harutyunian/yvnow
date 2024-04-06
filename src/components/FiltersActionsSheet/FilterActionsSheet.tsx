@@ -24,7 +24,7 @@ type FilterActionType = Filter.live | Filter.upcoming | Filter.all
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const {setSelectedFilters, setFilteredEvents, todaysEvents} = props
-    const [filterAction, setFilterActions] = useState(Filter.live)
+    const [filterAction, setFilterActions] = useState(Filter.all)
     const [filters, setFilters] = useState<IFilters[]>([])
     const {lang} = useAppSelector(state => state.translation)
     const colors = useAppSelector(state => state.theme)
