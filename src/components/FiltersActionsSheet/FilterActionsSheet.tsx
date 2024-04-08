@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {IEventCart, IFilters} from "../../types/event.type";
-import {FilterService} from "../../services/FilterService/FilterService";
 import {FilterTag} from "../FilterTag/FilterTag";
 import {ScrollView, StyleSheet, View} from "react-native";
 import {useAppSelector} from "../../hook/reduxHooks";
@@ -11,7 +10,7 @@ import {isBetweenDates} from "../../helpers/helper";
 interface IFilterActionsSheetProps {
     setSelectedFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
     setFilteredEvents: React.Dispatch<React.SetStateAction<IEventCart[]>>;
-    todaysEvents: IEventCart[]
+    tabFilters: IEventCart[]
 }
 
 enum Filter {
@@ -23,44 +22,35 @@ enum Filter {
 type FilterActionType = Filter.live | Filter.upcoming | Filter.all
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
-    const {setSelectedFilters, setFilteredEvents, todaysEvents} = props
+    const {setSelectedFilters, setFilteredEvents, tabFilters} = props
     const [filterAction, setFilterActions] = useState(Filter.all)
-    const [filters, setFilters] = useState<IFilters[]>([])
     const {lang} = useAppSelector(state => state.translation)
+    const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
     const {t} = useTranslation()
 
-    useEffect(() => {
-        (async function () {
-            try {
-                const filterService = new FilterService()
-                const result = await filterService.getFilterLists()
-                setFilters(result)
-            } catch (e) {
-                console.log('Rejected to get filters', e)
-            }
-        })()
-    }, []);
     const handlePress = (isPressed: boolean, filter: IFilters) => {
         if (!isPressed) setSelectedFilters((prev) => ([...prev, filter]))
         else setSelectedFilters((prev) => prev.filter(el => el.id !== filter.id))
     }
 
     const handleFilterChange = (action: FilterActionType) => {
+        console.log({tabFilters})
         switch (action) {
             case Filter.all: {
-                setFilteredEvents(todaysEvents)
+                setFilteredEvents(tabFilters)
                 break;
             }
             case Filter.live: {
-                setFilteredEvents(() => todaysEvents.filter(event => isBetweenDates(event.startDate, event.endDate)))
+                setFilteredEvents(() => tabFilters.filter(event => isBetweenDates(event.startDate, event.endDate)))
                 break;
             }
             case Filter.upcoming: {
-                setFilteredEvents(() => todaysEvents.filter(event => !isBetweenDates(event.startDate, event.endDate)))
+                setFilteredEvents(() => tabFilters.filter(event => !isBetweenDates(event.startDate, event.endDate)))
                 break;
             }
-            default: {}
+            default: {
+            }
         }
         setFilterActions(action)
     }
@@ -117,6 +107,7 @@ const filterActionsSheetStyle = StyleSheet.create({
         height: 50
     },
     filterContainer: {
+        paddingBottom: 10,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',

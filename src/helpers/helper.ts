@@ -51,3 +51,7 @@ export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: key
 ): boolean {
     return arr1.some((obj1) => arr2.some((obj2) => obj1[comparisonProp] === obj2[comparisonProp]));
 }
+
+export function removeDuplicatesByValues<T extends Record<string, any>>(arr: T[], key: keyof T): T[] {
+    return  arr.filter((v, i, a) => a.findIndex(v2 => v2[key] === v[key]) === i);
+}
