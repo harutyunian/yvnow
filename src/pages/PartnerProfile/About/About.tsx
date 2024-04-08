@@ -3,9 +3,20 @@ import {Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import ImageView from "react-native-image-viewing";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {IUser} from "../../../types/event.type";
-
+import {OpenInstagram} from "../../../components/OpenInstagram/OpenInstagram";
 interface IAboutProps {
     user: IUser
+}
+function wrapInstagramUsernameWithComponent(text: string) {
+    const colors = useAppSelector(state => state.theme)
+    const instagramRegex = /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([\w.-]+)\/?(?:\?[\w=&]*)?/g;
+    return text.split(instagramRegex).map((part, index) => {
+        if (index % 2 === 0) {
+            return <Text style={[{color: colors.ACCENT["1"], fontSize: 16, fontWeight: '400'}]}>{part}</Text>;
+        } else {
+            return <OpenInstagram profile={part} key={index}/>
+        }
+    });
 }
 
 export function About(props: IAboutProps) {
@@ -15,12 +26,8 @@ export function About(props: IAboutProps) {
     const [imageIndex, setImageIndex] = useState(0)
 
     const modifiedPictures = useMemo(() => {
-        return profilePictures.map((uri) => ({uri}))
+        return !profilePictures ? [] : profilePictures.map((uri) => ({uri}))
     }, [])
-
-    const colors = useAppSelector(state => state.theme)
-    const text_color = colors.ACCENT["1"]
-
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
     const onImagePress = (index: number) => {
@@ -28,8 +35,7 @@ export function About(props: IAboutProps) {
         setImageIndex(index)
     }
 
-    return <View>
-        <Text style={{color: text_color, fontSize: 16, fontWeight: '400'}}>{description}</Text>
+    return <View>{wrapInstagramUsernameWithComponent(description)}
         <View style={[aboutStyle.imagesContainer]}>
             {
                 profilePictures && profilePictures.length && profilePictures.map((uri, index) => (
