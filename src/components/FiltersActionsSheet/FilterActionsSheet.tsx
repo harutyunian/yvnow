@@ -35,7 +35,6 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     }
 
     const handleFilterChange = (action: FilterActionType) => {
-        console.log({tabFilters})
         switch (action) {
             case Filter.all: {
                 setFilteredEvents(tabFilters)
@@ -88,17 +87,16 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 }]}
             />
         </View>
-        {filters.length && <ScrollView
+        <ScrollView
             style={[filterActionsSheetStyle.scroll]}
             showsHorizontalScrollIndicator={false}
             horizontal
-        >
-            {filters.map((filter) => <FilterTag
-                onPress={handlePress}
-                filter={filter}
-                text={filter[lang]}
-                key={filter.id}/>)}
-        </ScrollView>}
+        >{filters.map((filter) => <FilterTag
+            onPress={handlePress}
+            filter={filter}
+            text={filter[lang]}
+            key={filter.id}/>)}
+        </ScrollView>
     </>
 }
 

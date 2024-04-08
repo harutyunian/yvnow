@@ -6,11 +6,12 @@ import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
-import {removeDuplicateUsers} from "../../helpers/helper";
+import {compareArrayObjects, removeDuplicateUsers} from "../../helpers/helper";
 import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {FilterActionsSheet} from "../FiltersActionsSheet/FilterActionsSheet";
+import {useTranslation} from "../../hook/translationHook";
 
 
 enum MapSwitchButtons {
@@ -34,9 +35,11 @@ export default function CustomMap() {
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [userLocation, setUserLocation] = useState<locationType>(null);
     const [destination, setDestination] = useState<locationType>(null);
-    const [setSelectedFilter,setSelectedFilters] = useState<IFilters[]>([])
+    const [selectedFilter,setSelectedFilters] = useState<IFilters[]>([])
+
     const [filteredEvents,setFilteredEvents] = useState<IEventCart[]>([])
     const colors = useAppSelector(state => state.theme)
+    const {t} = useTranslation()
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
@@ -66,13 +69,34 @@ export default function CustomMap() {
             try {
                 const eventService = new EventService();
                 const result = await eventService.toDaysEvents(1, 100);
-                setEvents(removeDuplicateUsers(result.events));
+                setEvents(result.events);
+                setFilteredEvents(removeDuplicateUsers(result.events));
             } catch (e: any) {
             }
         })();
     }, []);
 
-    const handlePressMapTabs = (type: ActiveTabType) => setActiveTab(type)
+    useEffect(() => {
+        if (selectedFilter.length) {
+            const filter = filteredEvents.filter(({filters}) => {
+                //comparing filters with object id and filtering events
+                return compareArrayObjects(filters, selectedFilter, "id")
+            })
+            setFilteredEvents(filter)
+        } else {
+            handlePressMapTabs(activeTab)
+        }
+    }, [selectedFilter, activeTab]);
+
+    const handlePressMapTabs = (type: ActiveTabType) => {
+        if(type === MapSwitchButtons.all){
+            setFilteredEvents(removeDuplicateUsers(events));
+        }else{
+            const eventFilteredByTabs = [...events.filter(({type: eventType}) => eventType.toLowerCase() === type.toLowerCase())]
+            setFilteredEvents(removeDuplicateUsers(eventFilteredByTabs));
+        }
+        setActiveTab(type)
+    }
     const isAllActive = activeTab === MapSwitchButtons.all
     const isEventActive = activeTab === MapSwitchButtons.events
     const isShowActive = activeTab === MapSwitchButtons.show
@@ -88,28 +112,28 @@ export default function CustomMap() {
                         {backgroundColor: isAllActive ? btn_active : btn_inactive}]}>
                     <Text
                         style={[{color: isAllActive ? "white" : colors.ACCENT["1"]}]}
-                    >All</Text>
+                    >{t('types.all')}</Text>
                 </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.events)}
                     style={[mapStyle.buttonStyle, {backgroundColor: isEventActive ? btn_active : btn_inactive}]}>
                     <Text
                         style={[{color: isEventActive ? "white" : colors.ACCENT["1"]}]}
-                    >Events</Text>
+                    >{t('types.event')}</Text>
                 </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.show)}
                     style={[mapStyle.buttonStyle, {backgroundColor: isShowActive ? btn_active : btn_inactive}]}>
                     <Text
                         style={[{color: isShowActive ? "white" : colors.ACCENT["1"]}]}
-                    >Show</Text>
+                    >{t('types.show')}</Text>
                 </Button>
                 <Button
                     onPress={() => handlePressMapTabs(MapSwitchButtons.concert)}
                     style={[mapStyle.buttonStyle, {backgroundColor: isConcertActive ? btn_active : btn_inactive}]}>
                     <Text
                         style={[{color: isConcertActive ? "white" : colors.ACCENT["1"]}]}
-                    >Concert</Text>
+                    >{t('types.concert')}</Text>
                 </Button>
             </View>
             <MapView
@@ -135,15 +159,15 @@ export default function CustomMap() {
                     strokeWidth={8}
                     strokeColor="#1b73e8"
                 />}
-                {events.map((event) => {
+                {filteredEvents.map((event) => {
                     return <CustomMarker key={event.id} {...event} {...{setDestination}}/>;
                 })}
             </MapView>
             <View style={[mapStyle.filterContainer]}>
                     <FilterActionsSheet
-                        todaysEvents={events}
-                        setFilteredEvents={setFilteredEvents}
                         setSelectedFilters={setSelectedFilters}
+                        setFilteredEvents={setFilteredEvents}
+                        tabFilters={filteredEvents}
                     />
             </View>
         </View>
