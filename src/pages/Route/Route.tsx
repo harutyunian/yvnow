@@ -4,7 +4,6 @@ import TabRoute from "./TabRout/TabRout";
 import { useAppDispatch } from "../../hook/reduxHooks";
 import { setDynamicsMode } from "../../store/reducer/theme/themeReducer";
 
-
 export default function Route() {
   const dispatch = useAppDispatch()
 

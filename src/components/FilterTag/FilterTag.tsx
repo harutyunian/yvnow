@@ -25,8 +25,10 @@ export function FilterTag(props: IFilterTagProps) {
 
     return <TouchableOpacity onPress={handlePress} style={[filterTagStyle.wrapper]}>
         <Badge style={[filterTagStyle.container]}
+               _text={{color: pressed ? '#16a34a' : '#0284c7', fontWeight: '900'}}
                colorScheme={pressed ? "success" : "info"}
-               variant={"outline"} rightIcon={icon}>
+               variant='subtle'
+               rightIcon={icon}>
             {text}
         </Badge>
     </TouchableOpacity>

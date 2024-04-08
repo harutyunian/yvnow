@@ -4,12 +4,13 @@ import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
-import {IEventCart} from "../../types/event.type";
+import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
 import {removeDuplicateUsers} from "../../helpers/helper";
 import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
 import {useAppSelector} from "../../hook/reduxHooks";
+import {FilterActionsSheet} from "../FiltersActionsSheet/FilterActionsSheet";
 
 
 enum MapSwitchButtons {
@@ -33,6 +34,8 @@ export default function CustomMap() {
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [userLocation, setUserLocation] = useState<locationType>(null);
     const [destination, setDestination] = useState<locationType>(null);
+    const [setSelectedFilter,setSelectedFilters] = useState<IFilters[]>([])
+    const [filteredEvents,setFilteredEvents] = useState<IEventCart[]>([])
     const colors = useAppSelector(state => state.theme)
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
@@ -114,6 +117,7 @@ export default function CustomMap() {
                 provider={PROVIDER_GOOGLE}
                 showsMyLocationButton
                 showsUserLocation={true}
+                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 followsUserLocation={true}
                 initialRegion={{
                     latitude: coordinates.lat,
@@ -126,6 +130,7 @@ export default function CustomMap() {
                 {userLocation && destination && <MapViewDirections
                     origin={userLocation}
                     destination={destination}
+                    lineCap='butt'
                     apikey="AIzaSyDdKBO9i_C_7Q3hlOr5eEwz3ohklp7gbqg"
                     strokeWidth={8}
                     strokeColor="#1b73e8"
@@ -134,11 +139,30 @@ export default function CustomMap() {
                     return <CustomMarker key={event.id} {...event} {...{setDestination}}/>;
                 })}
             </MapView>
+            <View style={[mapStyle.filterContainer]}>
+                    <FilterActionsSheet
+                        todaysEvents={events}
+                        setFilteredEvents={setFilteredEvents}
+                        setSelectedFilters={setSelectedFilters}
+                    />
+            </View>
         </View>
     );
 }
 
 const mapStyle = StyleSheet.create({
+    wrapper: {
+        backgroundColor: 'yellow',
+        width: "80%"
+    },
+    filterContainer: {
+        display: 'flex',
+        alignItems: "flex-start",
+        zIndex: 1,
+        position: 'absolute',
+        width: '100%',
+        bottom: 0,
+    },
     container: {
         ...StyleSheet.absoluteFillObject,
         justifyContent: "flex-start",

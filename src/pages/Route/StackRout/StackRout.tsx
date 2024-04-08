@@ -19,6 +19,8 @@ function useOptions() {
         headerStyle: {
             backgroundColor: accent_5,
         },
+        //header title working find but maybe included on typescript types
+        // So I will put ts-ignores
         headerTitleStyle: {
             fontWeight: '900'
         },

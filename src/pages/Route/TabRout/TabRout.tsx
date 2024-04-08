@@ -10,6 +10,7 @@ import {
     TodayEventStackScreen
 } from "../StackRout/StackRout";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +30,7 @@ export default function TabRoute() {
         },
     }
 
-    return <NavigationContainer theme={MyTheme}>
+    return <SafeAreaView style={[styles.safeAreaContainer,{backgroundColor: accent_5}]}><NavigationContainer theme={MyTheme}>
         <Tab.Navigator
             screenOptions={({route}) => {
                 return ({
@@ -76,10 +77,13 @@ export default function TabRoute() {
             <Tab.Screen name={routes.settings.key} options={{title: routes.settings.name}}
                         component={SettingsStackScreen}/>
         </Tab.Navigator>
-    </NavigationContainer>
+    </NavigationContainer></SafeAreaView>
 }
 
 const styles = StyleSheet.create({
+    safeAreaContainer: {
+        flex: 1
+    },
     icon: {
         width: 25,
         height: 25,

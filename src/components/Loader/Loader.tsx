@@ -12,13 +12,13 @@ export function Loader() {
         autoPlay
         style={[loaderStyle.lottie]}
         source={require('./../../../assets/lottie/loading.json')}
-    /><Text style={[{color: color.ACCENT['1'], left: 30, fontSize: 25}]}>{t('loading')}...</Text>
+    /><Text style={[{color: color.ACCENT['1'], left: 50, fontSize: 25}]}>{t('loading')}...</Text>
     </View>
 }
 
 const loaderStyle = StyleSheet.create({
     lottie: {
-        width: 150,
-        height: 150
+        width: 200,
+        height: 200
     }
 })
