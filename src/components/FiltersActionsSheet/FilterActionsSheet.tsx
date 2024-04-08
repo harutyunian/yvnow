@@ -88,7 +88,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 }]}
             />
         </View>
-        <ScrollView
+        {filters.length && <ScrollView
             style={[filterActionsSheetStyle.scroll]}
             showsHorizontalScrollIndicator={false}
             horizontal
@@ -98,7 +98,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 filter={filter}
                 text={filter[lang]}
                 key={filter.id}/>)}
-        </ScrollView>
+        </ScrollView>}
     </>
 }
 
