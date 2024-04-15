@@ -35,21 +35,12 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     }
 
     const handleFilterChange = (action: FilterActionType) => {
-        switch (action) {
-            case Filter.all: {
-                setFilteredEvents(tabFilters)
-                break;
-            }
-            case Filter.live: {
-                setFilteredEvents(() => tabFilters.filter(event => isBetweenDates(event.startDate, event.endDate)))
-                break;
-            }
-            case Filter.upcoming: {
-                setFilteredEvents(() => tabFilters.filter(event => !isBetweenDates(event.startDate, event.endDate)))
-                break;
-            }
-            default: {
-            }
+        if (action === Filter.all) {
+            setFilteredEvents(tabFilters)
+        } else if (action === Filter.live) {
+            setFilteredEvents(() => tabFilters.filter(event => isBetweenDates(event.startDate, event.endDate)))
+        } else {
+            setFilteredEvents(() => tabFilters.filter(event => !isBetweenDates(event.startDate, event.endDate)))
         }
         setFilterActions(action)
     }

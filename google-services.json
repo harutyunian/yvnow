@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "652057897270",
+    "project_id": "yvnow-c8f54",
+    "storage_bucket": "yvnow-c8f54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652057897270:android:b6b9197dcc002a85052b97",
+        "android_client_info": {
+          "package_name": "com.harutyunian.yvnow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjrHqz9DHVbB1OHQHh3logFMKGU7QbD9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

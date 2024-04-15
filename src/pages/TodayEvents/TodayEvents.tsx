@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {Text, View, StyleSheet, ScrollView} from "react-native";
+import LottieView from 'lottie-react-native';
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     compareArrayObjects,
     isBetweenDates,
-     removeDuplicatesByValues,
+    removeDuplicatesByValues,
     shuffleArray
 } from "../../helpers/helper";
 import ButtonStyled from "../../components/Button/Button";
@@ -17,14 +19,22 @@ import {useTranslation} from "../../hook/translationHook";
 import {FilterActionsSheet} from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {NoData} from "../../components/NoData/NoData";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
+import {setLanguages} from "../../store/reducer/translation/translation";
+import {langs} from "../../store/reducer/translation/types";
+import {setDarkMode, setDynamicsMode, setLightMode} from "../../store/reducer/theme/themeReducer";
 
 type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
 
 export default function TodayEvents() {
+    const [loadMore,setLoadMore] = useState(false)
+    const [isDataEmpty,setIsDataEmpty] = useState(false)
+
     const [selectedFilters, setSelectedFilters] = useState<IFilters[]>([])
+    const [tabFilters, setTabFilters] = useState<IEventCart[]>([]);
+
     const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]);
-    const [tabFilters,setTabFilters] =  useState<IEventCart[]>([]);
     const [filteredEvents, setFilteredEvents] = useState<IEventCart[]>([]);
+
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -33,9 +43,48 @@ export default function TodayEvents() {
     const dispatch = useAppDispatch()
     const {t} = useTranslation()
 
+
     useEffect(() => {
+        const fetchLanguage = async () => {
+            try {
+                type langType = langs.EN | langs.RU | langs.AM
+                const storedLang = await AsyncStorage.getItem('lang');
+                const lang: langType | undefined = storedLang ? (storedLang as langType) : langs.EN;
+                dispatch(setLanguages(lang));
+            } catch (error) {
+                console.error('Error fetching language:', error);
+            }
+        };
+        fetchLanguage();
+    }, [dispatch]);
+
+    useEffect(() => {
+        const setMode = async ():Promise<void> => {
+            try {
+                const mode = await AsyncStorage.getItem('theme');
+                if(mode){
+                    switch (mode) {
+                        case "two": dispatch(setDarkMode());
+                            break
+                        case "tree": dispatch(setLightMode());
+                            break
+                        default: dispatch(setDynamicsMode());
+                    }
+                }else {
+                    dispatch(setDynamicsMode());
+                }
+            } catch (error) {
+                console.error('Error fetching language:', error);
+            }
+        };
+        setMode();
+    }, [dispatch]);
+
+    useEffect(() => {
+        // first to show english
+
         setLoading(() => true);
-        getTodayEvents(page)
+        getEventList(page)
         setTimeout(() => {
             setLoading(() => false);
         }, 1000)
@@ -43,39 +92,46 @@ export default function TodayEvents() {
 
     useEffect(() => {
         if (selectedFilters.length) {
-            const filter = tabFilters.filter(({filters}) => {
+            const filter = filteredEvents.filter(({filters}) => {
                 //comparing filters with object id and filtering events
                 return compareArrayObjects(filters, selectedFilters, "id")
             })
             setFilteredEvents(filter)
-        } else {
-            handleChangeEventTabs(activeButton)
         }
-    }, [selectedFilters, activeButton]);
+    }, [selectedFilters, activeButton, tabFilters]);
 
+    useEffect(() => {
+        const filters = filteredEvents.reduce((acc, event) => {
+            if (!event.filters) return acc
+            return [...acc, ...event.filters]
+        }, [] as IFilters[])
 
-    async function getTodayEvents(page: number, count: number = 100) {
+        // removing duplicates for staying filters which included event
+        const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
+        dispatch(setFilters(uniqFilters))
+    }, [selectedFilters, activeButton, filteredEvents]);
+
+    async function getEventList(page: number, count: number = 50) {
+        setLoadMore(()=>true)
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
+            setIsDataEmpty(!events.length)
             const filters = events.reduce((acc, event) => {
                 if (!event.filters) return acc
                 return [...acc, ...event.filters]
             }, [] as IFilters[])
             // removing duplicates for staying filters which included event
-            const uniqFilters = removeDuplicatesByValues<IFilters>(filters,'id')
+            const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
             dispatch(setFilters(uniqFilters))
             const shuffledEvents = events.reduce((acc, event) => {
                 if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
                 else acc.noLive.push(event)
                 return acc
             }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
-
             const withLiveOrder = [...shuffleArray<IEventCart>(shuffledEvents.live), ...shuffleArray<IEventCart>(shuffledEvents.noLive)]
-
             setTodayEvents(prev => [...prev, ...withLiveOrder]);
-
             setFilteredEvents(prev => {
                 if (activeButton === TodayButtons.all) return [...prev, ...withLiveOrder]
                 return [...prev, ...withLiveOrder].filter(({type}) => type.toLowerCase() === activeButton.toLowerCase())
@@ -89,6 +145,9 @@ export default function TodayEvents() {
             if (e && e.message) {
                 setErrorMessage(e.message);
             }
+        }finally {
+            setTimeout(()=> setLoadMore(false),500)
+
         }
     }
 
@@ -97,8 +156,7 @@ export default function TodayEvents() {
         if (type === TodayButtons.all) {
             setTabFilters(() => [...todayEvents])
             setFilteredEvents(() => [...todayEvents])
-        }
-        else {
+        } else {
             const eventFilteredByTabs = [...todayEvents.filter(({type: eventType}) => eventType.toLowerCase() === type.toLowerCase())]
             setTabFilters(() => eventFilteredByTabs)
             setFilteredEvents(() => eventFilteredByTabs)
@@ -114,11 +172,11 @@ export default function TodayEvents() {
             layoutMeasurement: { height: number }
         }
     }) => {
-        // const {contentOffset, contentSize, layoutMeasurement} = nativeEvent;
-        // const isEndReached = contentOffset.y >= contentSize.height - layoutMeasurement.height;
-        // if (isEndReached) {
-        //     getTodayEvents(page)
-        // }
+        const {contentOffset, contentSize, layoutMeasurement} = nativeEvent;
+        const isEndReached = contentOffset.y >= contentSize.height - layoutMeasurement.height;
+        if (isEndReached && !loadMore) {
+            getEventList(page)
+        }
     };
 
     const isAllActive = activeButton === TodayButtons.all;
@@ -178,8 +236,17 @@ export default function TodayEvents() {
                     <EventCart key={`${event.id}_${index}`} event={event}/>
                 ))}
             </ScrollView>}
+            {(!isDataEmpty && loadMore) && <LottieView
+                autoPlay
+                style={{
+                    width: 200,
+                    height: 100,
+                    backgroundColor: 'transparent',
+                }}
+                source={require('./../../../assets/lottie/load_more.json')}
+            />}
             <FilterActionsSheet
-                {...{tabFilters,setFilteredEvents,setSelectedFilters}}
+                {...{tabFilters, setFilteredEvents, setSelectedFilters}}
             />
         </View>
     );

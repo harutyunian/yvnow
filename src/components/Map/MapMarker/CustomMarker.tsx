@@ -86,6 +86,7 @@ const customMapStyle = StyleSheet.create({
     liveContainer: {
         width: 30,
         height: 15,
+        left: 6.5,
         backgroundColor: "#e9b408",
         display: "flex",
         justifyContent: "center",

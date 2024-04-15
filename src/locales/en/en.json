@@ -8,6 +8,10 @@
     "show": "Show",
     "concert": "Concert"
   },
+  "profile": {
+    "past": "Past",
+    "about": "About"
+  },
   "tabs": {
     "today": "Events",
     "map": "Map",

@@ -15,7 +15,7 @@ export function About(props: IAboutProps) {
     const [imageIndex, setImageIndex] = useState(0)
 
     const modifiedPictures = useMemo(() => {
-        return profilePictures.map((uri) => ({uri}))
+        return !profilePictures ? [] :profilePictures.map((uri) => ({uri}))
     }, [])
 
     const colors = useAppSelector(state => state.theme)
