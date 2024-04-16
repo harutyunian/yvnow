@@ -1,6 +1,7 @@
 {
   "live": "Live",
   "upcoming": "Ожидаемые",
+  "partnerProfileButton": "Посмотреть профиль партнера",
   "types": {
     "all": "Все",
     "event": "Меропр.",

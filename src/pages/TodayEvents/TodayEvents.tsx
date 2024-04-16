@@ -27,7 +27,7 @@ import {setLanguages} from "../../store/reducer/translation/translation";
 import {langs} from "../../store/reducer/translation/types";
 import {setDarkMode, setDynamicsMode, setLightMode} from "../../store/reducer/theme/themeReducer";
 
-type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
+export type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
 
 export interface IEventsFilter {
     top: TodayTabs,
@@ -39,18 +39,12 @@ export default function TodayEvents() {
     const [loadMore, setLoadMore] = useState(false)
     const [isDataEmpty, setIsDataEmpty] = useState(false)
 
-    const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all)
-    const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all)
-    const [subFilter, setSubFilter] = useState<IFilters[]>([])
+    const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]); //This list we are getting from server
 
-    const [eventFilters, setEventFilters] = useState<IEventsFilter>({
-        top: TodayButtons.all,
-        bottom: FilterAction.all,
-        sub: []
-    })
+    const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all) // Top part filters state
+    const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
+    const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
 
-    const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]);
-    const [filteredEvents, setFilteredEvents] = useState<IEventCart[]>([]);
 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
@@ -155,19 +149,11 @@ export default function TodayEvents() {
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
             setIsDataEmpty(!events.length)
-            const filters = events.reduce((acc, event) => {
-                if (!event.filters) return acc
-                return [...acc, ...event.filters]
-            }, [] as IFilters[])
-            // removing duplicates for filters which included event
-            const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
-            dispatch(setFilters(uniqFilters))
             const shuffledEvents = events.reduce((acc, event) => {
                 if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
                 else acc.noLive.push(event)
                 return acc
             }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
-
             const withLiveOrder = [...shuffleArray<IEventCart>(shuffledEvents.live), ...shuffleArray<IEventCart>(shuffledEvents.noLive)]
             setTodayEvents(prev => [...prev, ...withLiveOrder]);
             setPage(prev => prev + 1)
@@ -177,7 +163,6 @@ export default function TodayEvents() {
             }
         } finally {
             setTimeout(() => setLoadMore(false), 500)
-
         }
     }
 

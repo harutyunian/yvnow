@@ -1,12 +1,11 @@
 import React, {useState} from "react";
-import {IEventCart, IFilters} from "../../types/event.type";
-import {FilterTag} from "../FilterTag/FilterTag";
 import {ScrollView, StyleSheet, View} from "react-native";
+import {IFilters} from "../../types/event.type";
+import {FilterTag} from "../FilterTag/FilterTag";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
-import {isBetweenDates} from "../../helpers/helper";
-import {IEventsFilter} from "../../pages/TodayEvents/TodayEvents";
+
 
 interface IFilterActionsSheetProps {
     setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
@@ -22,7 +21,7 @@ export enum FilterAction {
 export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
-    const {setBottomFilter,setSubFilter} = props
+    const {setBottomFilter, setSubFilter} = props
     const [filterAction, setFilterActions] = useState(FilterAction.all)
     const {lang} = useAppSelector(state => state.translation)
     const filters = useAppSelector(state => state.filters)
@@ -34,7 +33,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
             setSubFilter((prev) => ([...prev, filter]))
         } else {
             setSubFilter((prev) => {
-                return  prev.filter(({id}) => id !== filter.id)
+                return prev.filter(({id}) => id !== filter.id)
             })
         }
     }
