@@ -1,11 +1,16 @@
 {
   "live": "Live",
   "upcoming": "Ожидаемые",
+  "partnerProfileButton": "Посмотреть профиль партнера",
   "types": {
     "all": "Все",
     "event": "Меропр.",
     "show": "Шоу",
     "concert": "Концерт"
+  },
+  "profile": {
+    "past": "Предыдущие",
+    "about": "О партнере"
   },
   "tabs": {
     "today": "Сегодня",

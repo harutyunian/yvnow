@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {View, StyleSheet, Text} from "react-native";
 import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
@@ -6,12 +6,18 @@ import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
-import {compareArrayObjects, removeDuplicateUsers} from "../../helpers/helper";
+import {
+    compareArrayObjects,
+    isBetweenDates,
+    removeDuplicatesByValues,
+    removeDuplicateUsers
+} from "../../helpers/helper";
 import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
-import {useAppSelector} from "../../hook/reduxHooks";
-import {FilterActionsSheet} from "../FiltersActionsSheet/FilterActionsSheet";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
+import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useTranslation} from "../../hook/translationHook";
+import {setFilters} from "../../store/reducer/filter/filterReducer";
 
 
 enum MapSwitchButtons {
@@ -31,14 +37,17 @@ export type locationType = { latitude: number; longitude: number } | null
 export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
-    const [activeTab, setActiveTab] = useState<ActiveTabType>(MapSwitchButtons.all)
-    const [events, setEvents] = useState<IEventCart[]>([]);
     const [userLocation, setUserLocation] = useState<locationType>(null);
     const [destination, setDestination] = useState<locationType>(null);
-    const [selectedFilter,setSelectedFilters] = useState<IFilters[]>([])
 
-    const [filteredEvents,setFilteredEvents] = useState<IEventCart[]>([])
+    const [events, setEvents] = useState<IEventCart[]>([]);
+    const [topFilter, setTopFilter] = useState<ActiveTabType>(MapSwitchButtons.all) // Top part filters state
+    const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
+    const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
+
     const colors = useAppSelector(state => state.theme)
+    const dispatch = useAppDispatch()
+
     const {t} = useTranslation()
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
@@ -70,37 +79,57 @@ export default function CustomMap() {
                 const eventService = new EventService();
                 const result = await eventService.toDaysEvents(1, 100);
                 setEvents(result.events);
-                setFilteredEvents(removeDuplicateUsers(result.events));
             } catch (e: any) {
             }
         })();
     }, []);
 
-    useEffect(() => {
-        if (selectedFilter.length) {
-            const filter = filteredEvents.filter(({filters}) => {
-                //comparing filters with object id and filtering events
-                return compareArrayObjects(filters, selectedFilter, "id")
-            })
-            setFilteredEvents(filter)
-        } else {
-            handlePressMapTabs(activeTab)
+    const topFilteredEvents = useMemo(() => {
+        if (topFilter === MapSwitchButtons.all) {
+            return events
         }
-    }, [selectedFilter, activeTab]);
+        return events.filter(({type}) => type.toLowerCase() === topFilter.toLowerCase())
+    }, [topFilter, events])
 
-    const handlePressMapTabs = (type: ActiveTabType) => {
-        if(type === MapSwitchButtons.all){
-            setFilteredEvents(removeDuplicateUsers(events));
-        }else{
-            const eventFilteredByTabs = [...events.filter(({type: eventType}) => eventType.toLowerCase() === type.toLowerCase())]
-            setFilteredEvents(removeDuplicateUsers(eventFilteredByTabs));
+    const bottomFilteredEvents = useMemo(() => {
+        let eventLists = topFilteredEvents
+        if (bottomFilter === FilterAction.live) {
+            eventLists =  topFilteredEvents.filter((event) => {
+                const {startDate, endDate} = event
+                return isBetweenDates(startDate, endDate)
+            })
+        } else if (bottomFilter === FilterAction.upcoming) {
+            eventLists =  topFilteredEvents.filter((event) => {
+                const {startDate, endDate} = event
+                return !isBetweenDates(startDate, endDate)
+            })
         }
-        setActiveTab(type)
-    }
-    const isAllActive = activeTab === MapSwitchButtons.all
-    const isEventActive = activeTab === MapSwitchButtons.events
-    const isShowActive = activeTab === MapSwitchButtons.show
-    const isConcertActive = activeTab === MapSwitchButtons.concert
+        const filters = eventLists.reduce((acc, event) => {
+            if (!event.filters) return acc
+            return [...acc, ...event.filters]
+        }, [] as IFilters[])
+
+        // removing duplicates for staying filters which included event
+        const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
+        dispatch(setFilters(uniqFilters))
+        return eventLists
+    }, [topFilteredEvents, bottomFilter])
+
+    const subFilteredEvents = useMemo(() => {
+        if(subFilter.length){
+            return bottomFilteredEvents.filter(({filters})=>{
+                return   compareArrayObjects(filters, subFilter, "id")
+            })
+        }
+        return removeDuplicateUsers(bottomFilteredEvents)
+    }, [bottomFilteredEvents, subFilter])
+
+    const handlePressMapTabs = (type: ActiveTabType) =>  setTopFilter(type)
+
+    const isAllActive = topFilter === MapSwitchButtons.all
+    const isEventActive = topFilter === MapSwitchButtons.events
+    const isShowActive = topFilter === MapSwitchButtons.show
+    const isConcertActive = topFilter === MapSwitchButtons.concert
 
 
     return (
@@ -159,15 +188,13 @@ export default function CustomMap() {
                     strokeWidth={8}
                     strokeColor="#1b73e8"
                 />}
-                {filteredEvents.map((event) => {
+                {subFilteredEvents.map((event) => {
                     return <CustomMarker key={event.id} {...event} {...{setDestination}}/>;
                 })}
             </MapView>
             <View style={[mapStyle.filterContainer]}>
                     <FilterActionsSheet
-                        setSelectedFilters={setSelectedFilters}
-                        setFilteredEvents={setFilteredEvents}
-                        tabFilters={filteredEvents}
+                        {...{setBottomFilter,setSubFilter}}
                     />
             </View>
         </View>

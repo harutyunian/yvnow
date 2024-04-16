@@ -46,7 +46,13 @@ export default function PartnerProfile() {
             try {
                 const eventService = new EventService();
                 const events = await eventService.getEventByUserId(userId);
-                setPartnerEvents(events);
+                const withLiveOrder = events.notStarted.reduce((acc, event) => {
+                    if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
+                    else acc.noLive.push(event)
+                    return acc
+                }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
+                const eventsNotStarted = [...withLiveOrder.live, ...withLiveOrder.noLive]
+                setPartnerEvents({notStarted: eventsNotStarted, passed: events.passed});
             } catch (e) {
                 console.log(e);
             }
@@ -115,7 +121,7 @@ export default function PartnerProfile() {
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.past)}
-                    text={t('types.past')}
+                    text={t('profile.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
                     style={{
                         width: 104,
@@ -125,10 +131,10 @@ export default function PartnerProfile() {
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.about)}
-                    text={t('types.about')}
+                    text={t('profile.about')}
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        flex: 1,
                         height: 50,
                         backgroundColor: isAboutActive ? btn_active : btn_inactive,
                     }}

@@ -41,6 +41,7 @@ export function TodayEventStackScreen() {
         >
             <Stack.Screen name={routes.today.key} options={{title: routes.today.name}} component={TodayEvents}/>
             <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}} component={EventDetails}/>
+            <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}} component={PartnerProfile}/>
         </Stack.Navigator>
     );
 }

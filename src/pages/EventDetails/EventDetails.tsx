@@ -1,17 +1,27 @@
 import React, {useEffect} from "react";
-import {Text, View, Image, StyleSheet, ScrollView} from "react-native";
+import {Text, View, Image, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import Swiper from "react-native-swiper";
 import MapView, {Marker, PROVIDER_GOOGLE} from "react-native-maps";
-import {useAppSelector} from "../../hook/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
 import {customMapStyleConfigs} from "../../components/Map/customMapStyle";
 import {EventService} from "../../services/EventService/EventService";
+import {Badge} from "native-base";
+import {setUser} from "../../store/reducer/user/user";
+import {useTranslatedRoutes} from "../../hook/translatedRoutes";
+import {useNavigation} from "@react-navigation/native";
+import {useTranslation} from "../../hook/translationHook";
 
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
+    const {lang} = useAppSelector(state => state.translation)
+    const {t} = useTranslation()
+    const dispatch = useAppDispatch()
+    const routes = useTranslatedRoutes()
+    const navigate = useNavigation();
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT['1']
-    const {id, imageUrls, title, description, user: {location: {lat, lng}, address}} = eventDetails
+    const {id, imageUrls, title, description, filters, user: {location: {lat, lng}, address}} = eventDetails
 
     const sliderSettings = {
         autoplay: true,
@@ -30,6 +40,12 @@ export default function EventDetails() {
             }
         })()
     }, []);
+
+    const handleSeePartnerProfile = () =>{
+        dispatch(setUser(eventDetails.user));
+        navigate.navigate(routes.partnerProfile.key as never);
+    }
+
     return (
         <ScrollView>
             <View>
@@ -48,18 +64,34 @@ export default function EventDetails() {
                     </Swiper>
                 </View>
                 <CustomerInfoCard/>
-                <View style={[eventDetailsStyle.descriptionContainer]}>
-                    <View style={[eventDetailsStyle.content]}>
-                        <Text style={[eventDetailsStyle.eventTitle, {color: text_color}]}>
-                            {title}
-                        </Text>
-                        <Text style={[eventDetailsStyle.description, {color: text_color}]}>
-                            {description}
-                        </Text>
+                <View style={[eventDetailsStyle.infoWrapper]}>
+                    <View style={[eventDetailsStyle.descriptionContainer]}>
+                        <View style={[eventDetailsStyle.content]}>
+                            <Text style={[eventDetailsStyle.eventTitle, {color: text_color}]}>
+                                {title}
+                            </Text>
+                            <Text style={[eventDetailsStyle.description, {color: text_color}]}>
+                                {description}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
-                    <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address - {address}</Text>
+                    {filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
+                        {filters.map((filter) => {
+                            return <Badge
+                                style={[eventDetailsStyle.badge]}
+                                colorScheme={"info"}
+                                variant='subtle'
+                                key={filter.id}
+                            >{filter[lang]}</Badge>
+                        })}
+                    </View>}
+                    <TouchableOpacity style={[eventDetailsStyle.badgeWrapper, ]} onPress={handleSeePartnerProfile}>
+                        <Text style={[eventDetailsStyle.seeProfile]}>{t('partnerProfileButton')}</Text>
+                    </TouchableOpacity>
+                    <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
+                        <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address
+                            - {address}</Text>
+                    </View>
                 </View>
                 <View style={[eventDetailsStyle.mapConatiner]}>
                     <MapView
@@ -81,9 +113,28 @@ export default function EventDetails() {
     );
 }
 const eventDetailsStyle = StyleSheet.create({
+    seeProfile:{
+        fontWeight: '700'
+    },
+    infoWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: 25
+    },
     image: {
         width: "100%",
         height: 340,
+    },
+    badgeWrapper: {
+        display: "flex",
+        alignItems: 'center',
+        flexDirection: 'row',
+        columnGap: 5,
+        paddingHorizontal: 20
+    },
+    badge: {
+        flex: 1, justifyContent: 'center', alignItems: 'center',
+        borderRadius: 5,
     },
     mapConatiner: {
         width: '100%',
@@ -99,7 +150,6 @@ const eventDetailsStyle = StyleSheet.create({
         width: "100%",
         height: 340,
     },
-    wrapper: {},
     slider: {
         flex: 1,
         justifyContent: "center",
