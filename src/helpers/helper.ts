@@ -55,3 +55,4 @@ export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: key
 export function removeDuplicatesByValues<T extends Record<string, any>>(arr: T[], key: keyof T): T[] {
     return  arr.filter((v, i, a) => a.findIndex(v2 => v2[key] === v[key]) === i);
 }
+
