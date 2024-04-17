@@ -46,7 +46,13 @@ export default function PartnerProfile() {
             try {
                 const eventService = new EventService();
                 const events = await eventService.getEventByUserId(userId);
-                setPartnerEvents(events);
+                const withLiveOrder = events.notStarted.reduce((acc, event) => {
+                    if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
+                    else acc.noLive.push(event)
+                    return acc
+                }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
+                const eventsNotStarted = [...withLiveOrder.live, ...withLiveOrder.noLive]
+                setPartnerEvents({notStarted: eventsNotStarted, passed: events.passed});
             } catch (e) {
                 console.log(e);
             }
@@ -108,27 +114,32 @@ export default function PartnerProfile() {
                     text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        // width: 104,
+                        flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isEventActive ? btn_active : btn_inactive,
                     }}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.past)}
-                    text={t('types.past')}
+                    text={t('profile.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        // width: 104,
+                        flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isPastActive ? btn_active : btn_inactive,
                     }}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.about)}
-                    text={t('types.about')}
+                    text={t('profile.about')}
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isAboutActive ? btn_active : btn_inactive,
                     }}
@@ -159,11 +170,12 @@ const partnerProfileStyle = StyleSheet.create({
         paddingRight: 20,
     },
     buttons: {
+        gap: 10,
         paddingTop: 20,
         paddingBottom: 10,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
+        // justifyContent: "space-evenly",
     },
     avatar: {
         width: 100,

@@ -1,62 +1,54 @@
 import React, {useState} from "react";
-import {IEventCart, IFilters} from "../../types/event.type";
-import {FilterTag} from "../FilterTag/FilterTag";
 import {ScrollView, StyleSheet, View} from "react-native";
+import {IFilters} from "../../types/event.type";
+import {FilterTag} from "../FilterTag/FilterTag";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
-import {isBetweenDates} from "../../helpers/helper";
+
 
 interface IFilterActionsSheetProps {
-    setSelectedFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
-    setFilteredEvents: React.Dispatch<React.SetStateAction<IEventCart[]>>;
-    tabFilters: IEventCart[]
+    setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
+    setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>
 }
 
-enum Filter {
+export enum FilterAction {
     all = "all",
+    today = "today",
     upcoming = 'upcoming',
     live = 'live'
 }
 
-type FilterActionType = Filter.live | Filter.upcoming | Filter.all
+export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all | FilterAction.today
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
-    const {setSelectedFilters, setFilteredEvents, tabFilters} = props
-    const [filterAction, setFilterActions] = useState(Filter.all)
+    const {setBottomFilter, setSubFilter} = props
+    const [filterAction, setFilterActions] = useState(FilterAction.all)
     const {lang} = useAppSelector(state => state.translation)
     const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
     const {t} = useTranslation()
 
     const handlePress = (isPressed: boolean, filter: IFilters) => {
-        if (!isPressed) setSelectedFilters((prev) => ([...prev, filter]))
-        else setSelectedFilters((prev) => prev.filter(el => el.id !== filter.id))
+        if (!isPressed) {
+            setSubFilter((prev) => ([...prev, filter]))
+        } else {
+            setSubFilter((prev) => {
+                return prev.filter(({id}) => id !== filter.id)
+            })
+        }
     }
 
     const handleFilterChange = (action: FilterActionType) => {
-        switch (action) {
-            case Filter.all: {
-                setFilteredEvents(tabFilters)
-                break;
-            }
-            case Filter.live: {
-                setFilteredEvents(() => tabFilters.filter(event => isBetweenDates(event.startDate, event.endDate)))
-                break;
-            }
-            case Filter.upcoming: {
-                setFilteredEvents(() => tabFilters.filter(event => !isBetweenDates(event.startDate, event.endDate)))
-                break;
-            }
-            default: {
-            }
-        }
+        setBottomFilter(action)
         setFilterActions(action)
     }
 
-    const isAllActive = filterAction === Filter.all;
-    const isLiveActive = filterAction === Filter.live;
-    const isUpcomingActive = filterAction === Filter.upcoming;
+    const isAllActive = filterAction === FilterAction.all;
+    const isLiveActive = filterAction === FilterAction.live;
+    const isUpcomingActive = filterAction === FilterAction.upcoming;
+    const isTodayActive = filterAction === FilterAction.today;
+
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
@@ -64,15 +56,23 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
         <View style={[filterActionsSheetStyle.filterContainer]}>
             <ButtonStyled
                 text={t('types.all')}
-                onPress={() => handleFilterChange(Filter.all)}
+                onPress={() => handleFilterChange(FilterAction.all)}
                 textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isAllActive ? btn_active : btn_inactive,
                 }]}
             />
             <ButtonStyled
+                text={t('tabs.today')}
+                onPress={() => handleFilterChange(FilterAction.today)}
+                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
+                style={[filterActionsSheetStyle.button, {
+                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
+                }]}
+            />
+            <ButtonStyled
                 text={t('live')}
-                onPress={() => handleFilterChange(Filter.live)}
+                onPress={() => handleFilterChange(FilterAction.live)}
                 textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isLiveActive ? btn_active : btn_inactive,
@@ -80,7 +80,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
             />
             <ButtonStyled
                 text={t('upcoming')}
-                onPress={() => handleFilterChange(Filter.upcoming)}
+                onPress={() => handleFilterChange(FilterAction.upcoming)}
                 textColor={isUpcomingActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isUpcomingActive ? btn_active : btn_inactive,

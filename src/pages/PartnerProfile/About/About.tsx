@@ -1,9 +1,8 @@
 import React, {useMemo, useState} from "react";
-import {Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
+import {Image, StyleSheet, View, TouchableOpacity} from "react-native";
 import ImageView from "react-native-image-viewing";
-import {useAppSelector} from "../../../hook/reduxHooks";
 import {IUser} from "../../../types/event.type";
-
+import {wrapInstagramUsernameWithComponent} from "../../../components/OpenIntagram/OpenInstagram";
 interface IAboutProps {
     user: IUser
 }
@@ -15,12 +14,8 @@ export function About(props: IAboutProps) {
     const [imageIndex, setImageIndex] = useState(0)
 
     const modifiedPictures = useMemo(() => {
-        return profilePictures.map((uri) => ({uri}))
+        return !profilePictures ? [] : profilePictures.map((uri) => ({uri}))
     }, [])
-
-    const colors = useAppSelector(state => state.theme)
-    const text_color = colors.ACCENT["1"]
-
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
     const onImagePress = (index: number) => {
@@ -28,8 +23,7 @@ export function About(props: IAboutProps) {
         setImageIndex(index)
     }
 
-    return <View>
-        <Text style={{color: text_color, fontSize: 16, fontWeight: '400'}}>{description}</Text>
+    return <View>{wrapInstagramUsernameWithComponent(description)}
         <View style={[aboutStyle.imagesContainer]}>
             {
                 profilePictures && profilePictures.length && profilePictures.map((uri, index) => (

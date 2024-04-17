@@ -2,11 +2,16 @@
   "live": "Live",
   "upcoming": "Upcoming",
   "today": "Today",
+  "partnerProfileButton": "See partner's profile",
   "types": {
     "all": "All",
     "event":  "Event",
     "show": "Show",
     "concert": "Concert"
+  },
+  "profile": {
+    "past": "Past",
+    "about": "About"
   },
   "tabs": {
     "today": "Events",

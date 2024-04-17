@@ -1,11 +1,16 @@
 {
-  "live": "Live",
+  "live": "Լայվ",
   "upcoming": "Սպասվող",
+  "partnerProfileButton": "Տես գործընկերոջ պրոֆիլը",
   "types": {
     "all": "Բոլորը",
     "event": "Իվենթ",
     "show": "Շոու",
     "concert": "Համերգ"
+  },
+  "profile": {
+    "past": "Անցած",
+    "about": "Գործընկեր. մասին"
   },
   "tabs": {
     "today": "Այսօր",

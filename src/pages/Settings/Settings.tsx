@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet} from "react-native";
 import {Radio} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
@@ -9,6 +9,7 @@ import {
 } from "../../store/reducer/theme/themeReducer";
 import {Languages} from "./Languages/Languages";
 import {useTranslation} from "../../hook/translationHook";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Settings() {
     const [value, setValue] = useState("one");
@@ -16,8 +17,26 @@ export default function Settings() {
     const {t} = useTranslation()
     const dispatch = useAppDispatch();
 
+
+    useEffect(() => {
+        (async ()=>{
+            try{
+                const theme = await AsyncStorage.getItem('theme')
+                theme && setValue(theme)
+            }catch(e){
+                console.log('Error getting theme:', e);
+            }
+        })()
+    }, []);
     const handleChangeMode = (nextValue: string) => {
         setValue(nextValue);
+        (async ()=>{
+            try{
+                await AsyncStorage.setItem('theme', nextValue)
+            }catch(e){
+                console.log('Error getting theme:', e);
+            }
+        })()
         switch (nextValue) {
             case "two":
                 return dispatch(setDarkMode());
@@ -46,7 +65,7 @@ export default function Settings() {
                         <Text style={[{color: colors.ACCENT["1"]}]}>{t('theme.dark')}</Text>
                     </Radio>
                     <Radio value="tree" my="2" colorScheme="green" style={[]}>
-                        <Text style={[{color: colors.ACCENT["1"]}]}>{t('theme.dark')}</Text>
+                        <Text style={[{color: colors.ACCENT["1"]}]}>{t('theme.light')}</Text>
                     </Radio>
                 </Radio.Group>
             </View>

@@ -4,12 +4,20 @@ import {Radio} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHooks";
 import {setLanguages} from "../../../store/reducer/translation/translation";
 import {langs} from "../../../store/reducer/translation/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function Languages() {
-    const {lang} = useAppSelector(state=>state.translation)
+    const {lang} = useAppSelector(state => state.translation)
     const dispatch = useAppDispatch()
     const handleLanguageChange = (nextValue: string) => {
         dispatch(setLanguages(nextValue as langs));
+        (async () => {
+            try {
+                await AsyncStorage.setItem('lang', nextValue);
+            } catch (error) {
+                console.log('Error getting lang:', error);
+            }
+        })()
     }
     return <View style={[languagesStyle.container]}>
         <Radio.Group value={lang} name='languages' onChange={handleLanguageChange} aria-label='languages'>
