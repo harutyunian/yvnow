@@ -1,22 +1,10 @@
 import React, {useMemo, useState} from "react";
-import {Image, StyleSheet, Text, View, TouchableOpacity} from "react-native";
+import {Image, StyleSheet, View, TouchableOpacity} from "react-native";
 import ImageView from "react-native-image-viewing";
-import {useAppSelector} from "../../../hook/reduxHooks";
 import {IUser} from "../../../types/event.type";
-import {OpenInstagram} from "../../../components/OpenInstagram/OpenInstagram";
+import {wrapInstagramUsernameWithComponent} from "../../../components/OpenIntagram/OpenInstagram";
 interface IAboutProps {
     user: IUser
-}
-function wrapInstagramUsernameWithComponent(text: string) {
-    const colors = useAppSelector(state => state.theme)
-    const instagramRegex = /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([\w.-]+)\/?(?:\?[\w=&]*)?/g;
-    return text.split(instagramRegex).map((part, index) => {
-        if (index % 2 === 0) {
-            return <Text style={[{color: colors.ACCENT["1"], fontSize: 16, fontWeight: '400'}]}>{part}</Text>;
-        } else {
-            return <OpenInstagram profile={part} key={index}/>
-        }
-    });
 }
 
 export function About(props: IAboutProps) {

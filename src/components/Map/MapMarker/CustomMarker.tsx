@@ -62,12 +62,6 @@ export default function CustomMarker(props: ICustomMarkerProps) {
                     <Image source={{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
                 </>
             }
-            {/*{isBetweenDates(startDate, endDate) && <View style={customMapStyle.liveContainer}><Text style={customMapStyle.liveText}>Live</Text></View>}*/}
-            {/*<Image*/}
-            {/*    source={require("../../../../assets/icons/marker-96.png")}*/}
-            {/*    style={[customMapStyle.markerIcon]}*/}
-            {/*/>*/}
-            {/*<Image source={{uri: avatar}} style={[customMapStyle.partnerLogo]}/>*/}
             <Callout
                 tooltip
                 style={[customMapStyle.calloutContainer]}

@@ -8,7 +8,7 @@ import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
 import {
     compareArrayObjects,
-    isBetweenDates,
+    isBetweenDates, isDateGreaterThanEndOfDay, isIncludedToday,
     removeDuplicatesByValues,
     removeDuplicateUsers
 } from "../../helpers/helper";
@@ -100,8 +100,13 @@ export default function CustomMap() {
             })
         } else if (bottomFilter === FilterAction.upcoming) {
             eventLists =  topFilteredEvents.filter((event) => {
-                const {startDate, endDate} = event
-                return !isBetweenDates(startDate, endDate)
+                const {startDate} = event
+                return isDateGreaterThanEndOfDay(startDate)
+            })
+        }else if(bottomFilter === FilterAction.today){
+            eventLists =  topFilteredEvents.filter((event) => {
+                const {startDate} = event
+                return isIncludedToday(startDate)
             })
         }
         const filters = eventLists.reduce((acc, event) => {

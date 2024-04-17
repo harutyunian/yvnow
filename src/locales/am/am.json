@@ -1,5 +1,5 @@
 {
-  "live": "Live",
+  "live": "Լայվ",
   "upcoming": "Սպասվող",
   "partnerProfileButton": "Տես գործընկերոջ պրոֆիլը",
   "types": {
@@ -10,7 +10,7 @@
   },
   "profile": {
     "past": "Անցած",
-    "about": "Գործընկերոջ մասին"
+    "about": "Գործընկեր. մասին"
   },
   "tabs": {
     "today": "Այսօր",

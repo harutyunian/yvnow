@@ -53,6 +53,21 @@ export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: key
 }
 
 export function removeDuplicatesByValues<T extends Record<string, any>>(arr: T[], key: keyof T): T[] {
-    return  arr.filter((v, i, a) => a.findIndex(v2 => v2[key] === v[key]) === i);
+    return arr.filter((v, i, a) => a.findIndex(v2 => v2[key] === v[key]) === i);
 }
 
+export function isIncludedToday(date: string | Date): boolean {
+    const currentDate = new Date();
+    date = new Date(date)
+    const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59); // End of today
+
+    return date >= currentDate && date <= endOfDay;
+}
+
+export function isDateGreaterThanEndOfDay(date: Date | string): boolean {
+    const currentDate = new Date();
+    date = new Date(date)
+    const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59); // End of today
+
+    return date > endOfDay;
+}

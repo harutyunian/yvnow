@@ -14,11 +14,12 @@ interface IFilterActionsSheetProps {
 
 export enum FilterAction {
     all = "all",
+    today = "today",
     upcoming = 'upcoming',
     live = 'live'
 }
 
-export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all
+export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all | FilterAction.today
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const {setBottomFilter, setSubFilter} = props
@@ -46,6 +47,8 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const isAllActive = filterAction === FilterAction.all;
     const isLiveActive = filterAction === FilterAction.live;
     const isUpcomingActive = filterAction === FilterAction.upcoming;
+    const isTodayActive = filterAction === FilterAction.today;
+
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
@@ -57,6 +60,14 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isAllActive ? btn_active : btn_inactive,
+                }]}
+            />
+            <ButtonStyled
+                text={t('tabs.today')}
+                onPress={() => handleFilterChange(FilterAction.today)}
+                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
+                style={[filterActionsSheetStyle.button, {
+                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
                 }]}
             />
             <ButtonStyled

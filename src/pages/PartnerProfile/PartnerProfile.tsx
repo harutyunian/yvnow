@@ -114,7 +114,9 @@ export default function PartnerProfile() {
                     text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        // width: 104,
+                        flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isEventActive ? btn_active : btn_inactive,
                     }}
@@ -124,7 +126,9 @@ export default function PartnerProfile() {
                     text={t('profile.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
                     style={{
-                        width: 104,
+                        // width: 104,
+                        flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isPastActive ? btn_active : btn_inactive,
                     }}
@@ -135,6 +139,7 @@ export default function PartnerProfile() {
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
                     style={{
                         flex: 1,
+                        paddingHorizontal: 10,
                         height: 50,
                         backgroundColor: isAboutActive ? btn_active : btn_inactive,
                     }}
@@ -165,11 +170,12 @@ const partnerProfileStyle = StyleSheet.create({
         paddingRight: 20,
     },
     buttons: {
+        gap: 10,
         paddingTop: 20,
         paddingBottom: 10,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
+        // justifyContent: "space-evenly",
     },
     avatar: {
         width: 100,

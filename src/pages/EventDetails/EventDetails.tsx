@@ -11,6 +11,7 @@ import {setUser} from "../../store/reducer/user/user";
 import {useTranslatedRoutes} from "../../hook/translatedRoutes";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "../../hook/translationHook";
+import {wrapInstagramUsernameWithComponent} from "../../components/OpenIntagram/OpenInstagram";
 
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
@@ -71,10 +72,13 @@ export default function EventDetails() {
                                 {title}
                             </Text>
                             <Text style={[eventDetailsStyle.description, {color: text_color}]}>
-                                {description}
+                                {wrapInstagramUsernameWithComponent(description)}
                             </Text>
                         </View>
                     </View>
+                    <TouchableOpacity style={[eventDetailsStyle.badgeWrapper, ]} onPress={handleSeePartnerProfile}>
+                        <Text style={[eventDetailsStyle.seeProfile,{color: colors.ACCENT["1"]}]}>{t('partnerProfileButton')}</Text>
+                    </TouchableOpacity>
                     {filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
                         {filters.map((filter) => {
                             return <Badge
@@ -85,9 +89,6 @@ export default function EventDetails() {
                             >{filter[lang]}</Badge>
                         })}
                     </View>}
-                    <TouchableOpacity style={[eventDetailsStyle.badgeWrapper, ]} onPress={handleSeePartnerProfile}>
-                        <Text style={[eventDetailsStyle.seeProfile]}>{t('partnerProfileButton')}</Text>
-                    </TouchableOpacity>
                     <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
                         <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address
                             - {address}</Text>
@@ -101,6 +102,8 @@ export default function EventDetails() {
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}
+                        showsMyLocationButton
+                        showsUserLocation={true}
                         style={[eventDetailsStyle.map]}
                         provider={PROVIDER_GOOGLE}
                         customMapStyle={customMapStyleConfigs}
