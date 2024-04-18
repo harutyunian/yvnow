@@ -189,7 +189,7 @@ export default function CustomMap() {
                     origin={userLocation}
                     destination={destination}
                     lineCap='butt'
-                    apikey="AIzaSyDdKBO9i_C_7Q3hlOr5eEwz3ohklp7gbqg"
+                    apikey="AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
                     strokeWidth={8}
                     strokeColor="#1b73e8"
                 />}
