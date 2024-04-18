@@ -4,7 +4,7 @@ export function useTranslatedRoutes() {
     const {t} = useTranslation()
     return {
         today: {
-            name: t('tabs.today'),
+            name: t('types.event'),
             key: "today"
         },
         home: {name: 'Home', key: "home"},
