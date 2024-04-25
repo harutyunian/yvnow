@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
+          "apiKey": "API KEY"
         }
       }
     },
@@ -34,7 +34,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
+          "apiKey": "API KEY"
         }
       },
       "package": "com.harutyunian.yvnow"

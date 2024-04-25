@@ -46,8 +46,8 @@ export default function EventCart(props: IIEventCartProps) {
                     <View style={{...style.top}}>
                         <View style={{...style.date}}>
                             <Text style={{...style.dateText}}>
-                                {dayjs(startDate).format("DD MMM YYYY HH:MM - ")}
-                                {dayjs(endDate).format("HH:MM")}
+                                {dayjs(startDate).format("DD MMM YYYY HH:mm - ")}
+                                {dayjs(endDate).format("HH:mm")}
                             </Text>
                         </View>
                         {isBetweenDates(startDate, endDate) && (

@@ -63,19 +63,19 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 }]}
             />
             <ButtonStyled
-                text={t('tabs.today')}
-                onPress={() => handleFilterChange(FilterAction.today)}
-                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
-                }]}
-            />
-            <ButtonStyled
                 text={t('live')}
                 onPress={() => handleFilterChange(FilterAction.live)}
                 textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isLiveActive ? btn_active : btn_inactive,
+                }]}
+            />
+            <ButtonStyled
+                text={t('tabs.today')}
+                onPress={() => handleFilterChange(FilterAction.today)}
+                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
+                style={[filterActionsSheetStyle.button, {
+                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
                 }]}
             />
             <ButtonStyled
