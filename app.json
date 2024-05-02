@@ -4,24 +4,20 @@
     "slug": "yvnow",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo_yvnow.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash_v2.jpeg",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "package": "com.yvnow.event",
-      "versionCode": 1,
       "supportsTablet": true,
       "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
-        }
+        "googleMapsApiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
       }
     },
     "android": {

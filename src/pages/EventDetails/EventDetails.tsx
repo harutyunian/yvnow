@@ -42,7 +42,7 @@ export default function EventDetails() {
         })()
     }, []);
 
-    const handleSeePartnerProfile = () =>{
+    const handleSeePartnerProfile = () => {
         dispatch(setUser(eventDetails.user));
         navigate.navigate(routes.partnerProfile.key as never);
     }
@@ -76,8 +76,11 @@ export default function EventDetails() {
                             </Text>
                         </View>
                     </View>
-                    <TouchableOpacity style={[eventDetailsStyle.badgeWrapper, ]} onPress={handleSeePartnerProfile}>
-                        <Text style={[eventDetailsStyle.seeProfile,{color: colors.ACCENT["1"]}]}>{t('partnerProfileButton')}</Text>
+                    <TouchableOpacity onPress={handleSeePartnerProfile}>
+                        <View style={[eventDetailsStyle.profile]}>
+                            <Text
+                                style={[eventDetailsStyle.seeProfile, {color: colors.ACCENT["1"]}]}>{t('partnerProfileButton')}</Text>
+                        </View>
                     </TouchableOpacity>
                     {filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
                         {filters.map((filter) => {
@@ -116,8 +119,9 @@ export default function EventDetails() {
     );
 }
 const eventDetailsStyle = StyleSheet.create({
-    seeProfile:{
-        fontWeight: '700'
+    seeProfile: {
+        fontWeight: '700',
+        flex: 1,
     },
     infoWrapper: {
         display: 'flex',
@@ -127,6 +131,19 @@ const eventDetailsStyle = StyleSheet.create({
     image: {
         width: "100%",
         height: 340,
+    },
+    profile: {
+        // display: "flex",
+        borderRadius: 4,
+        width: 200,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        columnGap: 5,
+        left: 20,
+        paddingHorizontal: 20,
+        backgroundColor: 'rgba(28,139,219,0.47)',
+        flexDirection: 'row',
     },
     badgeWrapper: {
         display: "flex",
@@ -167,7 +184,7 @@ const eventDetailsStyle = StyleSheet.create({
     },
     eventTitle: {
         fontSize: 20,
-        fontWeight: "700",
+        fontWeight: "900",
         color: "rgb(51, 51, 51)",
     },
     description: {

@@ -205,23 +205,22 @@ export default function TodayEvents() {
                 <ButtonStyled
                     text={t('types.all')}
                     onPress={() => handleChangeEventTabs(TodayButtons.all)}
-                    textColor={isAllActive ? "white" : colors.ACCENT["1"]}
+                    textColor={isAllActive ? "#fff" : colors.ACCENT["1"]}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isAllActive ? btn_active : btn_inactive,
                     }]}
                 />
                 <ButtonStyled
                     text={t('types.event')}
-                    textColor={isEventActive ? "white" : colors.ACCENT["1"]}
+                    textColor={isEventActive ? "#fff" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.event)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isEventActive ? btn_active : btn_inactive,
-                        flex: 1
                     }]}
                 />
                 <ButtonStyled
                     text={t('types.show')}
-                    textColor={isShowActive ? "white" : colors.ACCENT["1"]}
+                    textColor={isShowActive ? "#fff" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.show)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isShowActive ? btn_active : btn_inactive,
@@ -229,7 +228,7 @@ export default function TodayEvents() {
                 />
                 <ButtonStyled
                     text={t('types.concert')}
-                    textColor={isConcertActive ? "white" : colors.ACCENT["1"]}
+                    textColor={isConcertActive ? "#fff" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.concert)}
                     style={[todayEventsStyle.button, {
                         backgroundColor: isConcertActive ? btn_active : btn_inactive,
@@ -277,7 +276,6 @@ const todayEventsStyle = StyleSheet.create({
     },
     scrollViewContent: {
         flex: 1,
-        // paddingBottom: 400
     },
     button: {
         backgroundColor: 'green',
@@ -285,6 +283,7 @@ const todayEventsStyle = StyleSheet.create({
         height: 40,
     },
     buttonWrapper: {
+        width: "100%",
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-evenly',

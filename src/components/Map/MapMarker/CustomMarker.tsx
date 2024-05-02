@@ -8,17 +8,13 @@ import {IEventCart} from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {isBetweenDates} from "../../../helpers/helper";
-import {locationType} from "../CustomMap";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
-
-type DestinationSetter = React.Dispatch<React.SetStateAction<locationType>>;
-
 interface ICustomMarkerProps extends IEventCart {
-    setDestination: DestinationSetter
+
 }
 
 export default function CustomMarker(props: ICustomMarkerProps) {
-    const {user, startDate, endDate, setDestination} = props;
+    const {user, startDate, endDate} = props;
 
     const {
         location: {lat: latitude, lng: longitude},
@@ -34,16 +30,10 @@ export default function CustomMarker(props: ICustomMarkerProps) {
     };
 
 
-    const handlePressMarker = () => {
-        const destination = {
-            latitude: +latitude,
-            longitude: +longitude
-        }
-        setDestination(destination)
-    }
+
 
     return (
-        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} onPress={handlePressMarker}>
+        <Marker coordinate={{latitude: +latitude, longitude: +longitude}}>
             {isBetweenDates(startDate, endDate) ?
                 <>
                     <View style={customMapStyle.liveContainer}><Text style={customMapStyle.liveText}>Live</Text></View>
