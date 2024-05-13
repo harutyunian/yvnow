@@ -19,7 +19,7 @@
     "settings": "Settings"
   },
   "theme": {
-    "theme": "Theme",
+    "theme": "Mode",
     "dynamic": "Dynamic",
     "dark": "Dark",
     "light": "Light"

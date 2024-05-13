@@ -78,6 +78,7 @@ const settingsStyle = StyleSheet.create({
         padding: 10,
     },
     themeModeContainer: {
+        top: 70,
         padding: 10,
         borderStyle: "solid",
         borderColor: "grey",

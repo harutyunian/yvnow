@@ -53,63 +53,87 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const btn_active = colors.PRIMARY.MAIN;
 
     return <>
-        <View style={[filterActionsSheetStyle.filterContainer]}>
-            <ButtonStyled
-                text={t('types.all')}
-                onPress={() => handleFilterChange(FilterAction.all)}
-                textColor={isAllActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isAllActive ? btn_active : btn_inactive,
-                }]}
-            />
-            <ButtonStyled
-                text={t('tabs.today')}
-                onPress={() => handleFilterChange(FilterAction.today)}
-                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
-                }]}
-            />
-            <ButtonStyled
-                text={t('live')}
-                onPress={() => handleFilterChange(FilterAction.live)}
-                textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isLiveActive ? btn_active : btn_inactive,
-                }]}
-            />
-            <ButtonStyled
-                text={t('upcoming')}
-                onPress={() => handleFilterChange(FilterAction.upcoming)}
-                textColor={isUpcomingActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isUpcomingActive ? btn_active : btn_inactive,
-                }]}
-            />
+        <View style={ filterActionsSheetStyle.scrollBlur}>
+            <View style={[filterActionsSheetStyle.filterContainer]}>
+                <ButtonStyled
+                    text={t('types.all')}
+                    onPress={() => handleFilterChange(FilterAction.all)}
+                    textColor={isAllActive ? "white" : colors.ACCENT["1"]}
+                    style={[filterActionsSheetStyle.button, {
+                        backgroundColor: isAllActive ? btn_active : btn_inactive,
+                    }]}
+                />
+                <ButtonStyled
+                    text={t('live')}
+                    onPress={() => handleFilterChange(FilterAction.live)}
+                    textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
+                    style={[filterActionsSheetStyle.button, {
+                        backgroundColor: isLiveActive ? btn_active : btn_inactive,
+                    }]}
+                />
+                <ButtonStyled
+                    text={t('tabs.today')}
+                    onPress={() => handleFilterChange(FilterAction.today)}
+                    textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
+                    style={[filterActionsSheetStyle.button, {
+                        backgroundColor: isTodayActive ? btn_active : btn_inactive,
+                    }]}
+                />
+                <ButtonStyled
+                    text={t('upcoming')}
+                    onPress={() => handleFilterChange(FilterAction.upcoming)}
+                    textColor={isUpcomingActive ? "white" : colors.ACCENT["1"]}
+                    style={[filterActionsSheetStyle.button, {
+                        backgroundColor: isUpcomingActive ? btn_active : btn_inactive,
+                    }]}
+                />
+            </View>
+            <ScrollView
+                style={[filterActionsSheetStyle.scroll]}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+            >
+                {filters.map((filter) => <FilterTag
+                    onPress={handlePress}
+                    filter={filter}
+                    text={filter[lang]}
+                    key={filter.id}/>)}
+            </ScrollView>
         </View>
-        <ScrollView
-            style={[filterActionsSheetStyle.scroll]}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-        >{filters.map((filter) => <FilterTag
-            onPress={handlePress}
-            filter={filter}
-            text={filter[lang]}
-            key={filter.id}/>)}
-        </ScrollView>
     </>
 }
 
 const filterActionsSheetStyle = StyleSheet.create({
+    scrollBlur: {
+        height: 100,
+        ...StyleSheet.absoluteFillObject,
+        top: '80%'
+    },
+    mapFilter:{
+        height: 100,
+        ...StyleSheet.absoluteFillObject,
+        top: '80%',
+        // position: 'absolute',
+        // zIndex: 50,
+    },
     scroll: {
-        height: 50
+        position: 'absolute',
+        zIndex: 50,
+        bottom: -10,
+        height: 50,
+        left: 10,
     },
     filterContainer: {
+        position: 'absolute',
+        zIndex: 50,
+        bottom: 50,
+        top:10,
         paddingBottom: 10,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        backgroundColor: 'transparent'
     },
     button: {
         width: 90,
