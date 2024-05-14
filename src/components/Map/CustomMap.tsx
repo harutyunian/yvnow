@@ -151,9 +151,9 @@ export default function CustomMap() {
             <MapView
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
-                showsMyLocationButton
-                showsUserLocation={true}
-                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
+                // showsMyLocationButton
+                // showsUserLocation={true}
+                mapPadding={{top: 20, right: 20, bottom: 150, left: 20}}
                 followsUserLocation={true}
                 initialRegion={{
                     latitude: coordinates.lat,
