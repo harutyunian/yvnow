@@ -15,9 +15,10 @@ function useOptions() {
     const {ACCENT} = colors;
     const accent_1 = ACCENT["1"];
     const accent_5 = ACCENT["5"];
+    const accent_6 = ACCENT["6"];
     return {
         headerStyle: {
-            backgroundColor: accent_5,
+            backgroundColor: accent_6,
         },
         // header title working find but maybe included on typescript types
         // So I will put ts-ignores
@@ -40,8 +41,10 @@ export function TodayEventStackScreen() {
             })}
         >
             <Stack.Screen name={routes.today.key} options={{title: routes.today.name}} component={TodayEvents}/>
-            <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}} component={EventDetails}/>
-            <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}} component={PartnerProfile}/>
+            <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}}
+                          component={EventDetails}/>
+            <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}}
+                          component={PartnerProfile}/>
         </Stack.Navigator>
     );
 }
@@ -55,8 +58,10 @@ export function MapStackScreen() {
             screenOptions={() => ({...screenOptionsSettings})}
         >
             <Stack.Screen name={routes.map.key} options={{title: routes.map.name}} component={CustomMap}/>
-            <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}} component={PartnerProfile}/>
-            <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}} component={EventDetails}/>
+            <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}}
+                          component={PartnerProfile}/>
+            <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}}
+                          component={EventDetails}/>
         </Stack.Navigator>
     );
 }

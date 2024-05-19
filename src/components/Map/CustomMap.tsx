@@ -151,6 +151,7 @@ export default function CustomMap() {
             <MapView
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
+                zoomEnabled
                 // showsMyLocationButton
                 // showsUserLocation={true}
                 mapPadding={{top: 20, right: 20, bottom: 150, left: 20}}

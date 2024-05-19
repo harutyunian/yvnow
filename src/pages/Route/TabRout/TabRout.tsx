@@ -21,6 +21,7 @@ export default function TabRoute() {
     const {ICON: iconColor, ACCENT, PRIMARY} = colors;
     const accent_1 = ACCENT["1"];
     const accent_5 = ACCENT["5"];
+    const accent_6 = ACCENT["6"];
 
 
     const MyTheme = {
@@ -31,7 +32,7 @@ export default function TabRoute() {
         },
     }
 
-    return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
+    return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_6}]}><NavigationContainer
         theme={MyTheme}>
         <Tab.Navigator
             screenOptions={({route}) => {

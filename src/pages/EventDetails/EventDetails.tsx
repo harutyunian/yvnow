@@ -22,6 +22,7 @@ export default function EventDetails() {
     const navigate = useNavigation();
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT['1']
+    const accent_6 = colors.ACCENT['6']
     const {id, imageUrls, title, description, filters, user: {location: {lat, lng}, address}} = eventDetails
 
     const sliderSettings = {
@@ -53,9 +54,8 @@ export default function EventDetails() {
                 <View style={[eventDetailsStyle.sliderContainer]}>
                     <Swiper {...sliderSettings}>
                         {imageUrls.map((uri) => (
-                            <View>
+                            <View key={uri}>
                                 <Image
-                                    key={uri}
                                     style={eventDetailsStyle.image}
                                     source={{uri}}
                                     onError={(err) => console.log(err.nativeEvent.error)}
@@ -65,36 +65,40 @@ export default function EventDetails() {
                     </Swiper>
                 </View>
                 <CustomerInfoCard/>
-                <View style={[eventDetailsStyle.infoWrapper]}>
-                    <View style={[eventDetailsStyle.descriptionContainer]}>
-                        <View style={[eventDetailsStyle.content]}>
-                            <Text style={[eventDetailsStyle.eventTitle, {color: text_color}]}>
-                                {title}
-                            </Text>
-                            <Text style={[eventDetailsStyle.description, {color: text_color}]}>
-                                {wrapInstagramUsernameWithComponent(description)}
-                            </Text>
+                <View style={{paddingHorizontal: 15}}>
+                    <View style={[eventDetailsStyle.infoWrapper, {backgroundColor: 'transparent'}]}>
+                        <View style={[eventDetailsStyle.descriptionContainer]}>
+                            <View style={[eventDetailsStyle.content]}>
+                                <Text style={[eventDetailsStyle.eventTitle, {color: text_color}]}>
+                                    {title}
+                                </Text>
+                                <Text style={[eventDetailsStyle.description, {color: text_color}]}>
+                                    {wrapInstagramUsernameWithComponent(description)}
+                                </Text>
+                            </View>
                         </View>
-                    </View>
-                    <TouchableOpacity onPress={handleSeePartnerProfile}>
-                        <View style={[eventDetailsStyle.profile]}>
-                            <Text
-                                style={[eventDetailsStyle.seeProfile, {color: colors.ACCENT["1"]}]}>{t('partnerProfileButton')}</Text>
+                        <View style={[eventDetailsStyle.details]}>
+                            <TouchableOpacity onPress={handleSeePartnerProfile}>
+                                <Text style={[eventDetailsStyle.profile]}>
+                                    <Text
+                                        style={[eventDetailsStyle.seeProfile, {color: '#2d88ff',}]}>See profile +</Text>
+                                </Text>
+                            </TouchableOpacity>
+                            {filters && filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
+                                {filters.map((filter) => {
+                                    return <Badge
+                                        style={[eventDetailsStyle.badge]}
+                                        colorScheme={"info"}
+                                        variant='subtle'
+                                        key={filter.id}
+                                    >{filter[lang]}</Badge>
+                                })}
+                            </View>}
+                            <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
+                                <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address
+                                    - {address}</Text>
+                            </View>
                         </View>
-                    </TouchableOpacity>
-                    {filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
-                        {filters.map((filter) => {
-                            return <Badge
-                                style={[eventDetailsStyle.badge]}
-                                colorScheme={"info"}
-                                variant='subtle'
-                                key={filter.id}
-                            >{filter[lang]}</Badge>
-                        })}
-                    </View>}
-                    <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
-                        <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address
-                            - {address}</Text>
                     </View>
                 </View>
                 <View style={[eventDetailsStyle.mapConatiner]}>
@@ -123,26 +127,30 @@ const eventDetailsStyle = StyleSheet.create({
         fontWeight: '700',
         flex: 1,
     },
+    details:{
+        left: -20,
+        rowGap: 10,
+    },
     infoWrapper: {
         display: 'flex',
         flexDirection: 'column',
-        rowGap: 25
+        rowGap: 25,
+        borderRadius: 20,
+        padding: 5,
     },
     image: {
         width: "100%",
         height: 340,
     },
     profile: {
-        // display: "flex",
-        borderRadius: 4,
-        width: 200,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        columnGap: 5,
+        borderRadius: 8,
+        alignSelf: 'flex-start',
         left: 20,
-        paddingHorizontal: 20,
-        backgroundColor: 'rgba(28,139,219,0.47)',
+        padding: 5,
+        top: -8,
+        backgroundColor: 'transparent',
+        borderColor: '#2d88ff',
+        borderWidth: 2,
         flexDirection: 'row',
     },
     badgeWrapper: {
@@ -178,6 +186,11 @@ const eventDetailsStyle = StyleSheet.create({
     descriptionContainer: {
         display: "flex",
         alignItems: "center",
+        borderStyle: "solid",
+        borderColor: "grey",
+        borderWidth: 2,
+        paddingVertical: 20,
+        borderRadius: 20,
     },
     content: {
         width: "90%",

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yvnow",
     "slug": "Yvnow",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/logo_yvnow.png",
     "userInterfaceStyle": "light",
@@ -16,28 +16,29 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show you relevant data.",
+        "NSLocationAlwaysUsageDescription": "We need your location to show you relevant data.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to show you relevant data."
+      },
       "config": {
-        "googleMapsApiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
+        "googleMapsApiKey": "AIzaSyB6vCdaOT5v34dEmaXJZrCBuA5oo0tcL_U"
       },
       "bundleIdentifier": "com.yvnow.event"
     },
     "android": {
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
         "INTERNET",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
       ],
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
+          "apiKey": "AIzaSyAsWhPWiIZGBiExSlWcd4hPAQ94mF7zOsE"
         }
       },
-      "package": "com.yvnow.event"
+      "package": "com.yvnow"
     },
     "web": {
       "favicon": "./assets/favicon.png"

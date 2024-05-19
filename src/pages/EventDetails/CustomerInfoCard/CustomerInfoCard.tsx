@@ -56,12 +56,12 @@ const customerInfoCardStyle = StyleSheet.create({
         height: 80,
         borderRadius: 15,
         paddingTop: 11,
-        paddingRight: 15,
+        paddingRight: 8,
         paddingBottom: 10,
-        paddingLeft: 20,
+        paddingLeft: 13,
         display: "flex",
         flexDirection: 'row',
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: 'center'
     },
     iconSizes: {
@@ -69,7 +69,8 @@ const customerInfoCardStyle = StyleSheet.create({
         height: 45
     },
     dateWrapper:{
-
+        top: 7,
+        right: 6
     },
     date:{
         fontWeight: '500',
