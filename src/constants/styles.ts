@@ -17,8 +17,7 @@ export const styles = {
     },
     LIGHT:{
         PRIMARY:{
-            MAIN: '#871F78',
-
+            MAIN: '#1CAE81',
             SECOND: '#FFA26B'
         },
         ICON: '#000',

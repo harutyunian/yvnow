@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {View, StyleSheet, Text} from "react-native";
+import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
@@ -11,12 +12,12 @@ import {
     removeDuplicatesByValues,
     removeDuplicateUsers
 } from "../../helpers/helper";
+import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useTranslation} from "../../hook/translationHook";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
-import {DARK} from "../../store/reducer/types";
 
 
 enum MapSwitchButtons {
@@ -43,7 +44,6 @@ export default function CustomMap() {
     const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
 
     const colors = useAppSelector(state => state.theme)
-
     const dispatch = useAppDispatch()
 
     const {t} = useTranslation()
@@ -72,17 +72,17 @@ export default function CustomMap() {
     const bottomFilteredEvents = useMemo(() => {
         let eventLists = topFilteredEvents
         if (bottomFilter === FilterAction.live) {
-            eventLists = topFilteredEvents.filter((event) => {
+            eventLists =  topFilteredEvents.filter((event) => {
                 const {startDate, endDate} = event
                 return isBetweenDates(startDate, endDate)
             })
         } else if (bottomFilter === FilterAction.upcoming) {
-            eventLists = topFilteredEvents.filter((event) => {
+            eventLists =  topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isDateGreaterThanEndOfDay(startDate)
             })
-        } else if (bottomFilter === FilterAction.today) {
-            eventLists = topFilteredEvents.filter((event) => {
+        }else if(bottomFilter === FilterAction.today){
+            eventLists =  topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isIncludedToday(startDate)
             })
@@ -99,15 +99,15 @@ export default function CustomMap() {
     }, [topFilteredEvents, bottomFilter])
 
     const subFilteredEvents = useMemo(() => {
-        if (subFilter.length) {
-            return bottomFilteredEvents.filter(({filters}) => {
-                return compareArrayObjects(filters, subFilter, "id")
+        if(subFilter.length){
+            return bottomFilteredEvents.filter(({filters})=>{
+                return   compareArrayObjects(filters, subFilter, "id")
             })
         }
         return removeDuplicateUsers(bottomFilteredEvents)
     }, [bottomFilteredEvents, subFilter])
 
-    const handlePressMapTabs = (type: ActiveTabType) => setTopFilter(type)
+    const handlePressMapTabs = (type: ActiveTabType) =>  setTopFilter(type)
 
     const isAllActive = topFilter === MapSwitchButtons.all
     const isEventActive = topFilter === MapSwitchButtons.events
@@ -151,10 +151,9 @@ export default function CustomMap() {
             <MapView
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
-                zoomEnabled
-                // showsMyLocationButton
-                // showsUserLocation={true}
-                mapPadding={{top: 20, right: 20, bottom: 150, left: 20}}
+                showsMyLocationButton
+                showsUserLocation={true}
+                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 followsUserLocation={true}
                 initialRegion={{
                     latitude: coordinates.lat,
@@ -162,22 +161,33 @@ export default function CustomMap() {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-                customMapStyle={colors.mode === DARK ? customMapStyleConfigs : []}
+                customMapStyle={customMapStyleConfigs}
             >
                 {subFilteredEvents.map((event) => {
                     return <CustomMarker key={event.id} {...event}/>;
                 })}
             </MapView>
-            <FilterActionsSheet
-                {...{setBottomFilter, setSubFilter}}
-            />
+            <View style={[mapStyle.filterContainer]}>
+                <FilterActionsSheet
+                    {...{setBottomFilter,setSubFilter}}
+                />
+            </View>
         </View>
     );
 }
 
 const mapStyle = StyleSheet.create({
     wrapper: {
+        backgroundColor: 'yellow',
         width: "80%"
+    },
+    filterContainer: {
+        display: 'flex',
+        alignItems: "flex-start",
+        zIndex: 1,
+        position: 'absolute',
+        width: '100%',
+        bottom: 0,
     },
     container: {
         ...StyleSheet.absoluteFillObject,
@@ -201,7 +211,7 @@ const mapStyle = StyleSheet.create({
     tabsContainer: {
         position: 'absolute', // Position the buttons absolutely
         zIndex: 1, // Increase zIndex to bring it to the front
-        paddingTop: 8,
+        paddingTop: 25,
         width: '100%',
         display: "flex",
         flexDirection: 'row',
