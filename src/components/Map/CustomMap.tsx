@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {View, StyleSheet, Text} from "react-native";
-import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {customMapStyleConfigs} from "./customMapStyle";
@@ -12,7 +11,6 @@ import {
     removeDuplicatesByValues,
     removeDuplicateUsers
 } from "../../helpers/helper";
-import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
