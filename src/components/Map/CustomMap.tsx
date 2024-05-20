@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {View, StyleSheet, Text} from "react-native";
-import * as Location from 'expo-location';
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
-import {customMapStyleConfigs} from "./customMapStyle";
+import {aubergine} from "./mapStyles/aubergine";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
 import {
@@ -12,7 +11,6 @@ import {
     removeDuplicatesByValues,
     removeDuplicateUsers
 } from "../../helpers/helper";
-import MapViewDirections from "react-native-maps-directions";
 import {Button} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
@@ -161,7 +159,7 @@ export default function CustomMap() {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-                customMapStyle={customMapStyleConfigs}
+                customMapStyle={aubergine}
             >
                 {subFilteredEvents.map((event) => {
                     return <CustomMarker key={event.id} {...event}/>;
