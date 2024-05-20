@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
-import {Text, View, Image, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
+import {Text, View, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import Swiper from "react-native-swiper";
+import { Image } from 'expo-image';
 import MapView, {Marker, PROVIDER_GOOGLE} from "react-native-maps";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
@@ -22,7 +23,6 @@ export default function EventDetails() {
     const navigate = useNavigation();
     const colors = useAppSelector(state => state.theme)
     const text_color = colors.ACCENT['1']
-    const accent_6 = colors.ACCENT['6']
     const {id, imageUrls, title, description, filters, user: {location: {lat, lng}, address}} = eventDetails
 
     const sliderSettings = {
@@ -57,8 +57,7 @@ export default function EventDetails() {
                             <View key={uri}>
                                 <Image
                                     style={eventDetailsStyle.image}
-                                    source={{uri}}
-                                    onError={(err) => console.log(err.nativeEvent.error)}
+                                    source={{ uri}}
                                 />
                             </View>
                         ))}
