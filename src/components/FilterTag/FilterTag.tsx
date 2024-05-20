@@ -27,7 +27,7 @@ export function FilterTag(props: IFilterTagProps) {
         <Badge style={[filterTagStyle.container]}
                _text={{color: pressed ? '#16a34a' : '#0284c7', fontWeight: '900'}}
                colorScheme={pressed ? "success" : "info"}
-               variant='subtle'
+               variant="subtle"
                rightIcon={icon}>
             {text}
         </Badge>

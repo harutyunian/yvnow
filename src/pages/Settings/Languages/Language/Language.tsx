@@ -20,7 +20,7 @@ export function Language(props: ILanguageProps) {
     }
     return <TouchableOpacity onPress={onLangPress} style={[languageStyle.container, {backgroundColor: bg}]}>
         <View style={languageStyle.wrapper}>
-            <Image style={[languageStyle.flag]} source={flagPath}/>
+            <Image style={[languageStyle.flag]} source={flagPath} resizeMode='cover'/>
             <Text style={[{color: tc}, languageStyle.text]}>{lang}</Text>
         </View>
         <Radio value={radioValue} aria-label={lang}/>
@@ -43,7 +43,7 @@ const languageStyle = StyleSheet.create({
         fontWeight: '500'
     },
     flag: {
-        width: 24,
+        width: 30,
         height: 24,
         borderRadius: 24
     },

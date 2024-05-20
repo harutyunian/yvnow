@@ -215,8 +215,7 @@ export default function TodayEvents() {
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.event)}
                     style={[todayEventsStyle.button, {
-                        backgroundColor: isEventActive ? btn_active : btn_inactive,
-                        flex: 1
+                        backgroundColor: isEventActive ? btn_active : btn_inactive
                     }]}
                 />
                 <ButtonStyled
@@ -286,6 +285,7 @@ const todayEventsStyle = StyleSheet.create({
     },
     buttonWrapper: {
         display: 'flex',
+        width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         padding: 10,

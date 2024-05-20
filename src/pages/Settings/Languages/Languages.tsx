@@ -1,4 +1,4 @@
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {Language} from "./Language/Language";
 import {Radio} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHooks";
@@ -8,6 +8,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function Languages() {
     const {lang} = useAppSelector(state => state.translation)
+    const colors = useAppSelector(state => state.theme)
+    // const bg = colors.ACCENT['6']
+    const tc = colors.ACCENT['1']
+
     const dispatch = useAppDispatch()
     const handleLanguageChange = (nextValue: string) => {
         dispatch(setLanguages(nextValue as langs));
@@ -20,6 +24,7 @@ export function Languages() {
         })()
     }
     return <View style={[languagesStyle.container]}>
+        <Text style={[languagesStyle.lang, {color: tc}]}>Languages</Text>
         <Radio.Group value={lang} name='languages' onChange={handleLanguageChange} aria-label='languages'>
             <Language
                 handleLanguageChange={handleLanguageChange}
@@ -45,6 +50,13 @@ export function Languages() {
 
 const languagesStyle = StyleSheet.create({
     container: {
+        display: "flex",
+        alignItems: 'center',
+        top:25,
         paddingHorizontal: 10
+    },
+    lang:{
+        fontSize: 16,
+        fontWeight: '700'
     }
 })

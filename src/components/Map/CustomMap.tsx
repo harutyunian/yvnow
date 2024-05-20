@@ -37,8 +37,6 @@ export type locationType = { latitude: number; longitude: number } | null
 export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
-    const [userLocation, setUserLocation] = useState<locationType>(null);
-    const [destination, setDestination] = useState<locationType>(null);
 
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [topFilter, setTopFilter] = useState<ActiveTabType>(MapSwitchButtons.all) // Top part filters state
@@ -52,26 +50,6 @@ export default function CustomMap() {
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
-
-    useEffect(() => {
-        // Fetch user's location
-        (async () => {
-            try {
-                const {status} = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    throw new Error('Permission to access location was denied');
-                }
-                const location = await Location.getCurrentPositionAsync({});
-                setUserLocation({
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                });
-            } catch (error) {
-                console.error("Error getting user's location:", error);
-            }
-        })()
-
-    }, []);
 
     useEffect(() => {
         (async function () {
@@ -185,22 +163,14 @@ export default function CustomMap() {
                 }}
                 customMapStyle={customMapStyleConfigs}
             >
-                {userLocation && destination && <MapViewDirections
-                    origin={userLocation}
-                    destination={destination}
-                    lineCap='butt'
-                    apikey="AIzaSyBeRfrXKa3XAB8UEUIuTipW97KYb_qYkxE"
-                    strokeWidth={8}
-                    strokeColor="#1b73e8"
-                />}
                 {subFilteredEvents.map((event) => {
-                    return <CustomMarker key={event.id} {...event} {...{setDestination}}/>;
+                    return <CustomMarker key={event.id} {...event}/>;
                 })}
             </MapView>
             <View style={[mapStyle.filterContainer]}>
-                    <FilterActionsSheet
-                        {...{setBottomFilter,setSubFilter}}
-                    />
+                <FilterActionsSheet
+                    {...{setBottomFilter,setSubFilter}}
+                />
             </View>
         </View>
     );

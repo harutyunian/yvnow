@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, TouchableOpacity, View, Text} from "react-native";
+import {StyleSheet, TouchableOpacity, View, Text, Dimensions} from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 import {useNavigation} from "@react-navigation/native";
 import dayjs from "dayjs";
@@ -27,14 +27,17 @@ export default function EventCart(props: IIEventCartProps) {
         navigate.navigate(routes.eventDetails.key as never);
         dispatch(setEventDetails(event));
     };
+    const screenWidth = Dimensions.get('window').width;
+    const width = screenWidth - (screenWidth * 0.1)
+    const height = screenWidth / 2
 
     return (<TouchableOpacity
-            style={{...style.container}}
+            style={[style.container, {width, height}]}
             onPress={handlePressEvent}
         >
             {imageUrls && imageUrls.length && <ImageSlider {...{imageUrls}} />}
             <LinearGradient
-                style={{...style.gradient}}
+                style={[style.gradient, {width, height}]}
                 colors={[
                     "rgba(0, 0, 0, 0)",
                     "rgba(0, 0, 0, 0)",
@@ -45,9 +48,13 @@ export default function EventCart(props: IIEventCartProps) {
                 <View style={{...style.cartInfoContainer}}>
                     <View style={{...style.top}}>
                         <View style={{...style.date}}>
+
                             <Text style={{...style.dateText}}>
-                                {dayjs(startDate).format("DD MMM YYYY HH:MM - ")}
-                                {dayjs(endDate).format("HH:MM")}
+                                {dayjs(startDate).format("DD MMM YYYY")}
+                            </Text>
+                            <Text  style={{...style.dateText}}>
+                                {dayjs(startDate).format("HH:mm - ")}
+                                {dayjs(endDate).format("HH:mm")}
                             </Text>
                         </View>
                         {isBetweenDates(startDate, endDate) && (
@@ -71,8 +78,8 @@ export default function EventCart(props: IIEventCartProps) {
 }
 
 const main = {
-    width: 335,
-    height: 192,
+    width: 600,
+    height: 300,
     borderRadius: 12,
 };
 const style = StyleSheet.create({
@@ -130,6 +137,7 @@ const style = StyleSheet.create({
         borderRadius: 12,
         width: 90,
         height: 24,
+        flexDirection: 'column',
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

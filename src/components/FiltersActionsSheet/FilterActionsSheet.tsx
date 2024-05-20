@@ -63,19 +63,19 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 }]}
             />
             <ButtonStyled
-                text={t('tabs.today')}
-                onPress={() => handleFilterChange(FilterAction.today)}
-                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
-                style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
-                }]}
-            />
-            <ButtonStyled
                 text={t('live')}
                 onPress={() => handleFilterChange(FilterAction.live)}
                 textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
                     backgroundColor: isLiveActive ? btn_active : btn_inactive,
+                }]}
+            />
+            <ButtonStyled
+                text={t('tabs.today')}
+                onPress={() => handleFilterChange(FilterAction.today)}
+                textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
+                style={[filterActionsSheetStyle.button, {
+                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
                 }]}
             />
             <ButtonStyled
@@ -87,20 +87,30 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 }]}
             />
         </View>
-        <ScrollView
-            style={[filterActionsSheetStyle.scroll]}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-        >{filters.map((filter) => <FilterTag
-            onPress={handlePress}
-            filter={filter}
-            text={filter[lang]}
-            key={filter.id}/>)}
-        </ScrollView>
+        <View style={[filterActionsSheetStyle.filterTagContainer]}>
+            <ScrollView
+                style={[filterActionsSheetStyle.scroll]}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+            >{filters.map((filter) => <FilterTag
+                onPress={handlePress}
+                filter={filter}
+                text={filter[lang]}
+                key={filter.id}/>)}
+            </ScrollView>
+        </View>
     </>
 }
 
 const filterActionsSheetStyle = StyleSheet.create({
+    filterTagContainer: {
+        // backgroundColor: 'tomato',
+        width: "100%",
+        display: "flex",
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50
+    },
     scroll: {
         height: 50
     },
