@@ -15,6 +15,7 @@ type Theme = {
     PRIMARY: ColorPalette;
     ICON: string;
     ACCENT: AccentPalette;
+    FILTER_COLOR: string
 };
 interface IInitialState extends Theme {
     mode?: 'DARK' | 'LIGHT' | 'DYNAMIC'

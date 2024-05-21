@@ -1,8 +1,9 @@
 import React, {useEffect} from "react";
 import {Text, View, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import Swiper from "react-native-swiper";
-import { Image } from 'expo-image';
-import MapView, {Marker, PROVIDER_GOOGLE} from "react-native-maps";
+import {Image} from 'expo-image';
+import MapView,
+{Marker, PROVIDER_GOOGLE} from "react-native-maps";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
 import {customMapStyleConfigs} from "../../components/Map/customMapStyle";
@@ -13,10 +14,15 @@ import {useTranslatedRoutes} from "../../hook/translatedRoutes";
 import {useNavigation} from "@react-navigation/native";
 import {useTranslation} from "../../hook/translationHook";
 import {wrapInstagramUsernameWithComponent} from "../../components/OpenIntagram/OpenInstagram";
+import {LocationIcon} from "../../components/Svg/Svg";
+import {DARK} from "../../store/reducer/types";
+import {aubergine} from "../../components/Map/mapStyles/aubergine";
+import {standard} from "../../components/Map/mapStyles/standard";
 
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
     const {lang} = useAppSelector(state => state.translation)
+    const color = useAppSelector(state => state.theme)
     const {t} = useTranslation()
     const dispatch = useAppDispatch()
     const routes = useTranslatedRoutes()
@@ -57,7 +63,7 @@ export default function EventDetails() {
                             <View key={uri}>
                                 <Image
                                     style={eventDetailsStyle.image}
-                                    source={{ uri}}
+                                    source={{uri}}
                                 />
                             </View>
                         ))}
@@ -78,9 +84,10 @@ export default function EventDetails() {
                         </View>
                         <View style={[eventDetailsStyle.details]}>
                             <TouchableOpacity onPress={handleSeePartnerProfile}>
-                                <Text style={[eventDetailsStyle.profile]}>
+                                <Text style={[eventDetailsStyle.profile, {borderColor: colors.PRIMARY.MAIN},]}>
                                     <Text
-                                        style={[eventDetailsStyle.seeProfile, {color: '#2d88ff',}]}>See profile +</Text>
+                                        style={[eventDetailsStyle.seeProfile, {color: colors.PRIMARY.MAIN,}]}>See
+                                        profile +</Text>
                                 </Text>
                             </TouchableOpacity>
                             {filters && filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
@@ -93,9 +100,19 @@ export default function EventDetails() {
                                     >{filter[lang]}</Badge>
                                 })}
                             </View>}
-                            <View style={[{width: '100%', borderStyle: 'solid', borderColor: text_color, top: 25}]}>
-                                <Text style={[eventDetailsStyle.description, {color: text_color, left: 18}]}>Address
-                                    - {address}</Text>
+                            <View style={[eventDetailsStyle.addressContainer, {width: '100%', top: 25}]}>
+                                <LocationIcon
+                                    style={eventDetailsStyle.locationIcon}
+                                    fill={color.PRIMARY.MAIN}
+                                    width={20} height={20}
+                                />
+                                <Text style={[eventDetailsStyle.description, {
+                                    color: text_color,
+                                    left: 18,
+                                    top: 5,
+                                    fontWeight: '700'
+                                }]}> Address - {address}
+                                </Text>
                             </View>
                         </View>
                     </View>
@@ -112,7 +129,7 @@ export default function EventDetails() {
                         showsUserLocation={true}
                         style={[eventDetailsStyle.map]}
                         provider={PROVIDER_GOOGLE}
-                        customMapStyle={customMapStyleConfigs}
+                        customMapStyle={colors.mode === DARK ? aubergine : standard}
                     >
                         <Marker coordinate={{latitude: +lat, longitude: +lng}}/>
                     </MapView>
@@ -126,7 +143,16 @@ const eventDetailsStyle = StyleSheet.create({
         fontWeight: '700',
         flex: 1,
     },
-    details:{
+    locationIcon: {
+        left: 25,
+        top: 5
+    },
+    addressContainer: {
+        display: "flex",
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+    details: {
         left: -20,
         rowGap: 10,
     },
@@ -154,6 +180,7 @@ const eventDetailsStyle = StyleSheet.create({
     },
     badgeWrapper: {
         display: "flex",
+        // backgroundColor: 'tomato',
         alignItems: 'center',
         flexDirection: 'row',
         columnGap: 5,
@@ -164,14 +191,17 @@ const eventDetailsStyle = StyleSheet.create({
         borderRadius: 5,
     },
     mapConatiner: {
+        top: 40,
         width: '100%',
         height: 400,
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'flex-start',
+        alignItems: 'center'
     },
     map: {
-        width: '100%',
-        height: 300
+        width: '92%',
+        height: 200,
+        borderRadius: 20,
     },
     sliderContainer: {
         width: "100%",
@@ -200,8 +230,10 @@ const eventDetailsStyle = StyleSheet.create({
         color: "rgb(51, 51, 51)",
     },
     description: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         fontSize: 14,
         fontWeight: "400",
-        top: 14,
     },
 });

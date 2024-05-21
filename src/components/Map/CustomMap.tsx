@@ -16,6 +16,8 @@ import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useTranslation} from "../../hook/translationHook";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
+import {DARK} from "../../store/reducer/types";
+import {standard} from "./mapStyles/standard";
 
 
 enum MapSwitchButtons {
@@ -70,17 +72,17 @@ export default function CustomMap() {
     const bottomFilteredEvents = useMemo(() => {
         let eventLists = topFilteredEvents
         if (bottomFilter === FilterAction.live) {
-            eventLists =  topFilteredEvents.filter((event) => {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate, endDate} = event
                 return isBetweenDates(startDate, endDate)
             })
         } else if (bottomFilter === FilterAction.upcoming) {
-            eventLists =  topFilteredEvents.filter((event) => {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isDateGreaterThanEndOfDay(startDate)
             })
-        }else if(bottomFilter === FilterAction.today){
-            eventLists =  topFilteredEvents.filter((event) => {
+        } else if (bottomFilter === FilterAction.today) {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isIncludedToday(startDate)
             })
@@ -97,15 +99,15 @@ export default function CustomMap() {
     }, [topFilteredEvents, bottomFilter])
 
     const subFilteredEvents = useMemo(() => {
-        if(subFilter.length){
-            return bottomFilteredEvents.filter(({filters})=>{
-                return   compareArrayObjects(filters, subFilter, "id")
+        if (subFilter.length) {
+            return bottomFilteredEvents.filter(({filters}) => {
+                return compareArrayObjects(filters, subFilter, "id")
             })
         }
         return removeDuplicateUsers(bottomFilteredEvents)
     }, [bottomFilteredEvents, subFilter])
 
-    const handlePressMapTabs = (type: ActiveTabType) =>  setTopFilter(type)
+    const handlePressMapTabs = (type: ActiveTabType) => setTopFilter(type)
 
     const isAllActive = topFilter === MapSwitchButtons.all
     const isEventActive = topFilter === MapSwitchButtons.events
@@ -159,7 +161,7 @@ export default function CustomMap() {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-                customMapStyle={aubergine}
+                customMapStyle={colors.mode === DARK ? aubergine : standard}
             >
                 {subFilteredEvents.map((event) => {
                     return <CustomMarker key={event.id} {...event}/>;
@@ -167,7 +169,7 @@ export default function CustomMap() {
             </MapView>
             <View style={[mapStyle.filterContainer]}>
                 <FilterActionsSheet
-                    {...{setBottomFilter,setSubFilter}}
+                    {...{setBottomFilter, setSubFilter}}
                 />
             </View>
         </View>

@@ -13,9 +13,11 @@ export const styles = {
             4: '#F65A5A',
             5: '#111229',
             6: '#1A1B30'
-        }
+        },
+        FILTER_COLOR: "coolGray",
     },
     LIGHT:{
+        FILTER_COLOR: "coolGray",
         PRIMARY:{
             MAIN: '#1CAE81',
             SECOND: '#FFA26B'
