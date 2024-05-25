@@ -1,5 +1,6 @@
 import React from "react";
-import {StyleSheet, Image, View, Text} from "react-native";
+import {StyleSheet, View, Text} from "react-native";
+import {Image} from 'expo-image'
 import {Marker, Callout} from "react-native-maps";
 import {useNavigation} from "@react-navigation/native";
 import LottieView from 'lottie-react-native';
@@ -9,6 +10,7 @@ import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {isBetweenDates} from "../../../helpers/helper";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
+
 interface ICustomMarkerProps extends IEventCart {
 
 }
@@ -28,8 +30,6 @@ export default function CustomMarker(props: ICustomMarkerProps) {
         dispatch(setUser(user));
         navigate.navigate(routes.partnerProfile.key as never);
     };
-
-
 
 
     return (

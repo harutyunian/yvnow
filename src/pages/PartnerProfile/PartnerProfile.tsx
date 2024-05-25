@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Text, Image, View, StyleSheet, ScrollView} from "react-native";
+import {Text, View, StyleSheet, ScrollView} from "react-native";
+import {Image} from 'expo-image'
 import {useAppSelector} from "../../hook/reduxHooks";
 import {
     CalendarIcon,
