@@ -58,9 +58,6 @@ export default function Settings() {
                     value={value}
                     onChange={handleChangeMode}
                 >
-                    <Radio value="one" my="2" colorScheme="green">
-                        <Text style={[{color: colors.ACCENT["1"]}]}>{t('theme.dynamic')}</Text>
-                    </Radio>
                     <Radio value="two" my="2" colorScheme="green" style={[]}>
                         <Text style={[{color: colors.ACCENT["1"]}]}>{t('theme.dark')}</Text>
                     </Radio>

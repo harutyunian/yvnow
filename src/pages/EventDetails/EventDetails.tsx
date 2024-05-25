@@ -6,7 +6,6 @@ import MapView,
 {Marker, PROVIDER_GOOGLE} from "react-native-maps";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import CustomerInfoCard from "./CustomerInfoCard/CustomerInfoCard";
-import {customMapStyleConfigs} from "../../components/Map/customMapStyle";
 import {EventService} from "../../services/EventService/EventService";
 import {Badge} from "native-base";
 import {setUser} from "../../store/reducer/user/user";

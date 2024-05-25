@@ -265,18 +265,17 @@ const todayEventsStyle = StyleSheet.create({
     container: {
         flex: 1,
         display: "flex",
-        marginTop: 10,
-        marginBottom: 10,
-        rowGap: 10,
+        marginTop: 2,
+        rowGap: 5,
         alignItems: "center",
+        justifyContent: 'space-between',
         width: "100%",
     },
     scrollViewContainer: {
-        // flex: 1,
+
     },
     scrollViewContent: {
         flex: 1,
-        // paddingBottom: 400
     },
     button: {
         backgroundColor: 'green',
@@ -288,7 +287,6 @@ const todayEventsStyle = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        padding: 10,
         columnGap: 5,
     },
     loading: {

@@ -211,7 +211,7 @@ const mapStyle = StyleSheet.create({
     tabsContainer: {
         position: 'absolute', // Position the buttons absolutely
         zIndex: 1, // Increase zIndex to bring it to the front
-        paddingTop: 25,
+        paddingTop: 5,
         width: '100%',
         display: "flex",
         flexDirection: 'row',

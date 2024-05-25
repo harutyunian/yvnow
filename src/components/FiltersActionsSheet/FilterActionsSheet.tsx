@@ -52,7 +52,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
-    return <>
+    return <View style={[filterActionsSheetStyle.wrapper]}>
         <View style={[filterActionsSheetStyle.filterContainer]}>
             <ButtonStyled
                 text={t('types.all')}
@@ -99,23 +99,26 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 key={filter.id}/>)}
             </ScrollView>
         </View>
-    </>
+    </View>
 }
 
 const filterActionsSheetStyle = StyleSheet.create({
     filterTagContainer: {
-        // backgroundColor: 'tomato',
         width: "100%",
         display: "flex",
         justifyContent: 'center',
         alignItems: 'center',
         height: 50
     },
+    wrapper:{
+        top: 15,
+        padding: 0,
+    },
     scroll: {
-        height: 50
+        // height: 50
     },
     filterContainer: {
-        paddingBottom: 10,
+        paddingBottom: 5,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
