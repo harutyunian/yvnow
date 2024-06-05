@@ -14,7 +14,13 @@ const ImageSlider = (props:IImageSliderProps) => {
         <Swiper style={styles.wrapper} autoplay>
             {imageUrls.length && imageUrls.map((image, index) => (
                 <View key={index} style={styles.slide}>
-                    <Image style={styles.image} source={{ uri: image }} />
+                    <Image
+                        // transition={20}
+                        priority='normal'
+                        // cachePolicy='memory-disk'
+                        // allowDownscaling
+                        style={styles.image}
+                        source={{ uri: image }} />
                 </View>
             ))}
         </Swiper>

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Text, View, StyleSheet, ScrollView} from "react-native";
+import {Text, View, StyleSheet, FlatList} from "react-native";
 import LottieView from 'lottie-react-native';
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
@@ -96,9 +96,6 @@ export default function TodayEvents() {
     useEffect(() => {
         setLoading(() => true);
         getEventList(page)
-        setTimeout(() => {
-            setLoading(() => false);
-        }, 500)
     }, []);
 
     const topFilteredEvents = useMemo(() => {
@@ -111,18 +108,17 @@ export default function TodayEvents() {
     const bottomFilteredEvents = useMemo(() => {
         let eventLists = topFilteredEvents
         if (bottomFilter === FilterAction.live) {
-            eventLists =  topFilteredEvents.filter((event) => {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate, endDate} = event
                 return isBetweenDates(startDate, endDate)
             })
         } else if (bottomFilter === FilterAction.upcoming) {
-            eventLists =  topFilteredEvents.filter((event) => {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isDateGreaterThanEndOfDay(startDate)
             })
-        }
-        else if(bottomFilter === FilterAction.today){
-            eventLists =  topFilteredEvents.filter((event) => {
+        } else if (bottomFilter === FilterAction.today) {
+            eventLists = topFilteredEvents.filter((event) => {
                 const {startDate} = event
                 return isIncludedToday(startDate)
             })
@@ -139,9 +135,9 @@ export default function TodayEvents() {
     }, [topFilteredEvents, bottomFilter])
 
     const subFilteredEvents = useMemo(() => {
-        if(subFilter.length){
-            return bottomFilteredEvents.filter(({filters})=>{
-                return   compareArrayObjects(filters, subFilter, "id")
+        if (subFilter.length) {
+            return bottomFilteredEvents.filter(({filters}) => {
+                return compareArrayObjects(filters, subFilter, "id")
             })
         }
         return bottomFilteredEvents
@@ -169,6 +165,7 @@ export default function TodayEvents() {
             }
         } finally {
             setTimeout(() => setLoadMore(false), 500)
+            setLoading(() => false);
         }
     }
 
@@ -195,7 +192,9 @@ export default function TodayEvents() {
     const isConcertActive = topFilter === TodayButtons.concert;
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
-
+    const renderItem = ({item}: { item: IEventCart }) => (
+        <EventCart event={item}/>
+    );
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
 
@@ -235,16 +234,17 @@ export default function TodayEvents() {
                     }]}
                 />
             </View>
-            {!loading && !subFilteredEvents.length ? <NoData/> : <ScrollView
-                style={[{height: "100%"}]}
-                showsVerticalScrollIndicator={false}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-            >
-                {subFilteredEvents.map((event, index) => (
-                    <EventCart key={`${event.id}_${index}`} event={event}/>
-                ))}
-            </ScrollView>}
+            {!loading && !subFilteredEvents.length ? <NoData/> :
+                <FlatList
+                    style={[{height: "100%"}]}
+                    showsVerticalScrollIndicator={false}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                    data={subFilteredEvents}
+                    keyExtractor={(item) => `${item.id}`}
+                    renderItem={renderItem}
+                />
+            }
             {(!isDataEmpty && loadMore) && <LottieView
                 autoPlay
                 style={{
@@ -255,7 +255,7 @@ export default function TodayEvents() {
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
             <FilterActionsSheet
-                {...{setBottomFilter,setSubFilter}}
+                {...{setBottomFilter, setSubFilter}}
             />
         </View>
     );
@@ -271,9 +271,7 @@ const todayEventsStyle = StyleSheet.create({
         justifyContent: 'space-between',
         width: "100%",
     },
-    scrollViewContainer: {
-
-    },
+    scrollViewContainer: {},
     scrollViewContent: {
         flex: 1,
     },

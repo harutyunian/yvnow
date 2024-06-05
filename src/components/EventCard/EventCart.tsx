@@ -135,8 +135,8 @@ const style = StyleSheet.create({
     date: {
         backgroundColor: "#6C63FF",
         borderRadius: 12,
-        width: 90,
-        height: 24,
+        width: 95,
+        height: 29,
         flexDirection: 'column',
         display: "flex",
         justifyContent: "center",

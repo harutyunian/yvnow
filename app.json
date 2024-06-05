@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yvnow",
     "slug": "Yvnow",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/logo_yvnow.png",
     "userInterfaceStyle": "light",
@@ -27,7 +27,7 @@
       "bundleIdentifier": "com.yvnow.event"
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "INTERNET",
         "android.permission.ACCESS_COARSE_LOCATION",
