@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
 import {IFilters} from "../../types/event.type";
 import {FilterTag} from "../FilterTag/FilterTag";
@@ -30,14 +31,10 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const {t} = useTranslation()
 
     const handlePress = (isPressed: boolean, filter: IFilters) => {
-        if (!isPressed) {
-            setSubFilter((prev) => ([...prev, filter]))
-        } else {
-            setSubFilter((prev) => {
-                return prev.filter(({id}) => id !== filter.id)
-            })
-        }
-    }
+        setSubFilter(prev => {
+            return isPressed ? _.filter(prev, ({ id }) => id !== filter.id) : _.xorBy(prev, [filter], 'id');
+        });
+    };
 
     const handleFilterChange = (action: FilterActionType) => {
         setBottomFilter(action)

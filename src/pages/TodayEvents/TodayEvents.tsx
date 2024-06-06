@@ -1,16 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Text, View, StyleSheet, FlatList} from "react-native";
 import LottieView from 'lottie-react-native';
+import _ from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-    compareArrayObjects,
     isBetweenDates, isDateGreaterThanEndOfDay, isIncludedToday,
     removeDuplicatesByValues,
-    shuffleArray
 } from "../../helpers/helper";
 import ButtonStyled from "../../components/Button/Button";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
@@ -102,32 +101,29 @@ export default function TodayEvents() {
         if (topFilter === TodayButtons.all) {
             return todayEvents
         }
-        return todayEvents.filter(({type}) => type.toLowerCase() === topFilter.toLowerCase())
+        return _.filter(todayEvents, ({type}) => _.toLower(type) === _.toLower(topFilter))
     }, [topFilter, todayEvents])
 
     const bottomFilteredEvents = useMemo(() => {
         let eventLists = topFilteredEvents
         if (bottomFilter === FilterAction.live) {
-            eventLists = topFilteredEvents.filter((event) => {
-                const {startDate, endDate} = event
-                return isBetweenDates(startDate, endDate)
-            })
-        } else if (bottomFilter === FilterAction.upcoming) {
-            eventLists = topFilteredEvents.filter((event) => {
-                const {startDate} = event
-                return isDateGreaterThanEndOfDay(startDate)
-            })
-        } else if (bottomFilter === FilterAction.today) {
-            eventLists = topFilteredEvents.filter((event) => {
-                const {startDate} = event
-                return isIncludedToday(startDate)
-            })
-        }
-        const filters = eventLists.reduce((acc, event) => {
-            if (!event.filters) return acc
-            return [...acc, ...event.filters]
-        }, [] as IFilters[])
+            eventLists = _.filter(topFilteredEvents, event => {
+                const {startDate, endDate} = event;
+                return isBetweenDates(startDate, endDate);
+            });
 
+        } else if (bottomFilter === FilterAction.upcoming) {
+            eventLists = _.filter(topFilteredEvents, event => {
+                const { startDate } = event;
+                return isDateGreaterThanEndOfDay(startDate);
+            });
+        } else if (bottomFilter === FilterAction.today) {
+            eventLists = _.filter(topFilteredEvents, event => {
+                const { startDate } = event;
+                return isIncludedToday(startDate);
+            });
+        }
+        const filters =  _.flatMap(eventLists, event => event.filters || []);
         // removing duplicates for staying filters which included event
         const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
         dispatch(setFilters(uniqFilters))
@@ -135,13 +131,13 @@ export default function TodayEvents() {
     }, [topFilteredEvents, bottomFilter])
 
     const subFilteredEvents = useMemo(() => {
-        if (subFilter.length) {
-            return bottomFilteredEvents.filter(({filters}) => {
-                return compareArrayObjects(filters, subFilter, "id")
-            })
+        if (_.isEmpty(subFilter)) {
+            return bottomFilteredEvents;
         }
-        return bottomFilteredEvents
-    }, [bottomFilteredEvents, subFilter])
+        return bottomFilteredEvents.filter(({filters}) => {
+            return filters.some(filter => _.isEqual(_.find(subFilter, {'id': filter.id}), filter));
+        });
+    }, [bottomFilteredEvents, subFilter]);
 
 
     async function getEventList(page: number, count: number = 50) {
@@ -151,12 +147,13 @@ export default function TodayEvents() {
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
             setIsDataEmpty(!events.length)
-            const shuffledEvents = events.reduce((acc, event) => {
-                if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
-                else acc.noLive.push(event)
-                return acc
-            }, {live: [], noLive: []} as { live: IEventCart[], noLive: IEventCart[] })
-            const withLiveOrder = [...shuffleArray<IEventCart>(shuffledEvents.live), ...shuffleArray<IEventCart>(shuffledEvents.noLive)]
+            const shuffledEvents = _.groupBy(events, event =>
+                isBetweenDates(event.startDate, event.endDate) ? 'live' : 'noLive'
+            );
+            const withLiveOrder = [
+                ..._.shuffle(shuffledEvents.live),
+                ..._.shuffle(shuffledEvents.noLive)
+            ];
             setTodayEvents(prev => [...prev, ...withLiveOrder]);
             setPage(prev => prev + 1)
         } catch (e: any) {
@@ -169,14 +166,11 @@ export default function TodayEvents() {
         }
     }
 
-    const handleChangeEventTabs = (type: TodayTabs) => {
-        setTopFilter(type)
-    }
+    const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
 
     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}: any) => {
         const paddingToBottom = 20;
-        return layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - paddingToBottom;
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
     };
 
     const handleScroll = ({nativeEvent}: any) => {
@@ -192,9 +186,8 @@ export default function TodayEvents() {
     const isConcertActive = topFilter === TodayButtons.concert;
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
-    const renderItem = ({item}: { item: IEventCart }) => (
-        <EventCart event={item}/>
-    );
+    const renderItem = ({item}: { item: IEventCart }) => <EventCart event={item}/>
+
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
 

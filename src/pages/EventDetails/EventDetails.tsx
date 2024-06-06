@@ -11,7 +11,6 @@ import {Badge} from "native-base";
 import {setUser} from "../../store/reducer/user/user";
 import {useTranslatedRoutes} from "../../hook/translatedRoutes";
 import {useNavigation} from "@react-navigation/native";
-import {useTranslation} from "../../hook/translationHook";
 import {wrapInstagramUsernameWithComponent} from "../../components/OpenIntagram/OpenInstagram";
 import {LocationIcon} from "../../components/Svg/Svg";
 import {DARK} from "../../store/reducer/types";
@@ -22,7 +21,6 @@ export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
     const {lang} = useAppSelector(state => state.translation)
     const color = useAppSelector(state => state.theme)
-    const {t} = useTranslation()
     const dispatch = useAppDispatch()
     const routes = useTranslatedRoutes()
     const navigate = useNavigation();
