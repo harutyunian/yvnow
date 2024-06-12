@@ -4,3 +4,9 @@ export enum TodayButtons {
     show = 'Show',
     concert = 'Concert',
 }
+export enum FilterAction {
+    all = "all",
+    today = "today",
+    upcoming = 'upcoming',
+    live = 'live'
+}

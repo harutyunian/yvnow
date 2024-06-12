@@ -163,8 +163,8 @@ export default function CustomMap() {
                 }}
                 customMapStyle={colors.mode === DARK ? aubergine : standard}
             >
-                {subFilteredEvents.map((event) => {
-                    return <CustomMarker key={event.id} {...event}/>;
+                {subFilteredEvents.map((event,index) => {
+                    return <CustomMarker key={index} {...event}/>;
                 })}
             </MapView>
             <View style={[mapStyle.filterContainer]}>

@@ -1,8 +1,7 @@
 import React from "react";
-import {View, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
-import {CalendarIcon, LocationIcon, SettingIcon} from "../../../components/Svg/Svg";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {
     MapStackScreen,
@@ -11,6 +10,10 @@ import {
 } from "../StackRout/StackRout";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 import {SafeAreaView} from "react-native-safe-area-context";
+
+import { FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,7 +38,7 @@ export default function TabRoute() {
             screenOptions={({route}) => {
                 return ({
                     headerStyle: {
-                        backgroundColor: accent_5, // Background color of the header
+                        backgroundColor: 'yellow',
                     },
                     headerTintColor: accent_1,
                     tabBarStyle: {
@@ -46,23 +49,12 @@ export default function TabRoute() {
                         let iconComponent: JSX.Element | null = null;
                         const focusedIcon = focused ? PRIMARY.MAIN : iconColor
                         if (route.name === routes.map.key) {
-                            iconComponent = (
-                                <View style={[styles.locationIcon]}>
-                                    <LocationIcon fill={focusedIcon} width={25} height={25}/>
-                                </View>
-                            );
+                            iconComponent =  <FontAwesome5 name="map-marker-alt" size={20} color={focusedIcon} />;
                         } else if (route.name === routes.settings.key) {
-                            iconComponent = (
-                                <View style={[styles.icon]}>
-                                    <SettingIcon fill={focusedIcon}/>
-                                </View>
-                            );
+                            iconComponent =
+                                    <Feather name="settings" size={20} color={focusedIcon} />
                         } else if (route.name === routes.today.key) {
-                            iconComponent = (
-                                <View style={[styles.icon]}>
-                                    <CalendarIcon fill={focusedIcon}/>
-                                </View>
-                            );
+                            iconComponent =   <Entypo name="calendar" size={20} color={focusedIcon} />;
                         }
 
                         return iconComponent;
