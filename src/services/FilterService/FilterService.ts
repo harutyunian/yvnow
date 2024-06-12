@@ -1,8 +1,8 @@
 import {IEventCart, IFilters,} from "../../types/event.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import _ from "lodash";
-import {TodayTabs} from "../../types/filter.type";
-import {FilterAction, FilterActionType} from "../../components/FiltersActionsSheet/FilterActionsSheet";
+import {FilterActionType, TodayTabs} from "../../types/filter.type";
+import {FilterAction} from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {
     isBetweenDates,
     isDateGreaterThanEndOfDay,
@@ -19,6 +19,7 @@ export class FilterService {
         }
         return _.filter(events, ({type}) => _.toLower(type) === _.toLower(mainFilter))
     }
+
 
     static bottomFilteredEvents(topFilteredEvents: IEventCart[], bottomFilter: FilterActionType) {
         let eventLists = topFilteredEvents
@@ -44,6 +45,8 @@ export class FilterService {
         const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
         return {eventLists, uniqFilters}
     }
+
+
 
     static subFilter(bottomFilteredEvents: IEventCart[], filtersList: IFilters[]) {
         if (_.isEmpty(filtersList)) {

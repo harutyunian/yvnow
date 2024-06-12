@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Text, View, StyleSheet, FlatList,Button} from "react-native";
+import React, {useEffect, useMemo, useState} from "react";
+import {Text, View, StyleSheet, FlatList} from "react-native";
 import LottieView from 'lottie-react-native';
 import _ from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
@@ -7,17 +7,12 @@ import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-    isBetweenDates, isDateGreaterThanEndOfDay, isIncludedToday,
-    removeDuplicatesByValues,
-} from "../../helpers/helper";
-import ButtonStyled from "../../components/Button/Button";
-import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
+import {isBetweenDates} from "../../helpers/helper";
+import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
-import {useTranslation} from "../../hook/translationHook";
 import {
     FilterAction,
-    FilterActionsSheet,
+
     FilterActionType
 } from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {NoData} from "../../components/NoData/NoData";
@@ -25,23 +20,12 @@ import {setFilters} from "../../store/reducer/filter/filterReducer";
 import {setLanguages} from "../../store/reducer/translation/translation";
 import {langs} from "../../store/reducer/translation/types";
 import {setDarkMode, setDynamicsMode, setLightMode} from "../../store/reducer/theme/themeReducer";
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {FilterService} from "../../services/FilterService/FilterService";
+import {TodayTabs} from "../../types/filter.type";
+import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
 
-
-export type TodayTabs = TodayButtons.all | TodayButtons.concert | TodayButtons.show | TodayButtons.event
-
-export interface IEventsFilter {
-    top: TodayTabs,
-    bottom: FilterActionType,
-    sub: IFilters[]
-}
 
 export default function TodayEvents() {
-    const bottomSheetRef = useRef<BottomSheet>(null);
-
-
     const [loadMore, setLoadMore] = useState(false)
     const [isDataEmpty, setIsDataEmpty] = useState(false)
 
@@ -55,9 +39,7 @@ export default function TodayEvents() {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const colors = useAppSelector(state => state.theme)
     const dispatch = useAppDispatch()
-    const {t} = useTranslation()
 
 
     useEffect(() => {
@@ -106,13 +88,13 @@ export default function TodayEvents() {
 
     // Top Buttons Filter
     const topFilteredEvents = useMemo(() => {
-        return FilterService.topFilter(todayEvents,topFilter)
+        return FilterService.topFilter(todayEvents, topFilter)
     }, [topFilter, todayEvents])
 
 
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(() => {
-        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents,bottomFilter)
+        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
@@ -120,7 +102,7 @@ export default function TodayEvents() {
 
     //Bottom part filter
     const subFilteredEvents = useMemo(() => {
-        return FilterService.subFilter(bottomFilteredEvents,subFilter)
+        return FilterService.subFilter(bottomFilteredEvents, subFilter)
     }, [bottomFilteredEvents, subFilter]);
 
 
@@ -150,8 +132,6 @@ export default function TodayEvents() {
         }
     }
 
-    const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
-
     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}: any) => {
         const paddingToBottom = 20;
         return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
@@ -164,12 +144,6 @@ export default function TodayEvents() {
             }
         }
     }
-    const isAllActive = topFilter === TodayButtons.all;
-    const isEventActive = topFilter === TodayButtons.event;
-    const isShowActive = topFilter === TodayButtons.show;
-    const isConcertActive = topFilter === TodayButtons.concert;
-    const btn_inactive = colors.ACCENT["6"];
-    const btn_active = colors.PRIMARY.MAIN;
     const renderItem = ({item}: { item: IEventCart }) => <EventCart event={item}/>
 
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
@@ -177,9 +151,6 @@ export default function TodayEvents() {
 
     return (
         <View style={[todayEventsStyle.container]}>
-            <Button title='click me ' onPress={()=>{
-                bottomSheetRef?.current?.expand()
-            }} />
             {!loading && !subFilteredEvents.length ? <NoData/> :
                 <FlatList
                     style={[{height: "100%"}]}
@@ -200,51 +171,7 @@ export default function TodayEvents() {
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-                <BottomSheet
-                    snapPoints={["10%", "100%"]}
-                    index={-1}
-                    ref={bottomSheetRef}
-                >
-                    <BottomSheetView style={todayEventsStyle.contentContainer}>
-                        <View style={[todayEventsStyle.buttonWrapper]}>
-                            <ButtonStyled
-                                text={t('types.all')}
-                                onPress={() => handleChangeEventTabs(TodayButtons.all)}
-                                textColor={isAllActive ? "white" : colors.ACCENT["1"]}
-                                style={[todayEventsStyle.button, {
-                                    backgroundColor: isAllActive ? btn_active : btn_inactive,
-                                }]}
-                            />
-                            <ButtonStyled
-                                text={t('types.event')}
-                                textColor={isEventActive ? "white" : colors.ACCENT["1"]}
-                                onPress={() => handleChangeEventTabs(TodayButtons.event)}
-                                style={[todayEventsStyle.button, {
-                                    backgroundColor: isEventActive ? btn_active : btn_inactive
-                                }]}
-                            />
-                            <ButtonStyled
-                                text={t('types.show')}
-                                textColor={isShowActive ? "white" : colors.ACCENT["1"]}
-                                onPress={() => handleChangeEventTabs(TodayButtons.show)}
-                                style={[todayEventsStyle.button, {
-                                    backgroundColor: isShowActive ? btn_active : btn_inactive,
-                                }]}
-                            />
-                            <ButtonStyled
-                                text={t('types.concert')}
-                                textColor={isConcertActive ? "white" : colors.ACCENT["1"]}
-                                onPress={() => handleChangeEventTabs(TodayButtons.concert)}
-                                style={[todayEventsStyle.button, {
-                                    backgroundColor: isConcertActive ? btn_active : btn_inactive,
-                                }]}
-                            />
-                        </View>
-                        <FilterActionsSheet
-                            {...{setBottomFilter, setSubFilter}}
-                        />
-                    </BottomSheetView>
-                </BottomSheet>
+            <BottomSheetFilters {...{topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
         </View>
     );
 }
