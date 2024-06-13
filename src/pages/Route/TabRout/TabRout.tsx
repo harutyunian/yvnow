@@ -1,5 +1,5 @@
-import React from "react";
-import {StyleSheet} from "react-native";
+import React, {useMemo} from "react";
+import {Platform, StyleSheet} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
@@ -32,6 +32,19 @@ export default function TabRoute() {
         },
     }
 
+    const iosBottomBar = useMemo(()=>{
+        if(Platform.OS === 'ios'){
+            return {
+                paddingBottom: 0,
+                display: 'flex',
+                alignItems: 'flex-start',
+                height: 43
+            }
+        }
+        return {}
+    },[Platform.OS])
+
+
     return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
         theme={MyTheme}>
         <Tab.Navigator
@@ -39,7 +52,7 @@ export default function TabRoute() {
                 return ({
                     headerStyle: { backgroundColor: 'yellow' },
                     headerTintColor: accent_1,
-                    tabBarStyle: {  backgroundColor: accent_5},
+                    tabBarStyle: {  backgroundColor: accent_5 , ...iosBottomBar},
                     headerShown: false,
                     tabBarIcon: ({focused}) => {
                         let iconComponent: JSX.Element | null = null;
