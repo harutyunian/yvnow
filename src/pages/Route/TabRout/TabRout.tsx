@@ -11,9 +11,8 @@ import {
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 import {SafeAreaView} from "react-native-safe-area-context";
 
-import { FontAwesome5 } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Fontisto,Feather } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,30 +32,25 @@ export default function TabRoute() {
         },
     }
 
-    return <SafeAreaView style={[styles.safeAreaContainer,{backgroundColor: accent_5}]}><NavigationContainer theme={MyTheme}>
+    return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
+        theme={MyTheme}>
         <Tab.Navigator
             screenOptions={({route}) => {
                 return ({
-                    headerStyle: {
-                        backgroundColor: 'yellow',
-                    },
+                    headerStyle: { backgroundColor: 'yellow' },
                     headerTintColor: accent_1,
-                    tabBarStyle: {
-                        backgroundColor: accent_5,
-                    },
+                    tabBarStyle: {  backgroundColor: accent_5},
                     headerShown: false,
                     tabBarIcon: ({focused}) => {
                         let iconComponent: JSX.Element | null = null;
                         const focusedIcon = focused ? PRIMARY.MAIN : iconColor
                         if (route.name === routes.map.key) {
-                            iconComponent =  <FontAwesome5 name="map-marker-alt" size={20} color={focusedIcon} />;
+                            iconComponent = <Fontisto name="map-marker-alt" size={24} color={focusedIcon} />
                         } else if (route.name === routes.settings.key) {
-                            iconComponent =
-                                    <Feather name="settings" size={20} color={focusedIcon} />
+                            iconComponent = <Feather name="settings" size={24} color={focusedIcon}/>
                         } else if (route.name === routes.today.key) {
-                            iconComponent =   <Entypo name="calendar" size={20} color={focusedIcon} />;
+                            iconComponent = <AntDesign name="calendar" size={24} color={focusedIcon}/>;
                         }
-
                         return iconComponent;
                     },
                     tabBarActiveTintColor: PRIMARY.MAIN,
