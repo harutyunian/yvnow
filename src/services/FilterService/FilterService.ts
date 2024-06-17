@@ -40,13 +40,11 @@ export class FilterService {
                 return isIncludedToday(startDate);
             });
         }
-        const filters = _.flatMap(eventLists, event => event.filters || []);
+        const filters = _.flatMap(eventLists, event => event.filters || []).map((el)=>({...el, selected: false}));
         // removing duplicates for staying filters which included event
         const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
         return {eventLists, uniqFilters}
     }
-
-
 
     static subFilter(bottomFilteredEvents: IEventCart[], filtersList: IFilters[]) {
         if (_.isEmpty(filtersList)) {

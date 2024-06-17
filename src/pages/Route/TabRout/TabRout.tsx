@@ -36,6 +36,7 @@ export default function TabRoute() {
         if(Platform.OS === 'ios'){
             return {
                 paddingBottom: 0,
+                paddingTop: 3,
                 display: 'flex',
                 alignItems: 'flex-start',
                 height: 43

@@ -171,7 +171,7 @@ export default function TodayEvents() {
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters {...{topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
+            <BottomSheetFilters {...{subFilter,topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
         </View>
     );
 }

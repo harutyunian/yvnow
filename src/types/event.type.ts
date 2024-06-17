@@ -15,7 +15,8 @@ export interface IFilters{
     id: number,
     am: string,
     ru: string,
-    en: string
+    en: string,
+    selected: boolean
 }
 export interface IEventCart {
     id: number,

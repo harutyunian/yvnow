@@ -1,14 +1,14 @@
 import {StyleSheet, Text, View} from "react-native";
 import {Language} from "./Language/Language";
-import {Radio} from "native-base";
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHooks";
 import {setLanguages} from "../../../store/reducer/translation/translation";
 import {langs} from "../../../store/reducer/translation/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function Languages() {
-    const {lang} = useAppSelector(state => state.translation)
     const colors = useAppSelector(state => state.theme)
+    const {lang: selectedLanguage} = useAppSelector(state => state.translation)
+
     // const bg = colors.ACCENT['6']
     const tc = colors.ACCENT['1']
 
@@ -23,9 +23,10 @@ export function Languages() {
             }
         })()
     }
+
+    console.log(selectedLanguage);
     return <View style={[languagesStyle.container]}>
         <Text style={[languagesStyle.lang, {color: tc}]}>Languages</Text>
-        <Radio.Group value={lang} name='languages' onChange={handleLanguageChange} aria-label='languages'>
             <Language
                 handleLanguageChange={handleLanguageChange}
                 radioValue='am'
@@ -44,12 +45,12 @@ export function Languages() {
                 lang='English'
                 flagPath={require('./../../../../assets/flags/uk.gif')}
             />
-        </Radio.Group>
     </View>
 }
 
 const languagesStyle = StyleSheet.create({
     container: {
+        width: '100%',
         display: "flex",
         alignItems: 'center',
         top:25,

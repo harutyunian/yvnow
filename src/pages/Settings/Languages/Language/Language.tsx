@@ -1,5 +1,4 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Radio} from "native-base";
 import {useAppSelector} from "../../../../hook/reduxHooks";
 
 interface ILanguageProps {
@@ -11,6 +10,7 @@ interface ILanguageProps {
 
 export function Language(props: ILanguageProps) {
     const {lang, flagPath, radioValue, handleLanguageChange} = props
+    const {lang: selectedLanguage} = useAppSelector(state => state.translation)
     const colors = useAppSelector(state => state.theme)
     const bg = colors.ACCENT['6']
     const tc = colors.ACCENT['1']
@@ -18,12 +18,14 @@ export function Language(props: ILanguageProps) {
     const onLangPress = () => {
         handleLanguageChange(radioValue)
     }
-    return <TouchableOpacity onPress={onLangPress} style={[languageStyle.container, {backgroundColor: bg}]}>
+
+    const background = selectedLanguage === radioValue ? colors.PRIMARY.MAIN : bg
+
+    return <TouchableOpacity onPress={onLangPress} style={[languageStyle.container, {backgroundColor: background}]}>
         <View style={languageStyle.wrapper}>
             <Image style={[languageStyle.flag]} source={flagPath} resizeMode='cover'/>
             <Text style={[{color: tc}, languageStyle.text]}>{lang}</Text>
         </View>
-        <Radio value={radioValue} aria-label={lang}/>
     </TouchableOpacity>
 }
 
@@ -45,7 +47,7 @@ const languageStyle = StyleSheet.create({
     flag: {
         width: 30,
         height: 24,
-        borderRadius: 24
+        borderRadius: 25
     },
     container: {
         marginVertical: 10,

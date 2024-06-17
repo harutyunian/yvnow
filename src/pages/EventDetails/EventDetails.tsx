@@ -11,11 +11,13 @@ import {Badge} from "native-base";
 import {setUser} from "../../store/reducer/user/user";
 import {useTranslatedRoutes} from "../../hook/translatedRoutes";
 import {useNavigation} from "@react-navigation/native";
-import {wrapInstagramUsernameWithComponent} from "../../components/OpenIntagram/OpenInstagram";
+import {HighlightsContacts} from "../../components/HighlightsContacts/OpenInstagram";
 import {LocationIcon} from "../../components/Svg/Svg";
 import {DARK} from "../../store/reducer/types";
 import {aubergine} from "../../components/Map/mapStyles/aubergine";
 import {standard} from "../../components/Map/mapStyles/standard";
+import { AntDesign } from '@expo/vector-icons';
+
 
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
@@ -67,30 +69,22 @@ export default function EventDetails() {
                     </Swiper>
                 </View>
                 <CustomerInfoCard/>
-                <View style={{paddingHorizontal: 15}}>
-                    <View style={[eventDetailsStyle.infoWrapper, {backgroundColor: 'transparent'}]}>
+                <View style={{paddingHorizontal: 20}}>
+                    <View style={[eventDetailsStyle.infoWrapper, {backgroundColor: colors.ACCENT['6']}]}>
                         <View style={[eventDetailsStyle.descriptionContainer]}>
                             <View style={[eventDetailsStyle.content]}>
                                 <Text style={[eventDetailsStyle.eventTitle, {color: text_color}]}>
                                     {title}
                                 </Text>
                                 <Text style={[eventDetailsStyle.description, {color: text_color}]}>
-                                    {wrapInstagramUsernameWithComponent(description)}
+                                    <HighlightsContacts text={`<[+374 95 300 955]> https://www.instagram.com/stop.music.club ${description} `}/>
                                 </Text>
                             </View>
                         </View>
-                        <View style={[eventDetailsStyle.details]}>
-                            <TouchableOpacity onPress={handleSeePartnerProfile}>
-                                <Text style={[eventDetailsStyle.profile, {borderColor: colors.PRIMARY.MAIN},]}>
-                                    <Text
-                                        style={[eventDetailsStyle.seeProfile, {color: colors.PRIMARY.MAIN,}]}>See
-                                        profile +</Text>
-                                </Text>
-                            </TouchableOpacity>
+                        <View>
                             {filters && filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
                                 {filters.map((filter) => {
                                     return <Badge
-                                        style={[eventDetailsStyle.badge]}
                                         colorScheme={"info"}
                                         variant='subtle'
                                         key={filter.id}
@@ -131,14 +125,37 @@ export default function EventDetails() {
                         <Marker coordinate={{latitude: +lat, longitude: +lng}}/>
                     </MapView>
                 </View>
+                <TouchableOpacity onPress={handleSeePartnerProfile}
+                                  style={[eventDetailsStyle.seeProfileWrapper]}>
+                    <View style={[eventDetailsStyle.seeProfileButton,{backgroundColor: color.PRIMARY.MAIN}]}>
+                        <Text style={eventDetailsStyle.seeButtonText}> See Venue</Text>
+                        <AntDesign name="arrowright" size={24} color="white" />
+                    </View>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
 }
 const eventDetailsStyle = StyleSheet.create({
-    seeProfile: {
-        fontWeight: '700',
-        flex: 1,
+    seeProfileWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        top: -40
+    },
+    seeButtonText:{
+        color: 'white',
+        fontWeight: '500',
+        fontSize: 18
+    },
+    seeProfileButton:{
+        columnGap: 10,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        width: '90%',
+        flexDirection: 'row'
     },
     locationIcon: {
         left: 25,
@@ -148,10 +165,6 @@ const eventDetailsStyle = StyleSheet.create({
         display: "flex",
         alignItems: 'center',
         flexDirection: 'row'
-    },
-    details: {
-        left: -20,
-        rowGap: 10,
     },
     infoWrapper: {
         display: 'flex',
@@ -170,22 +183,15 @@ const eventDetailsStyle = StyleSheet.create({
         left: 20,
         padding: 5,
         top: -8,
-        backgroundColor: 'transparent',
-        borderColor: '#2d88ff',
-        borderWidth: 2,
-        flexDirection: 'row',
     },
     badgeWrapper: {
+        flexWrap: 'wrap',
         display: "flex",
-        // backgroundColor: 'tomato',
+        justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
         columnGap: 5,
-        paddingHorizontal: 20
-    },
-    badge: {
-        flex: 1, justifyContent: 'center', alignItems: 'center',
-        borderRadius: 5,
+        rowGap: 5,
     },
     mapConatiner: {
         top: 40,
@@ -196,8 +202,8 @@ const eventDetailsStyle = StyleSheet.create({
         alignItems: 'center'
     },
     map: {
-        width: '92%',
-        height: 200,
+        width: '90%',
+        height: 300,
         borderRadius: 20,
     },
     sliderContainer: {
@@ -212,9 +218,6 @@ const eventDetailsStyle = StyleSheet.create({
     descriptionContainer: {
         display: "flex",
         alignItems: "center",
-        borderStyle: "solid",
-        borderColor: "grey",
-        borderWidth: 2,
         paddingVertical: 20,
         borderRadius: 20,
     },
