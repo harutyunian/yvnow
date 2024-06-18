@@ -9,12 +9,13 @@ interface IFilterTagProps {
     filter: IFilters,
     text: string,
     onPress: (isPressed: boolean, filter: IFilters) => void,
+    isPressed?: boolean
 }
 
 
 export function FilterTag(props: IFilterTagProps) {
-    const {filter, text, onPress} = props
-    const [pressed, setPressed] = useState(false)
+    const {filter, text, onPress, isPressed} = props
+    const [pressed, setPressed] = useState(isPressed || false)
     const colors = useAppSelector(state => state.theme)
     const handlePress = () => {
         onPress(pressed, filter)
@@ -26,9 +27,9 @@ export function FilterTag(props: IFilterTagProps) {
 
     return <TouchableOpacity onPress={handlePress} style={[filterTagStyle.wrapper]}>
         <Badge style={[filterTagStyle.container]}
-            _text={{fontWeight: '900'}}
+               _text={{fontWeight: '900'}}
                colorScheme={pressed ? "success" : colors.FILTER_COLOR}
-            variant="solid"
+               variant="solid"
                rightIcon={icon}>
             {text}
         </Badge>

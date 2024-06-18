@@ -22,9 +22,9 @@ function useOptions() {
         },
         // header title working find but maybe included on typescript types
         // So I will put ts-ignores
-        headerTitleStyle: {
-            fontWeight: '900'
-        },
+        // headerTitleStyle: {
+        //     fontWeight: '900'
+        // },
         headerTintColor: accent_1,
         tabBarStyle: {
             backgroundColor: accent_5,
@@ -41,7 +41,8 @@ export function TodayEventStackScreen() {
             })}
         >
             <Stack.Screen name={routes.today.key} options={{title: routes.today.name}} component={TodayEvents}/>
-            <Stack.Screen name={routes.eventDetails.key} options={{title: routes.eventDetails.name}}
+            <Stack.Screen name={routes.eventDetails.key}
+                          options={{title: routes.eventDetails.name}}
                           component={EventDetails}/>
             <Stack.Screen name={routes.partnerProfile.key} options={{title: routes.partnerProfile.name}}
                           component={PartnerProfile}/>

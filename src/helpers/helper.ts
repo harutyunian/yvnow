@@ -1,25 +1,18 @@
 import {IEventCart} from "../types/event.type";
+import _ from 'lodash';
 
 export function isBetweenDates(startDateStr: string, endDateStr: string) {
     const currentDate = new Date(); // Current date and time
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
-    return currentDate >= startDate && currentDate <= endDate;
+    return _.inRange(currentDate.getTime(), startDate.getTime(), endDate.getTime() + 1);
 }
 
 export function isAfter8pm(): boolean {
     const currentHour = new Date().getHours();
-    return currentHour >= 20 || currentHour < 8;
+    return _.inRange(currentHour, 0, 8) || _.inRange(currentHour, 20, 24);
 }
 
-export function shuffleArray<T>(array: T[]): T[] {
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-    }
-    return shuffledArray;
-}
 
 export function formatNumber(number: number) {
     if (number >= 1000000) {
@@ -32,28 +25,18 @@ export function formatNumber(number: number) {
 }
 
 export function removeDuplicateUsers(events: IEventCart[]) {
-    const uniqueUsers: any = {};
-    const result = [];
-
-    for (const event of events) {
-        const userId = event.user.id;
-        if (!uniqueUsers[userId]) {
-            uniqueUsers[userId] = true;
-            result.push(event);
-        }
-    }
-
-    return result;
+    return _.uniqBy(events, (event) => event.user.id);
 }
-
 
 export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: keyof T
 ): boolean {
-    return arr1.some((obj1) => arr2.some((obj2) => obj1[comparisonProp] === obj2[comparisonProp]));
+    return _.some(arr1, (obj1) =>
+        _.some(arr2, (obj2) => _.isEqual(obj1[comparisonProp], obj2[comparisonProp]))
+    );
 }
 
 export function removeDuplicatesByValues<T extends Record<string, any>>(arr: T[], key: keyof T): T[] {
-    return arr.filter((v, i, a) => a.findIndex(v2 => v2[key] === v[key]) === i);
+    return _.uniqBy(arr, key);
 }
 
 export function isIncludedToday(date: string | Date): boolean {

@@ -1,8 +1,10 @@
 import React, {useMemo, useState} from "react";
-import {Image, StyleSheet, View, TouchableOpacity} from "react-native";
+import {StyleSheet, View, TouchableOpacity} from "react-native";
+import {Image} from 'expo-image'
 import ImageView from "react-native-image-viewing";
 import {IUser} from "../../../types/event.type";
-import {wrapInstagramUsernameWithComponent} from "../../../components/OpenIntagram/OpenInstagram";
+import {HighlightsContacts} from "../../../components/HighlightsContacts/OpenInstagram";
+
 interface IAboutProps {
     user: IUser
 }
@@ -23,7 +25,7 @@ export function About(props: IAboutProps) {
         setImageIndex(index)
     }
 
-    return <View>{wrapInstagramUsernameWithComponent(description)}
+    return <View><HighlightsContacts text={description}/>
         <View style={[aboutStyle.imagesContainer]}>
             {
                 profilePictures && profilePictures.length && profilePictures.map((uri, index) => (

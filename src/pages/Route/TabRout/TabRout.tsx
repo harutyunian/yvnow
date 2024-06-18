@@ -1,8 +1,7 @@
-import React from "react";
-import {View, StyleSheet} from "react-native";
+import React, {useMemo} from "react";
+import {Platform, StyleSheet} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
-import {CalendarIcon, LocationIcon, SettingIcon} from "../../../components/Svg/Svg";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {
     MapStackScreen,
@@ -11,6 +10,9 @@ import {
 } from "../StackRout/StackRout";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 import {SafeAreaView} from "react-native-safe-area-context";
+
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Fontisto,Feather } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,41 +32,39 @@ export default function TabRoute() {
         },
     }
 
-    return <SafeAreaView style={[styles.safeAreaContainer,{backgroundColor: accent_5}]}><NavigationContainer theme={MyTheme}>
+    const iosBottomBar = useMemo(()=>{
+        if(Platform.OS === 'ios'){
+            return {
+                paddingBottom: 0,
+                paddingTop: 3,
+                display: 'flex',
+                alignItems: 'flex-start',
+                height: 43
+            }
+        }
+        return {}
+    },[Platform.OS])
+
+
+    return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
+        theme={MyTheme}>
         <Tab.Navigator
             screenOptions={({route}) => {
                 return ({
-                    headerStyle: {
-                        backgroundColor: accent_5, // Background color of the header
-                    },
+                    headerStyle: { backgroundColor: 'yellow' },
                     headerTintColor: accent_1,
-                    tabBarStyle: {
-                        backgroundColor: accent_5,
-                    },
+                    tabBarStyle: {  backgroundColor: accent_5 , ...iosBottomBar},
                     headerShown: false,
                     tabBarIcon: ({focused}) => {
                         let iconComponent: JSX.Element | null = null;
                         const focusedIcon = focused ? PRIMARY.MAIN : iconColor
                         if (route.name === routes.map.key) {
-                            iconComponent = (
-                                <View style={[styles.locationIcon]}>
-                                    <LocationIcon fill={focusedIcon} width={25} height={25}/>
-                                </View>
-                            );
+                            iconComponent = <Fontisto name="map-marker-alt" size={24} color={focusedIcon} />
                         } else if (route.name === routes.settings.key) {
-                            iconComponent = (
-                                <View style={[styles.icon]}>
-                                    <SettingIcon fill={focusedIcon}/>
-                                </View>
-                            );
+                            iconComponent = <Feather name="settings" size={24} color={focusedIcon}/>
                         } else if (route.name === routes.today.key) {
-                            iconComponent = (
-                                <View style={[styles.icon]}>
-                                    <CalendarIcon fill={focusedIcon}/>
-                                </View>
-                            );
+                            iconComponent = <AntDesign name="calendar" size={24} color={focusedIcon}/>;
                         }
-
                         return iconComponent;
                     },
                     tabBarActiveTintColor: PRIMARY.MAIN,

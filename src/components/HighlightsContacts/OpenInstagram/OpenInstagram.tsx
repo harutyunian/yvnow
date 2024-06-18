@@ -1,5 +1,7 @@
-import {Image, Linking, StyleSheet, Text, TouchableOpacity} from "react-native";
-import {useAppSelector} from "../../hook/reduxHooks";
+import {Linking, StyleSheet, Text, TouchableOpacity} from "react-native";
+import {useAppSelector} from "../../../hook/reduxHooks";
+import {Image} from "expo-image";
+import image from "../../../../assets/images";
 
 interface IOpenInstagramProps {
     profile: string
@@ -17,7 +19,7 @@ export function OpenInstagram(props: IOpenInstagramProps) {
     return <TouchableOpacity style={[openInstagramStyles.container]} onPress={handlePress}>
         <Image
             style={[openInstagramStyles.image]}
-            source={require('./../../../assets/instagram_logo.png.webp')}
+            source={image.instagram_logo}
         />
         <Text style={[{color: colors.ACCENT["1"]}]}>{profile}</Text>
     </TouchableOpacity>

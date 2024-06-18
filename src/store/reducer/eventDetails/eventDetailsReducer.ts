@@ -9,6 +9,7 @@ const initialState: IEventCart = {
     view: 0,
     endDate: '',
     type: 'event',
+    filters: [],
     title: '',
     description: '',
     user: {

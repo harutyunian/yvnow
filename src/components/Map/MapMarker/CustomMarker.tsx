@@ -1,5 +1,6 @@
 import React from "react";
-import {StyleSheet, Image, View, Text} from "react-native";
+import {StyleSheet, View, Text} from "react-native";
+import {Image} from "expo-image";
 import {Marker, Callout} from "react-native-maps";
 import {useNavigation} from "@react-navigation/native";
 import LottieView from 'lottie-react-native';
@@ -9,6 +10,7 @@ import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {isBetweenDates} from "../../../helpers/helper";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
+
 interface ICustomMarkerProps extends IEventCart {
 
 }
@@ -30,8 +32,6 @@ export default function CustomMarker(props: ICustomMarkerProps) {
     };
 
 
-
-
     return (
         <Marker coordinate={{latitude: +latitude, longitude: +longitude}}>
             {isBetweenDates(startDate, endDate) ?
@@ -42,14 +42,14 @@ export default function CustomMarker(props: ICustomMarkerProps) {
                         style={[customMapStyle.lottieIcon]}
                         source={require('./../../../../assets/lottie/animated_marker.json')}
                     />
-                    <Image source={{uri: avatar}} style={[customMapStyle.lottieAvatar]}/>
+                    <Image {...{uri: avatar}} style={[customMapStyle.lottieAvatar]}/>
                 </> :
                 <>
                     <Image
-                        source={require("../../../../assets/icons/marker-96.png")}
+                        {...{uri:require("../../../../assets/icons/marker-96.png") }}
                         style={[customMapStyle.markerIcon]}
                     />
-                    <Image source={{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
+                    <Image {...{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
                 </>
             }
             <Callout
