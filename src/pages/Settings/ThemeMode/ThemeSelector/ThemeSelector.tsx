@@ -16,7 +16,6 @@ export default function ThemeSelector(props: IThemeSelectorProps) {
 
     const dispatch = useAppDispatch()
     const color = useAppSelector(state => state.theme)
-    const tc = color.ACCENT['1']
 
 
     const handleChangeMode = (nextValue: string) => {

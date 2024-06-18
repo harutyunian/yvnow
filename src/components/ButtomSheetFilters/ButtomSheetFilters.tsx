@@ -1,9 +1,9 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
-import {FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
+import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import {TodayTabs} from "../../types/filter.type";
@@ -22,21 +22,31 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
 
     const bottomSheetRef = useRef<BottomSheet>(null);
     const {t} = useTranslation()
+
     const colors = useAppSelector(state => state.theme)
+
+    const filters = useAppSelector(state => state.filters)
+    const [selectedFilters, setSelectedFilter] = useState<IFilters[]>(filters || [])
+    const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>([])
+    const [filterAction, setFilterActions] = useState<FilterActionType>(FilterAction.all)
+
 
     const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
 
 
     useEffect(() => {
-        setTimeout(()=>{
+        setTimeout(() => {
             bottomSheetRef.current?.expand()
-        },1000)
-
+        }, 1000)
     }, []);
 
 
-    const handleResetFilters = () =>{
+    const handleResetFilters = () => {
+        setSelectedFilter(filters)
+        setUnselectedFilter([])
+        setSubFilter([]);
         handleChangeEventTabs(TodayButtons.all)
+        setFilterActions(FilterAction.all)
     }
 
     const isAllActive = topFilter === TodayButtons.all;
@@ -46,21 +56,21 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
 
-    const filterBackground =  colors.ACCENT['3']
+    const filterBackground = colors.ACCENT['3']
 
     return <BottomSheet
         snapPoints={["10%", "38%"]}
         index={-1}
         ref={bottomSheetRef}
     >
-        <BottomSheetView style={[{...bottomSheetFilter.contentContainer},{backgroundColor:btn_inactive }]}>
-           <Text style={{
-               color: 'white',
-               fontSize: 22,
+        <BottomSheetView style={[{...bottomSheetFilter.contentContainer}, {backgroundColor: btn_inactive}]}>
+            <Text style={{
+                color: 'white',
+                fontSize: 22,
                 paddingVertical: 4,
-               fontWeight: '500'
-           }}>Select options</Text>
-            <View style={[bottomSheetFilter.buttonWrapper,{backgroundColor: filterBackground}]}>
+                fontWeight: '500'
+            }}>Select options</Text>
+            <View style={[bottomSheetFilter.buttonWrapper, {backgroundColor: filterBackground}]}>
                 <ButtonStyled
                     text={t('types.all')}
                     textStyle={bottomSheetFilter.textStyle}
@@ -99,10 +109,19 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
                 />
             </View>
             <FilterActionsSheet
-                {...{setBottomFilter, setSubFilter}}
+                {...{
+                    filterAction,
+                    setFilterActions,
+                    setBottomFilter,
+                    setSubFilter,
+                    selectedFilters,
+                    unselectedFilters,
+                    setSelectedFilter,
+                    setUnselectedFilter
+                }}
             />
             <TouchableOpacity style={[{...bottomSheetFilter.resetButton}, {backgroundColor: btn_active}]}
-                onPress={handleResetFilters}
+                              onPress={handleResetFilters}
             >
                 <Text style={{color: 'white'}}>Reset Filters</Text>
             </TouchableOpacity>
@@ -110,7 +129,7 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
     </BottomSheet>
 }
 const bottomSheetFilter = StyleSheet.create({
-    resetButton:{
+    resetButton: {
         top: 20,
         display: 'flex',
         justifyContent: 'center',
@@ -127,7 +146,7 @@ const bottomSheetFilter = StyleSheet.create({
         justifyContent: 'space-between',
         width: "100%",
     },
-    textStyle:{
+    textStyle: {
         fontSize: 12,
         fontWeight: '500'
     },

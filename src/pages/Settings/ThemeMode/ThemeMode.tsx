@@ -9,7 +9,6 @@ import {useAppSelector} from "../../../hook/reduxHooks";
 export default function ThemeMode() {
     const colors = useAppSelector(state => state.theme)
     const {t} = useTranslation()
-    const tc = colors.ACCENT['1']
 
 
     return <View style={[themeModeStyle.container]}>

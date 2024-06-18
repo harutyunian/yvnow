@@ -7,7 +7,7 @@ import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {isBetweenDates} from "../../helpers/helper";
+import {isBetweenDates, removeDuplicatesByValues} from "../../helpers/helper";
 import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {
@@ -95,7 +95,7 @@ export default function TodayEvents() {
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(() => {
         const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(uniqFilters))
+        //dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
@@ -121,6 +121,9 @@ export default function TodayEvents() {
                 ..._.shuffle(shuffledEvents.noLive)
             ];
             setTodayEvents(prev => [...prev, ...withLiveOrder]);
+            const eventsList = [...todayEvents,...withLiveOrder].map((el)=> el.filters).flat()
+            const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
+            dispatch(setFilters(uniqFilters))
             setPage(prev => prev + 1)
         } catch (e: any) {
             if (e && e.message) {

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import _, {find} from 'lodash'
+import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
 import {IFilters} from "../../types/event.type";
 import {FilterTag} from "../FilterTag/FilterTag";
@@ -8,11 +8,7 @@ import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
 
 
-interface IFilterActionsSheetProps {
-    setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
-    setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
-    subFilter?: IFilters[],
-}
+
 
 export enum FilterAction {
     all = "all",
@@ -23,22 +19,43 @@ export enum FilterAction {
 
 export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all | FilterAction.today
 
+interface IFilterActionsSheetProps {
+    setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
+    setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
+    subFilter?: IFilters[],
+    selectedFilters: IFilters[],
+    unselectedFilters: IFilters[],
+    setSelectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
+    setUnselectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
+    setFilterActions: React.Dispatch<React.SetStateAction<FilterActionType>>,
+    filterAction: FilterActionType
+}
+
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
-    const {setBottomFilter, setSubFilter, subFilter} = props
-    const [filterAction, setFilterActions] = useState(FilterAction.all)
-    const [selectedFilters, setSelectedFilter] = useState<IFilters[]>([])
+    const {setBottomFilter,
+        setSubFilter,
+        selectedFilters,
+        unselectedFilters,
+        setSelectedFilter,
+        setUnselectedFilter,
+        setFilterActions,
+        filterAction
+
+    } = props
+
     const {lang} = useAppSelector(state => state.translation)
-    const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
     const {t} = useTranslation()
 
     const handlePress = (isPressed: boolean, filter: IFilters) => {
 
-        setSelectedFilter((prev) => {
-            if (!isPressed) {
-                return [filter, ...prev]
-            }
-            return prev.filter((el) => el.id !== filter.id)
+        setUnselectedFilter((prev)=>{
+            if(isPressed) return prev.filter((filters)=>filters.id !== filter.id)
+            return [filter, ...prev]
+        })
+        setSelectedFilter((prev)=>{
+            if(isPressed) return [filter, ...prev]
+            return prev.filter((filters)=>filters.id !== filter.id)
         })
         setSubFilter(prev => {
             return isPressed ? _.filter(prev, ({id}) => id !== filter.id) : _.xorBy(prev, [filter], 'id');
@@ -106,16 +123,15 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 showsHorizontalScrollIndicator={false}
                 horizontal
             >
-                {selectedFilters.map((filter) => <FilterTag
+                {unselectedFilters.map((filter) => <FilterTag
                     isPressed
                     onPress={handlePress}
                     filter={filter}
                     text={filter[lang]}
                     key={filter.id}/>)
                 }
-                {filters.map((filter) => <FilterTag
+                {selectedFilters.map((filter) => <FilterTag
                     onPress={handlePress}
-                    isPressed={false}
                     filter={filter}
                     text={filter[lang]}
                     key={filter.id}/>)}
@@ -126,13 +142,11 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
 
 const filterActionsSheetStyle = StyleSheet.create({
     filterTagContainer: {
-        // bottom: 10,
         width: "100%",
         display: "flex",
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 10,
-        // height: 50
     },
     textStyle: {
         fontSize: 12,
