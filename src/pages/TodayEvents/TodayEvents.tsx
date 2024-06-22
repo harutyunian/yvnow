@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Text, View, StyleSheet, FlatList} from "react-native";
+import React, {JSX, useCallback, useEffect, useMemo, useState} from "react";
+import {Text, View, StyleSheet, FlatList, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
 import _ from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
@@ -19,10 +19,14 @@ import {NoData} from "../../components/NoData/NoData";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
 import {setLanguages} from "../../store/reducer/translation/translation";
 import {langs} from "../../store/reducer/translation/types";
-import {setDarkMode, setDynamicsMode, setLightMode} from "../../store/reducer/theme/themeReducer";
+import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer";
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
+import {useClipboard} from "native-base";
+
+
+let render = 0;
 
 
 export default function TodayEvents() {
@@ -40,7 +44,7 @@ export default function TodayEvents() {
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
     const dispatch = useAppDispatch()
-
+    console.log('TodayEvents', render++);
 
     useEffect(() => {
         const fetchLanguage = async () => {
@@ -65,10 +69,10 @@ export default function TodayEvents() {
                             dispatch(setLightMode());
                             break
                         default:
-                            dispatch(setDynamicsMode());
+                            dispatch(setDarkMode());
                     }
                 } else {
-                    dispatch(setDynamicsMode());
+                    dispatch(setDarkMode());
                 }
             } catch (error) {
                 console.error('Error fetching language:', error);
@@ -94,8 +98,7 @@ export default function TodayEvents() {
 
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(() => {
-        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        //dispatch(setFilters(uniqFilters))
+        const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
@@ -106,8 +109,8 @@ export default function TodayEvents() {
     }, [bottomFilteredEvents, subFilter]);
 
 
-    async function getEventList(page: number, count: number = 50) {
-        setLoadMore(() => true)
+    async function getEventList(page: number, count: number = 10) {
+        setLoadMore(true);
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
@@ -130,24 +133,30 @@ export default function TodayEvents() {
                 setErrorMessage(e.message);
             }
         } finally {
-            setTimeout(() => setLoadMore(false), 500)
-            setLoading(() => false);
+            setLoadMore(false);
+            setLoading(false);
         }
     }
 
-    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}: any) => {
-        const paddingToBottom = 20;
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
-    };
 
-    const handleScroll = ({nativeEvent}: any) => {
-        if (isCloseToBottom(nativeEvent)) {
-            if (!loadMore) {
-                !isDataEmpty && getEventList(page)
-            }
-        }
+    const handleScroll = () => {
+        !isDataEmpty && getEventList(page)
     }
-    const renderItem = ({item}: { item: IEventCart }) => <EventCart event={item}/>
+
+    const renderItem = useCallback(({item}: { item: IEventCart }) => {
+        return <EventCart event={item}/>
+    }, [])
+    const getItemLayout = useCallback((_: any, index: number) => {
+            const screenWidth = Dimensions.get('window').width;
+            const height = screenWidth / 2
+            return {length: height, offset: height * index, index}
+        }
+        , [])
+    const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
+    const keyExtractor = useCallback((item: IEventCart, index: number) => `${item.id}_${index}`, []); // useCallback for optimization
+    const maxToRenderPerBatch = useMemo(() => 10, []); // useMemo for optimization
+    const windowSize = useMemo(() => 21, []); // useMemo for optimization
+
 
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
@@ -156,12 +165,19 @@ export default function TodayEvents() {
         <View style={[todayEventsStyle.container]}>
             {!loading && !subFilteredEvents.length ? <NoData/> :
                 <FlatList
-                    style={[{height: "100%"}]}
+                    {...{
+                        getItemLayout,
+                        initialNumToRender,
+                        maxToRenderPerBatch,
+                        windowSize
+                    }}
+                    refreshing={loadMore}
                     showsVerticalScrollIndicator={false}
-                    onScroll={handleScroll}
+                    onEndReached={handleScroll}
+                    onEndReachedThreshold={1}
                     scrollEventThrottle={16}
                     data={subFilteredEvents}
-                    keyExtractor={(item) => `${item.id}`}
+                    keyExtractor={keyExtractor}
                     renderItem={renderItem}
                 />
             }
@@ -174,7 +190,7 @@ export default function TodayEvents() {
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters {...{subFilter,topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
+            <BottomSheetFilters {...{subFilter, topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
         </View>
     );
 }

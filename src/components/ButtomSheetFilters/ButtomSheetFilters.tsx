@@ -1,13 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
-import {useAppSelector} from "../../hook/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import {TodayTabs} from "../../types/filter.type";
 import {IFilters} from "../../types/event.type";
+import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
 
 
 interface IBottomSheetFiltersProps {
@@ -17,9 +18,18 @@ interface IBottomSheetFiltersProps {
     setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>
 }
 
-export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
+export interface IColorScheme {
+    bnt_active: string,
+    bnt_inactive: string,
+    buttonsBackground: string,
+    background: string
+}
+
+
+const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps) {
     const {topFilter, setTopFilter, setBottomFilter, setSubFilter} = props
 
+    const dipatch = useAppDispatch()
     const bottomSheetRef = useRef<BottomSheet>(null);
     const {t} = useTranslation()
 
@@ -30,7 +40,6 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
     const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>([])
     const [filterAction, setFilterActions] = useState<FilterActionType>(FilterAction.all)
 
-
     const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
 
 
@@ -38,7 +47,13 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
         setTimeout(() => {
             bottomSheetRef.current?.expand()
         }, 1000)
+
     }, []);
+
+    const colorSchemeFilter = useMemo<IColorScheme>(() => {
+        if (colors.mode === 'DARK') return {...colorSchemeDark, bnt_active: colors.PRIMARY.MAIN}
+        else return colorSchemeLight
+    }, [colors, dipatch])
 
 
     const handleResetFilters = () => {
@@ -58,26 +73,50 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
 
     const filterBackground = colors.ACCENT['3']
 
+
+    const bottomSheetbackground = '#002638'
+
+
     return <BottomSheet
-        snapPoints={["10%", "38%"]}
+        snapPoints={["10%", "28%"]}
         index={-1}
         ref={bottomSheetRef}
+        handleStyle={{
+            paddingVertical: 0,
+            backgroundColor: bottomSheetbackground,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderStyle: 'solid',
+            borderWidth: 5,
+            borderTopColor: bottomSheetbackground,
+            borderLeftColor: bottomSheetbackground,
+            borderRightColor: bottomSheetbackground,
+            borderBottomColor: 'transparent',
+
+        }}
+        handleIndicatorStyle={{backgroundColor: 'white'}}
     >
-        <BottomSheetView style={[{...bottomSheetFilter.contentContainer}, {backgroundColor: btn_inactive}]}>
+        <BottomSheetView
+            style={[{...bottomSheetFilter.contentContainer},
+                {
+                    rowGap: 10,
+                    backgroundColor: bottomSheetbackground,
+                }
+            ]}>
             <Text style={{
                 color: 'white',
-                fontSize: 22,
-                paddingVertical: 4,
+                fontSize: 18,
+                // paddingVertical: 4,
                 fontWeight: '500'
             }}>Select options</Text>
-            <View style={[bottomSheetFilter.buttonWrapper, {backgroundColor: filterBackground}]}>
+            <View style={[bottomSheetFilter.buttonWrapper]}>
                 <ButtonStyled
                     text={t('types.all')}
                     textStyle={bottomSheetFilter.textStyle}
                     onPress={() => handleChangeEventTabs(TodayButtons.all)}
                     textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                     style={[bottomSheetFilter.button, {
-                        backgroundColor: isAllActive ? btn_active : btn_inactive,
+                        backgroundColor: isAllActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                     }]}
                 />
                 <ButtonStyled
@@ -86,7 +125,7 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.event)}
                     style={[bottomSheetFilter.button, {
-                        backgroundColor: isEventActive ? btn_active : btn_inactive
+                        backgroundColor: isEventActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                     }]}
                 />
                 <ButtonStyled
@@ -95,7 +134,7 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
                     textColor={isShowActive ? "white" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.show)}
                     style={[bottomSheetFilter.button, {
-                        backgroundColor: isShowActive ? btn_active : btn_inactive,
+                        backgroundColor: isShowActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                     }]}
                 />
                 <ButtonStyled
@@ -104,12 +143,13 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
                     textColor={isConcertActive ? "white" : colors.ACCENT["1"]}
                     onPress={() => handleChangeEventTabs(TodayButtons.concert)}
                     style={[bottomSheetFilter.button, {
-                        backgroundColor: isConcertActive ? btn_active : btn_inactive,
+                        backgroundColor: isConcertActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                     }]}
                 />
             </View>
             <FilterActionsSheet
                 {...{
+                    colorSchemeFilter,
                     filterAction,
                     setFilterActions,
                     setBottomFilter,
@@ -120,22 +160,24 @@ export default function BottomSheetFilters(props: IBottomSheetFiltersProps) {
                     setUnselectedFilter
                 }}
             />
-            <TouchableOpacity style={[{...bottomSheetFilter.resetButton}, {backgroundColor: btn_active}]}
-                              onPress={handleResetFilters}
+            <TouchableOpacity
+                style={[{...bottomSheetFilter.resetButton}, {backgroundColor: colorSchemeFilter.bnt_active}]}
+                onPress={handleResetFilters}
             >
-                <Text style={{color: 'white'}}>Reset Filters</Text>
+                <Text style={{color: 'white', fontSize: 16, fontWeight: '500'}}>Reset Filters</Text>
             </TouchableOpacity>
         </BottomSheetView>
     </BottomSheet>
-}
+})
+
+
 const bottomSheetFilter = StyleSheet.create({
     resetButton: {
-        top: 20,
         display: 'flex',
         justifyContent: 'center',
         alignItems: "center",
-        paddingVertical: 10,
-        borderRadius: 10
+        borderRadius: 10,
+        height: 38
     },
     container: {
         flex: 1,
@@ -151,20 +193,21 @@ const bottomSheetFilter = StyleSheet.create({
         fontWeight: '500'
     },
     button: {
-        width: 75,
+        width: 90,
         height: 30,
     },
     contentContainer: {
         flex: 1,
-        padding: 24,
+        paddingHorizontal: 15,
+        paddingBottom: 24,
         paddingTop: 0,
     },
     buttonWrapper: {
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10,
+        justifyContent: 'space-between',
         borderRadius: 10
     },
 });
+export default BottomSheetFilters

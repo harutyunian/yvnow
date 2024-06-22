@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
 import {IFilters} from "../../types/event.type";
@@ -6,6 +6,7 @@ import {FilterTag} from "../FilterTag/FilterTag";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
+import {IColorScheme} from "../ButtomSheetFilters/ButtomSheetFilters";
 
 
 
@@ -28,7 +29,8 @@ interface IFilterActionsSheetProps {
     setSelectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
     setUnselectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
     setFilterActions: React.Dispatch<React.SetStateAction<FilterActionType>>,
-    filterAction: FilterActionType
+    filterAction: FilterActionType,
+    colorSchemeFilter: IColorScheme
 }
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
@@ -39,8 +41,8 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
         setSelectedFilter,
         setUnselectedFilter,
         setFilterActions,
-        filterAction
-
+        filterAction,
+        colorSchemeFilter
     } = props
 
     const {lang} = useAppSelector(state => state.translation)
@@ -79,14 +81,14 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const filterBackground = colors.ACCENT['3']
 
     return <View style={[filterActionsSheetStyle.wrapper]}>
-        <View style={[filterActionsSheetStyle.filterContainer, {backgroundColor: filterBackground}]}>
+        <View style={[filterActionsSheetStyle.filterContainer]}>
             <ButtonStyled
                 text={t('types.all')}
                 textStyle={filterActionsSheetStyle.textStyle}
                 onPress={() => handleFilterChange(FilterAction.all)}
                 textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isAllActive ? btn_active : btn_inactive,
+                    backgroundColor: isAllActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -95,7 +97,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.live)}
                 textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isLiveActive ? btn_active : btn_inactive,
+                    backgroundColor: isLiveActive ?colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -104,7 +106,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.today)}
                 textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
+                    backgroundColor: isTodayActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -113,7 +115,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.upcoming)}
                 textColor={isUpcomingActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isUpcomingActive ? btn_active : btn_inactive,
+                    backgroundColor: isUpcomingActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
         </View>
@@ -146,14 +148,14 @@ const filterActionsSheetStyle = StyleSheet.create({
         display: "flex",
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 10,
+        // paddingVertical: 10,
     },
     textStyle: {
         fontSize: 12,
         fontWeight: '500'
     },
     wrapper: {
-        top: 15,
+        rowGap: 10,
         padding: 0,
     },
     scroll: {},
@@ -161,12 +163,10 @@ const filterActionsSheetStyle = StyleSheet.create({
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10,
-        borderRadius: 10
+        justifyContent: 'space-between',
     },
     button: {
-        width: 75,
+        width: 90,
         height: 30,
     }
 })

@@ -65,6 +65,7 @@ export default function CustomMap() {
                 provider={PROVIDER_GOOGLE}
                 showsMyLocationButton
                 showsUserLocation={true}
+
                 mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 followsUserLocation={true}
                 initialRegion={{

@@ -31,9 +31,13 @@ function useOptions() {
         }
     }
 }
+let tab = 0
 export function TodayEventStackScreen() {
     const screenOptionsSettings = useOptions()
     const routes = useTranslatedRoutes()
+
+
+    console.log('TodayEventStackScreen',tab);
     return (
         <Stack.Navigator
             screenOptions={() => ({

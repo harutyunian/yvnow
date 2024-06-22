@@ -10,12 +10,13 @@ import {formatNumber, isBetweenDates} from "../../helpers/helper";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {setEventDetails} from "../../store/reducer/eventDetails/eventDetailsReducer";
 import {useTranslatedRoutes} from "../../hook/translatedRoutes";
+import _ from "lodash";
 
 interface IIEventCartProps {
     event: IEventCart;
 }
 
-export default function EventCart(props: IIEventCartProps) {
+const EventCart = React.memo( function (props: IIEventCartProps) {
     const {event} = props;
     const {imageUrls, view, startDate, endDate, title, user: {partner}} = event;
     const colors = useAppSelector((state) => state.theme);
@@ -75,7 +76,9 @@ export default function EventCart(props: IIEventCartProps) {
             </LinearGradient>
         </TouchableOpacity>
     );
-}
+},(prev,next)=>{
+    return _.isEqual(prev,next)
+})
 
 const main = {
     width: 600,
@@ -154,3 +157,5 @@ const style = StyleSheet.create({
         padding: 20,
     },
 });
+
+export default EventCart

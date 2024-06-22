@@ -18,7 +18,7 @@ import {aubergine} from "../../components/Map/mapStyles/aubergine";
 import {standard} from "../../components/Map/mapStyles/standard";
 import { AntDesign } from '@expo/vector-icons';
 
-
+let render = 0
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
     const {lang} = useAppSelector(state => state.translation)
@@ -37,6 +37,7 @@ export default function EventDetails() {
         loop: true
     }
 
+    console.log('EventDetails',render);
     useEffect(() => {
         (function () {
             try {

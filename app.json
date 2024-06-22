@@ -45,6 +45,14 @@
     },
     "plugins": [
       [
+        "expo-build-properties",
+        {
+          "ios": {
+            "flipper": true
+          }
+        }
+      ],
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
