@@ -16,7 +16,7 @@ interface IIEventCartProps {
     event: IEventCart;
 }
 
-const EventCart = React.memo( function (props: IIEventCartProps) {
+const EventCart = React.memo(function (props: IIEventCartProps) {
     const {event} = props;
     const {imageUrls, view, startDate, endDate, title, user: {partner}} = event;
     const colors = useAppSelector((state) => state.theme);
@@ -51,9 +51,9 @@ const EventCart = React.memo( function (props: IIEventCartProps) {
                         <View style={{...style.date}}>
 
                             <Text style={{...style.dateText}}>
-                                {dayjs(startDate).format("DD MMM YYYY")}
+                                {dayjs(startDate).format("DD MMM")}
                             </Text>
-                            <Text  style={{...style.dateText}}>
+                            <Text style={{...style.dateText}}>
                                 {dayjs(startDate).format("HH:mm - ")}
                                 {dayjs(endDate).format("HH:mm")}
                             </Text>
@@ -76,9 +76,7 @@ const EventCart = React.memo( function (props: IIEventCartProps) {
             </LinearGradient>
         </TouchableOpacity>
     );
-},(prev,next)=>{
-    return _.isEqual(prev,next)
-})
+}, () => true)
 
 const main = {
     width: 600,

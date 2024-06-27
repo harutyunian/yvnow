@@ -52,6 +52,7 @@ export default function CustomMarker(props: ICustomMarkerProps) {
                     <Image {...{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
                 </>
             }
+
             <Callout
                 tooltip
                 style={[customMapStyle.calloutContainer]}

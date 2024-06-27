@@ -47,6 +47,7 @@ const themeSelectorStyle = StyleSheet.create({
         fontWeight: '900'
     },
     container: {
+        width: '100%',
         borderStyle: 'solid',
         borderWidth: 3,
         borderColor: 'black',

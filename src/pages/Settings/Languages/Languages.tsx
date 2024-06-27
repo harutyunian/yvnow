@@ -50,6 +50,7 @@ export function Languages() {
 
 const languagesStyle = StyleSheet.create({
     container: {
+        // backgroundColor: 'tomato',
         width: '100%',
         display: "flex",
         alignItems: 'center',

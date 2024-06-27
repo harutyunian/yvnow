@@ -6,7 +6,7 @@ import {aubergine} from "./mapStyles/aubergine";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
-import {FilterAction,  FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
+import {FilterAction, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
 import {DARK} from "../../store/reducer/types";
 import {standard} from "./mapStyles/standard";
@@ -14,29 +14,31 @@ import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import {TodayTabs} from "../../types/filter.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterService} from "../../services/FilterService/FilterService";
-
+import {removeDuplicatesByValues} from "../../helpers/helper";
 
 
 export type locationType = { latitude: number; longitude: number } | null
 export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
+    const colors = useAppSelector(state => state.theme)
+    const filters = useAppSelector(state=>state.filters)
 
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all) // Top part filters state
     const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
-    const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
+    const [subFilter, setSubFilter] = useState<IFilters[]>(filters || []) // Sub filters
 
-    const colors = useAppSelector(state => state.theme)
+
+
     const dispatch = useAppDispatch()
-
 
 
     useEffect(() => {
         (async function () {
             try {
                 const eventService = new EventService();
-                const result = await eventService.toDaysEvents(1, 100);
+                const result = await eventService.toDaysEvents(1, 20);
                 setEvents(result.events);
             } catch (e: any) {
             }
@@ -48,8 +50,8 @@ export default function CustomMap() {
     }, [topFilter, events])
 
     const bottomFilteredEvents = useMemo(() => {
-        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(uniqFilters))
+        const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
+        // dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
@@ -76,12 +78,16 @@ export default function CustomMap() {
                 }}
                 customMapStyle={colors.mode === DARK ? aubergine : standard}
             >
-                {subFilteredEvents.map((event,index) => {
+                {subFilteredEvents.map((event, index) => {
                     return <CustomMarker key={index} {...event}/>;
                 })}
             </MapView>
             <BottomSheetFilters {...{
-                topFilter, setTopFilter,setBottomFilter, setSubFilter
+                topFilter,
+                subFilter: filters,
+                setSubFilter,
+                setTopFilter,
+                setBottomFilter
             }}/>
         </View>
     );

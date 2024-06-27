@@ -1,4 +1,4 @@
-import React, {JSX, useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Text, View, StyleSheet, FlatList, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
 import _ from 'lodash'
@@ -12,7 +12,6 @@ import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {
     FilterAction,
-
     FilterActionType
 } from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {NoData} from "../../components/NoData/NoData";
@@ -23,13 +22,11 @@ import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer"
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
-import {useClipboard} from "native-base";
 
 
-let render = 0;
+let count = 0
 
-
-export default function TodayEvents() {
+function TodayEvents() {
     const [loadMore, setLoadMore] = useState(false)
     const [isDataEmpty, setIsDataEmpty] = useState(false)
 
@@ -44,7 +41,6 @@ export default function TodayEvents() {
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
     const dispatch = useAppDispatch()
-    console.log('TodayEvents', render++);
 
     useEffect(() => {
         const fetchLanguage = async () => {
@@ -84,6 +80,7 @@ export default function TodayEvents() {
         fetchLanguage();
     }, [dispatch]);
 
+    console.log('today events - ', count++)
 
     useEffect(() => {
         setLoading(() => true);
@@ -115,7 +112,6 @@ export default function TodayEvents() {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
-            setIsDataEmpty(!events.length)
             const shuffledEvents = _.groupBy(events, event =>
                 isBetweenDates(event.startDate, event.endDate) ? 'live' : 'noLive'
             );
@@ -123,9 +119,10 @@ export default function TodayEvents() {
                 ..._.shuffle(shuffledEvents.live),
                 ..._.shuffle(shuffledEvents.noLive)
             ];
-            setTodayEvents(prev => [...prev, ...withLiveOrder]);
-            const eventsList = [...todayEvents,...withLiveOrder].map((el)=> el.filters).flat()
+            const eventsList = [...todayEvents, ...withLiveOrder].map((el) => el.filters).flat()
             const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
+            setTodayEvents(prev => [...prev, ...events]);
+            setIsDataEmpty(!events.length)
             dispatch(setFilters(uniqFilters))
             setPage(prev => prev + 1)
         } catch (e: any) {
@@ -142,21 +139,19 @@ export default function TodayEvents() {
     const handleScroll = () => {
         !isDataEmpty && getEventList(page)
     }
-
+    // memoed values for FlatList
     const renderItem = useCallback(({item}: { item: IEventCart }) => {
         return <EventCart event={item}/>
     }, [])
     const getItemLayout = useCallback((_: any, index: number) => {
-            const screenWidth = Dimensions.get('window').width;
-            const height = screenWidth / 2
-            return {length: height, offset: height * index, index}
-        }
-        , [])
+        const screenWidth = Dimensions.get('window').width;
+        const height = screenWidth / 2
+        return {length: height, offset: height * index, index}
+    }, [])
     const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
     const keyExtractor = useCallback((item: IEventCart, index: number) => `${item.id}_${index}`, []); // useCallback for optimization
-    const maxToRenderPerBatch = useMemo(() => 10, []); // useMemo for optimization
+    const maxToRenderPerBatch = useMemo(() => subFilteredEvents.length, [subFilteredEvents]); // useMemo for optimization
     const windowSize = useMemo(() => 21, []); // useMemo for optimization
-
 
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
@@ -171,6 +166,7 @@ export default function TodayEvents() {
                         maxToRenderPerBatch,
                         windowSize
                     }}
+                    removeClippedSubviews
                     refreshing={loadMore}
                     showsVerticalScrollIndicator={false}
                     onEndReached={handleScroll}
@@ -190,7 +186,13 @@ export default function TodayEvents() {
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters {...{subFilter, topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
+            <BottomSheetFilters {...{
+                subFilter,
+                topFilter,
+                setTopFilter,
+                setBottomFilter,
+                setSubFilter
+            }}/>
         </View>
     );
 }
@@ -234,3 +236,4 @@ const todayEventsStyle = StyleSheet.create({
         alignItems: "center",
     },
 });
+export default React.memo(TodayEvents)

@@ -1,6 +1,6 @@
 import HttpService from "../Http/HttpService";
 import {EVENTS} from "../../constants/server";
-import {IEventCart} from "../../types/event.type";
+import {IEventCart, IFilters} from "../../types/event.type";
 import dayjs from "dayjs";
 
 export class EventService {
@@ -10,10 +10,10 @@ export class EventService {
         this.httpService = new HttpService();
     }
 
-    async toDaysEvents(page: number, limit: number = 10): Promise<{ events: IEventCart[], total: number }> {
+    async toDaysEvents(page: number, limit: number = 10): Promise<{ events: IEventCart[], total: number,uniqFilters: IFilters[] }> {
         try {
             const url = EVENTS.TODAY;
-            return  await this.httpService.get<Promise<{ events: IEventCart[], total: number }>>(url, {
+            return  await this.httpService.get<Promise<{ events: IEventCart[], total: number, uniqFilters: IFilters[]  }>>(url, {
                 params: {
                     currentTime: new Date().toISOString(),
                     page,
