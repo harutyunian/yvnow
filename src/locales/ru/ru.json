@@ -28,9 +28,12 @@
     "light": "Светлый режим"
   },
   "partner": {
-    "see_partner_profile": "Mесто Прохождение",
+    "date": "Дата",
+    "time": "Время",
+    "address": "Адрес",
+    "see_partner_profile": "Место Прохождение",
     "description": "Описание",
-    "partner_profile": "Профиль партнера",
+    "partner_profile": "Место",
     "event_details": "Подробности"
   },
   "loading": "Загрузка"

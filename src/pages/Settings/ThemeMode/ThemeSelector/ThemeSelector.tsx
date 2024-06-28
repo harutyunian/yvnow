@@ -43,7 +43,7 @@ export default function ThemeSelector(props: IThemeSelectorProps) {
 }
 const themeSelectorStyle = StyleSheet.create({
     text: {
-        fontSize: 27,
+        fontSize: 20,
         fontWeight: '900'
     },
     container: {

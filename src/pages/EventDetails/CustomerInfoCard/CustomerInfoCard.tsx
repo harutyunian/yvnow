@@ -1,19 +1,20 @@
 import React from "react";
 import {View, Text, StyleSheet} from "react-native";
-import { Image } from 'expo-image';
+import {Image} from 'expo-image';
 import dayjs from "dayjs";
 import {useAppSelector} from "../../../hook/reduxHooks";
+import {useTranslation} from "../../../hook/translationHook";
 
 export default function CustomerInfoCard() {
     const colors = useAppSelector((state) => state.theme);
     const eventDetails = useAppSelector((state) => state.eventDetails);
+    const {t} = useTranslation()
     const {
         startDate,
         endDate
     } = eventDetails;
 
     const today = dayjs(startDate).format('DD-MM-YYYY')
-    const endDay = dayjs(endDate).format('DD-MM-YYYY')
     return (
         <View style={[customerInfoCardStyle.container]}>
             <View
@@ -28,9 +29,8 @@ export default function CustomerInfoCard() {
                         source={require('../../../../assets/calendar.png')}
                     />
                     <View style={[customerInfoCardStyle.dateWrapper]}>
-                        <Text style={[customerInfoCardStyle.iconNameText]}>Date</Text>
-                        <Text style={[customerInfoCardStyle.date,{color: colors.ACCENT['1']}]}>{today}</Text>
-                        {today !== endDay && <Text style={[customerInfoCardStyle.date, {color: colors.ACCENT['1']}]}>{}</Text>}
+                        <Text style={[customerInfoCardStyle.iconNameText]}>{t('partner.date')}</Text>
+                        <Text style={[customerInfoCardStyle.date, {color: colors.ACCENT['1']}]}>{today}</Text>
                     </View>
                 </View>
                 <View style={[customerInfoCardStyle.iconContainer]}>
@@ -39,8 +39,8 @@ export default function CustomerInfoCard() {
                         source={require('./../../../../assets/clock.png')}
                     />
                     <View style={[customerInfoCardStyle.dateWrapper]}>
-                        <Text style={[customerInfoCardStyle.iconNameText]}>Time</Text>
-                        <Text style={[customerInfoCardStyle.date,{color: colors.ACCENT['1']}]}>
+                        <Text style={[customerInfoCardStyle.iconNameText]}>{t('partner.time')}</Text>
+                        <Text style={[customerInfoCardStyle.date, {color: colors.ACCENT['1']}]}>
                             {dayjs(startDate).format('HH:mm')}-
                             {dayjs(endDate).format('HH:mm')}
                         </Text>
@@ -69,11 +69,11 @@ const customerInfoCardStyle = StyleSheet.create({
         width: 45,
         height: 45
     },
-    dateWrapper:{
+    dateWrapper: {
         top: 7,
         right: 6
     },
-    date:{
+    date: {
         fontWeight: '500',
         fontSize: 12
     },

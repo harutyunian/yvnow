@@ -29,9 +29,12 @@
     "light": "Light"
   },
   "partner": {
+    "date": "Data",
+    "time": "Time",
+    "address": "Address",
     "see_partner_profile": "See venue",
     "description": "Description",
-    "partner_profile": "Partner profile",
+    "partner_profile": "Venue",
     "event_details": "Event Details"
   },
   "loading": "Loading"

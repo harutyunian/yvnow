@@ -63,7 +63,7 @@ export function About(props: IAboutProps) {
 const aboutStyle = StyleSheet.create({
     container: {
         width: '100%',
-        top: 20,
+        // top: 20,
         paddingLeft: 10,
         borderRadius: 10,
         paddingVertical: 10

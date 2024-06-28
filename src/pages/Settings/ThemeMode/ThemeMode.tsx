@@ -16,14 +16,14 @@ export default function ThemeMode() {
             <ThemeSelector
                 name={t('theme.dark')}
                 mode='DARK'
-                icon={<Entypo name="moon" size={30}
+                icon={<Entypo name="moon" size={26}
                               color={'DARK' === colors.mode ? colors.PRIMARY.MAIN : colors.ACCENT['1']}/>}
             />
             <ThemeSelector
                 name={t('theme.light')}
                 mode='LIGHT'
                 icon={<MaterialIcons
-                    name="sunny" size={30}
+                    name="sunny" size={26}
                     color={'DARK' !== colors.mode ?
                         colors.PRIMARY.MAIN :
                         colors.ACCENT['1']}

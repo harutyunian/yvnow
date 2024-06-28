@@ -1,5 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Text, View, StyleSheet, FlatList, Dimensions} from "react-native";
+import {FlashList} from "@shopify/flash-list";
+
+import {Text, View, StyleSheet, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
 import _ from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
@@ -22,6 +24,11 @@ import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer"
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
+// import * as events from "events";
+
+const screenWidth = Dimensions.get('window').width;
+const width = screenWidth - (screenWidth * 0.1)
+const height = screenWidth / 2
 
 function TodayEvents() {
     const [loadMore, setLoadMore] = useState(false)
@@ -98,7 +105,9 @@ function TodayEvents() {
 
     //Bottom part filter
     const subFilteredEvents = useMemo(() => {
-        return FilterService.subFilter(bottomFilteredEvents, subFilter)
+        const events = FilterService.subFilter(bottomFilteredEvents, subFilter)
+        // return removeDuplicatesByValues(events, 'id')
+        return events
     }, [bottomFilteredEvents, subFilter]);
 
 
@@ -126,19 +135,21 @@ function TodayEvents() {
                 setErrorMessage(e.message);
             }
         } finally {
-            setTimeout(() => {
+            // setTimeout(() => {
                 setLoadMore(false);
                 setLoading(() => false);
-            }, 2000)
+            // }, 0)
         }
     }
 
+    // const prevPage = usePrevious(page)
 
     const handleScroll = useCallback(() => {
-        !isDataEmpty && getEventList(page)
-    }, [loadMore, isDataEmpty, page])
+        if (!isDataEmpty && !loadMore) {
+            getEventList(page)
+        }
+    }, [loadMore, isDataEmpty])
 
-    // memoed values for FlatList
     const renderItem = useCallback(({item}: { item: IEventCart }) => {
         return <EventCart event={item}/>
     }, [])
@@ -150,7 +161,7 @@ function TodayEvents() {
 
     const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
     const keyExtractor = useCallback((item: IEventCart) => {
-        return `${item.id}_key`
+        return `${item.id.toString()}_key`
     }, []);
     const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
     const windowSize = useMemo(() => 21, []); // useMemo for optimization
@@ -159,15 +170,17 @@ function TodayEvents() {
     if (errorMessage) return <Text>{errorMessage}</Text>;
 
     return (
-        <View style={[todayEventsStyle.container]}>
+        <View style={[todayEventsStyle.container, {width: '100%', height: 1000}]}>
             {!loading && !subFilteredEvents.length ? <NoData/> :
-                <FlatList
+                <FlashList
                     {...{
                         getItemLayout,
                         initialNumToRender,
                         maxToRenderPerBatch,
                         windowSize
                     }}
+                    estimatedItemSize={todayEvents.length}
+                    estimatedListSize={{height, width}}
                     refreshing={loadMore}
                     showsVerticalScrollIndicator={false}
                     onEndReached={handleScroll}

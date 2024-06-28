@@ -28,9 +28,12 @@
     "light": "Ցերեկային ռեժիմ"
   },
   "partner": {
+    "date": "Օր",
+    "time": "Ժամ",
+    "address": "Հասցե",
     "see_partner_profile": "Անցկացման վայրը",
     "description": "Բովանդակություն",
-    "partner_profile": "Գործընկերոջ էջ",
+    "partner_profile": "Ժամանցավայր",
     "event_details": "Միջոցառման մանրամասները"
   },
   "loading": "Բեռնում"

@@ -114,40 +114,23 @@ export default function PartnerProfile() {
                     onPress={() => handlePressProfileButtons(ProfileContent.event)}
                     text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
-                    style={{
-                        // width: 104,
-                        flex: 1,
-                        paddingHorizontal: 10,
-                        height: 50,
-                        backgroundColor: isEventActive ? btn_active : btn_inactive,
-                    }}
+                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isEventActive ? btn_active : btn_inactive,}]}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.past)}
                     text={t('profile.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
-                    style={{
-                        // width: 104,
-                        flex: 1,
-                        paddingHorizontal: 10,
-                        height: 50,
-                        backgroundColor: isPastActive ? btn_active : btn_inactive,
-                    }}
+                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isPastActive ? btn_active : btn_inactive,}]}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.about)}
                     text={t('profile.about')}
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
-                    style={{
-                        flex: 1,
-                        paddingHorizontal: 10,
-                        height: 50,
-                        backgroundColor: isAboutActive ? btn_active : btn_inactive,
-                    }}
+                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isAboutActive ? btn_active : btn_inactive,}]}
                 />
             </View>
             <ScrollView>
-                <View style={[{paddingBottom: 250, display: 'flex', alignItems: 'center'}]}>
+                <View style={[{paddingTop: 10, paddingBottom: 250, display: 'flex', alignItems: 'center'}]}>
                     {isEventActive && partnerEvents.notStarted.map((el) => {
                         if (isBetweenDates(el.startDate, el.endDate)) {
                             return <EventCart event={el} key={el.id}/>
@@ -170,13 +153,18 @@ const partnerProfileStyle = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    buttonStyle:{
+        paddingHorizontal: 10,
+        height: 37,
+        width: 100,
+    },
     buttons: {
         gap: 10,
-        paddingTop: 20,
+        paddingTop: 15,
         paddingBottom: 10,
         display: "flex",
         flexDirection: "row",
-        // justifyContent: "space-evenly",
+        justifyContent: 'space-evenly'
     },
     avatar: {
         width: 100,

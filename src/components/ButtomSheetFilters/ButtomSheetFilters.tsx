@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetView, BottomSheetHandle} from "@gorhom/bottom-sheet";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
@@ -57,6 +57,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                  else  bottomSheetRef.current?.collapse()
             }, 1000)
             await AsyncStorage.setItem('bottomSheet', 'true')
+            console.log('helav',isOpened)
         }catch(e){
 
         }
@@ -97,6 +98,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     return <BottomSheet
         snapPoints={["7.5%", "26.5%"]}
         index={-1}
+        handleComponent={BottomSheetHandle}
         ref={bottomSheetRef}
         handleStyle={[bottomSheetFilter.bottomSheetHeaderStyle, {
             backgroundColor: colorSchemeFilter.bottomSheetBackground,
@@ -104,7 +106,8 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
             borderLeftColor: colorSchemeFilter.bottomSheetBackground,
             borderRightColor: colorSchemeFilter.bottomSheetBackground,
         }]}
-        handleIndicatorStyle={{backgroundColor: colorSchemeFilter.indicatorColor}}
+        handleIndicatorStyle={{
+            backgroundColor: colorSchemeFilter.indicatorColor}}
     >
         <BottomSheetView
             style={[bottomSheetFilter.contentContainer,
@@ -183,7 +186,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                     style={[bottomSheetFilter.resetButton, {backgroundColor: colorSchemeFilter.bnt_active}]}
                     onPress={handleResetFilters}
                 >
-                    <Text style={{color: 'white', fontSize: 16, fontWeight: '900'}}>{t('filters.reset')}</Text>
+                    <Text style={{color: 'white', fontSize: 16, fontWeight: '800'}}>{t('filters.reset')}</Text>
                     <MaterialCommunityIcons name="filter-remove" size={20} color="white" />
                 </TouchableOpacity>
             </View>

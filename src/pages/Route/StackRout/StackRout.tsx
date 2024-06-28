@@ -51,12 +51,13 @@ export const TodayEventStackScreen = React.memo(function () {
 
     return (
         <TodayStack.Navigator
+            initialRouteName={'TodayEvents'}
             screenOptions={() => ({
                 ...screenOptionsSettings
             })}
         >
             <TodayStack.Screen
-                name={routes.today.key}
+                name={routes.today.name}
                 options={{title: routes.today.name, ...stckOptions, headerShown: false}}
                 component={TodayEvents}
             />
