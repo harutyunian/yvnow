@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
@@ -9,6 +10,7 @@ import {useTranslation} from "../../hook/translationHook";
 import {TodayTabs} from "../../types/filter.type";
 import {IFilters} from "../../types/event.type";
 import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 interface IBottomSheetFiltersProps {
@@ -47,12 +49,23 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
 
 
-    useEffect(() => {
-        setTimeout(() => {
-            bottomSheetRef.current?.expand()
-        }, 1000)
+    const isFiltersOpenedFirstTime = async ()=>{
+        try{
+            const isOpened = await AsyncStorage.getItem('bottomSheet');
+            setTimeout(() => {
+                if(isOpened !== 'true') bottomSheetRef.current?.expand()
+                 else  bottomSheetRef.current?.collapse()
+            }, 1000)
+            await AsyncStorage.setItem('bottomSheet', 'true')
+        }catch(e){
 
+        }
+    }
+    useEffect(() => {
+        isFiltersOpenedFirstTime()
     }, []);
+
+
 
     // colors for bottom sheet
     const colorSchemeFilter = useMemo<IColorScheme>(() => {
@@ -82,7 +95,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     const isConcertActive = useMemo(() => topFilter === TodayButtons.concert, [topFilter])
 
     return <BottomSheet
-        snapPoints={["7.5%", "30"]}
+        snapPoints={["7.5%", "26.5%"]}
         index={-1}
         ref={bottomSheetRef}
         handleStyle={[bottomSheetFilter.bottomSheetHeaderStyle, {
@@ -105,7 +118,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                 left: 8,
                 bottom: 5,
                 fontWeight: '500'
-            }}>Select options</Text>
+            }}>{t('filters.select_options')}</Text>
             <View style={[{backgroundColor: colorSchemeFilter.filtersBackground}, bottomSheetFilter.buttonBackground]}>
                 <View style={[bottomSheetFilter.buttonWrapper]}>
                     <ButtonStyled
@@ -170,7 +183,8 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                     style={[bottomSheetFilter.resetButton, {backgroundColor: colorSchemeFilter.bnt_active}]}
                     onPress={handleResetFilters}
                 >
-                    <Text style={{color: 'white', fontSize: 16, fontWeight: '500'}}>Reset Filters</Text>
+                    <Text style={{color: 'white', fontSize: 16, fontWeight: '900'}}>{t('filters.reset')}</Text>
+                    <MaterialCommunityIcons name="filter-remove" size={20} color="white" />
                 </TouchableOpacity>
             </View>
         </BottomSheetView>
@@ -183,6 +197,7 @@ const bottomSheetFilter = StyleSheet.create({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
+        columnGap: 20,
         rowGap: 10,
         padding: 8,
         borderRadius: 10
@@ -198,6 +213,7 @@ const bottomSheetFilter = StyleSheet.create({
     resetButton: {
         display: 'flex',
         justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: "center",
         borderRadius: 10,
         height: 38

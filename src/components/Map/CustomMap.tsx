@@ -1,20 +1,20 @@
 import React, {useState, useEffect, useMemo} from "react";
-import {View, StyleSheet,} from "react-native";
-import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
+import {View, StyleSheet} from "react-native";
+import { PROVIDER_GOOGLE} from "react-native-maps";
+import MapView from "react-native-map-clustering";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {aubergine} from "./mapStyles/aubergine";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {EventService} from "../../services/EventService/EventService";
-import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
+import {useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
-import {setFilters} from "../../store/reducer/filter/filterReducer";
 import {DARK} from "../../store/reducer/types";
 import {standard} from "./mapStyles/standard";
 import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import {TodayTabs} from "../../types/filter.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterService} from "../../services/FilterService/FilterService";
-import {removeDuplicatesByValues} from "../../helpers/helper";
+
 
 
 export type locationType = { latitude: number; longitude: number } | null
@@ -22,16 +22,12 @@ export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
     const colors = useAppSelector(state => state.theme)
-    const filters = useAppSelector(state=>state.filters)
+    const filters = useAppSelector(state => state.filters)
 
     const [events, setEvents] = useState<IEventCart[]>([]);
     const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all) // Top part filters state
     const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
     const [subFilter, setSubFilter] = useState<IFilters[]>(filters || []) // Sub filters
-
-
-
-    const dispatch = useAppDispatch()
 
 
     useEffect(() => {
@@ -51,7 +47,6 @@ export default function CustomMap() {
 
     const bottomFilteredEvents = useMemo(() => {
         const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        // dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
@@ -67,7 +62,6 @@ export default function CustomMap() {
                 provider={PROVIDER_GOOGLE}
                 showsMyLocationButton
                 showsUserLocation={true}
-
                 mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 followsUserLocation={true}
                 initialRegion={{

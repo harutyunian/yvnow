@@ -4,6 +4,7 @@ import {Image} from 'expo-image'
 import ImageView from "react-native-image-viewing";
 import {IUser} from "../../../types/event.type";
 import {HighlightsContacts} from "../../../components/HighlightsContacts/OpenInstagram";
+import {useAppSelector} from "../../../hook/reduxHooks";
 
 interface IAboutProps {
     user: IUser
@@ -11,6 +12,8 @@ interface IAboutProps {
 
 export function About(props: IAboutProps) {
     const {user: {description, profilePictures}} = props
+
+    const colors = useAppSelector(state => state.theme)
 
     const [showModal, setShowModal] = useState(false);
     const [imageIndex, setImageIndex] = useState(0)
@@ -25,7 +28,8 @@ export function About(props: IAboutProps) {
         setImageIndex(index)
     }
 
-    return <View><HighlightsContacts text={description}/>
+    return <View style={[aboutStyle.container, {backgroundColor: colors.ACCENT['6']}]}><HighlightsContacts
+        text={description}/>
         <View style={[aboutStyle.imagesContainer]}>
             {
                 profilePictures && profilePictures.length && profilePictures.map((uri, index) => (
@@ -37,7 +41,7 @@ export function About(props: IAboutProps) {
                     >
                         <Image
                             source={{uri}}
-                            resizeMode={'cover'}
+                            contentFit={'cover'}
                             style={aboutStyle.image}
                         />
                     </TouchableOpacity>
@@ -57,6 +61,13 @@ export function About(props: IAboutProps) {
 }
 
 const aboutStyle = StyleSheet.create({
+    container: {
+        width: '100%',
+        top: 20,
+        paddingLeft: 10,
+        borderRadius: 10,
+        paddingVertical: 10
+    },
     imagesContainer: {
         paddingTop: 20,
         flexDirection: "row",
@@ -79,11 +90,7 @@ const aboutStyle = StyleSheet.create({
         width: '100%',
         height: 300,
         display: 'flex',
-        // flex: 1,
         alignItems: 'center',
-        // justifyContent: 'center',
-        // width: Dimensions.get('window').width, // Set width to window width
-        // height: Dimensions.get('window').height,
     },
     modalImageWrapper: {
         flex: 1,

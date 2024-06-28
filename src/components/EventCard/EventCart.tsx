@@ -10,7 +10,6 @@ import {formatNumber, isBetweenDates} from "../../helpers/helper";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {setEventDetails} from "../../store/reducer/eventDetails/eventDetailsReducer";
 import {useTranslatedRoutes} from "../../hook/translatedRoutes";
-import _ from "lodash";
 
 interface IIEventCartProps {
     event: IEventCart;
@@ -33,7 +32,7 @@ const EventCart = React.memo(function (props: IIEventCartProps) {
     const height = screenWidth / 2
 
     return (<TouchableOpacity
-            style={[style.container, {width, height}]}
+            style={[style.container, {shadowColor: colors.PRIMARY.MAIN, width, height}]}
             onPress={handlePressEvent}
         >
             {imageUrls && imageUrls.length && <ImageSlider {...{imageUrls}} />}
@@ -49,7 +48,6 @@ const EventCart = React.memo(function (props: IIEventCartProps) {
                 <View style={{...style.cartInfoContainer}}>
                     <View style={{...style.top}}>
                         <View style={{...style.date}}>
-
                             <Text style={{...style.dateText}}>
                                 {dayjs(startDate).format("DD MMM")}
                             </Text>
@@ -76,7 +74,7 @@ const EventCart = React.memo(function (props: IIEventCartProps) {
             </LinearGradient>
         </TouchableOpacity>
     );
-}, () => true)
+})
 
 const main = {
     width: 600,

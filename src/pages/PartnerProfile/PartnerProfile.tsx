@@ -55,7 +55,7 @@ export default function PartnerProfile() {
                 const eventsNotStarted = [...withLiveOrder.live, ...withLiveOrder.noLive]
                 setPartnerEvents({notStarted: eventsNotStarted, passed: events.passed});
             } catch (e) {
-                console.log(e);
+                //console.log(e);
             }
         })();
     }, []);

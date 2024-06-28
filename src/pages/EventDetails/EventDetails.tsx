@@ -16,9 +16,8 @@ import {LocationIcon} from "../../components/Svg/Svg";
 import {DARK} from "../../store/reducer/types";
 import {aubergine} from "../../components/Map/mapStyles/aubergine";
 import {standard} from "../../components/Map/mapStyles/standard";
-import { AntDesign } from '@expo/vector-icons';
+import {AntDesign} from '@expo/vector-icons';
 
-let render = 0
 export default function EventDetails() {
     const eventDetails = useAppSelector(state => state.eventDetails)
     const {lang} = useAppSelector(state => state.translation)
@@ -37,14 +36,13 @@ export default function EventDetails() {
         loop: true
     }
 
-    console.log('EventDetails',render);
     useEffect(() => {
         (function () {
             try {
                 const eventService = new EventService()
                 eventService.addView(id)
             } catch (e) {
-                console.log('something went wrong trying to add view count')
+                //console.log('something went wrong trying to add view count')
             }
         })()
     }, []);
@@ -55,7 +53,7 @@ export default function EventDetails() {
     }
 
     return (
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
             <View>
                 <View style={[eventDetailsStyle.sliderContainer]}>
                     <Swiper {...sliderSettings}>
@@ -78,7 +76,7 @@ export default function EventDetails() {
                                     {title}
                                 </Text>
                                 <Text style={[eventDetailsStyle.description, {color: text_color}]}>
-                                    <HighlightsContacts text={`<[+374 95 300 955]> https://www.instagram.com/stop.music.club ${description} `}/>
+                                    <HighlightsContacts text={description}/>
                                 </Text>
                             </View>
                         </View>
@@ -86,8 +84,12 @@ export default function EventDetails() {
                             {filters && filters?.length && <View style={[eventDetailsStyle.badgeWrapper]}>
                                 {filters.map((filter) => {
                                     return <Badge
-                                        colorScheme={"info"}
-                                        variant='subtle'
+                                        style={{
+                                            borderRadius: 5
+                                        }}
+                                        _text={{color: colors.ACCENT["1"]}}
+                                        colorScheme={colors.FILTER_COLOR}
+                                        variant='outline'
                                         key={filter.id}
                                     >{filter[lang]}</Badge>
                                 })}
@@ -128,9 +130,9 @@ export default function EventDetails() {
                 </View>
                 <TouchableOpacity onPress={handleSeePartnerProfile}
                                   style={[eventDetailsStyle.seeProfileWrapper]}>
-                    <View style={[eventDetailsStyle.seeProfileButton,{backgroundColor: color.PRIMARY.MAIN}]}>
+                    <View style={[eventDetailsStyle.seeProfileButton, {backgroundColor: color.PRIMARY.MAIN}]}>
                         <Text style={eventDetailsStyle.seeButtonText}> See Venue</Text>
-                        <AntDesign name="arrowright" size={24} color="white" />
+                        <AntDesign name="arrowright" size={24} color="white"/>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -143,12 +145,12 @@ const eventDetailsStyle = StyleSheet.create({
         alignItems: 'center',
         top: -40
     },
-    seeButtonText:{
+    seeButtonText: {
         color: 'white',
         fontWeight: '500',
         fontSize: 18
     },
-    seeProfileButton:{
+    seeProfileButton: {
         columnGap: 10,
         borderRadius: 10,
         display: 'flex',

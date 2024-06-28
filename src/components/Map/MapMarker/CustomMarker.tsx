@@ -10,6 +10,7 @@ import MiniProfile from "../../MiniProfile/MiniProfile";
 import {setUser} from "../../../store/reducer/user/user";
 import {isBetweenDates} from "../../../helpers/helper";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
+import image from "../../../../assets/images"
 
 interface ICustomMarkerProps extends IEventCart {
 
@@ -31,28 +32,27 @@ export default function CustomMarker(props: ICustomMarkerProps) {
         navigate.navigate(routes.partnerProfile.key as never);
     };
 
-
     return (
-        <Marker coordinate={{latitude: +latitude, longitude: +longitude}}>
+        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} >
             {isBetweenDates(startDate, endDate) ?
                 <>
-                    <View style={customMapStyle.liveContainer}><Text style={customMapStyle.liveText}>Live</Text></View>
+                    <View style={customMapStyle.liveContainer}><Text
+                        style={customMapStyle.liveText}>Live</Text></View>
                     <LottieView
                         autoPlay
                         style={[customMapStyle.lottieIcon]}
                         source={require('./../../../../assets/lottie/animated_marker.json')}
                     />
-                    <Image {...{uri: avatar}} style={[customMapStyle.lottieAvatar]}/>
+
+                    <Image source={{uri: avatar}} style={[customMapStyle.lottieAvatar]}/>
                 </> :
                 <>
                     <Image
-                        {...{uri:require("../../../../assets/icons/marker-96.png") }}
+                        source={image.marker_icon}
                         style={[customMapStyle.markerIcon]}
                     />
-                    <Image {...{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
-                </>
-            }
-
+                    <Image source={{uri: avatar}} style={[customMapStyle.partnerLogo]}/>
+                </>}
             <Callout
                 tooltip
                 style={[customMapStyle.calloutContainer]}

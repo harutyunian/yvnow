@@ -10,7 +10,11 @@
   },
   "profile": {
     "past": "Անցած",
-    "about": "Գործընկեր. մասին"
+    "about": "Ինֆո"
+  },
+  "filters": {
+    "select_options": "Ընտրել տարբերակները",
+    "reset": "Զրոյացնել ֆիլտրները"
   },
   "tabs": {
     "today": "Այսօր",
@@ -24,7 +28,7 @@
     "light": "Ցերեկային ռեժիմ"
   },
   "partner": {
-    "see_partner_profile": "Տեսնել գործընկերոջ էջը",
+    "see_partner_profile": "Անցկացման վայրը",
     "description": "Բովանդակություն",
     "partner_profile": "Գործընկերոջ էջ",
     "event_details": "Միջոցառման մանրամասները"

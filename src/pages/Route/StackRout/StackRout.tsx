@@ -7,7 +7,7 @@ import PartnerProfile from "../../PartnerProfile/PartnerProfile";
 import EventDetails from "../../EventDetails/EventDetails";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
-
+import {NativeStackNavigationOptions} from "@react-navigation/native-stack/src/types";
 
 const TodayStack = createNativeStackNavigator();
 const MapStack = createNativeStackNavigator();
@@ -37,8 +37,16 @@ function useOptions() {
     }
 }
 
+const useStackOptions = (): NativeStackNavigationOptions => {
+    return {
+        headerShown: true,
+        freezeOnBlur: true,
+        animation: 'simple_push',
+    }
+}
 export const TodayEventStackScreen = React.memo(function () {
     const screenOptionsSettings = useOptions()
+    const stckOptions = useStackOptions()
     const routes = useTranslatedRoutes()
 
     return (
@@ -49,17 +57,17 @@ export const TodayEventStackScreen = React.memo(function () {
         >
             <TodayStack.Screen
                 name={routes.today.key}
-                options={{title: routes.today.name}}
+                options={{title: routes.today.name, ...stckOptions, headerShown: false}}
                 component={TodayEvents}
             />
             <TodayStack.Screen
                 name={routes.eventDetails.key}
-                options={{title: routes.eventDetails.name}}
+                options={{title: routes.eventDetails.name, ...stckOptions}}
                 component={EventDetails}
             />
             <TodayStack.Screen
                 name={routes.partnerProfile.key}
-                options={{title: routes.partnerProfile.name}}
+                options={{title: routes.partnerProfile.name, ...stckOptions}}
                 component={PartnerProfile}
             />
         </TodayStack.Navigator>
@@ -68,6 +76,7 @@ export const TodayEventStackScreen = React.memo(function () {
 
 export function MapStackScreen() {
     const screenOptionsSettings = useOptions()
+    const stackOptions = useStackOptions()
     const routes = useTranslatedRoutes()
 
     return (
@@ -76,17 +85,17 @@ export function MapStackScreen() {
         >
             <MapStack.Screen
                 name={routes.map.key}
-                options={{title: routes.map.name}}
+                options={{title: routes.map.name, ...stackOptions, headerShown: false}}
                 component={CustomMap}
             />
             <MapStack.Screen
                 name={routes.partnerProfile.key}
-                options={{title: routes.partnerProfile.name}}
+                options={{title: routes.partnerProfile.name, ...stackOptions}}
                 component={PartnerProfile}
             />
             <MapStack.Screen
                 name={routes.eventDetails.key}
-                options={{title: routes.eventDetails.name}}
+                options={{title: routes.eventDetails.name, ...stackOptions}}
                 component={EventDetails}
             />
         </MapStack.Navigator>
@@ -95,6 +104,7 @@ export function MapStackScreen() {
 
 export function SettingsStackScreen() {
     const screenOptionsSettings = useOptions()
+    const stackOptions = useStackOptions()
     const routes = useTranslatedRoutes()
 
     return (
@@ -103,8 +113,11 @@ export function SettingsStackScreen() {
                 ...screenOptionsSettings
             })}
         >
-            <SettingsStack.Screen name={routes.settings.key} options={{title: routes.settings.name}}
-                                  component={Settings}/>
+            <SettingsStack.Screen
+                name={routes.settings.key}
+                options={{title: routes.settings.name, ...stackOptions, headerShown: false}}
+                component={Settings}
+            />
         </SettingsStack.Navigator>
     );
 }

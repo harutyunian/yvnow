@@ -15,7 +15,6 @@ export default function FirstTimeWelcomePage(props: any) {
       if (err) {
       } else {
         if (result == null) {
-          console.log("null value recieved", result);
           setModalVisible(true);
         } else {
           console.log("result", result);

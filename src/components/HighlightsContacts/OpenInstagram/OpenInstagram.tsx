@@ -27,17 +27,17 @@ export function OpenInstagram(props: IOpenInstagramProps) {
 
 const openInstagramStyles = StyleSheet.create({
     container: {
-        alignSelf: 'flex-start',
         backgroundColor: 'rgba(255, 255, 255, 0.102)',
-        borderRadius: 6,
-        paddingBottom: 1,
-        flexDirection: 'row',
+        alignSelf: 'flex-start',
         paddingHorizontal: 10,
+        flexDirection: 'row',
         paddingVertical: 3,
+        paddingBottom: 1,
+        borderRadius: 6,
         columnGap: 5
     },
     image: {
-        width: 15,
-        height: 15
+        height: 15,
+        width: 15
     }
 })

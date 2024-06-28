@@ -13,7 +13,7 @@ export default function CallByPhoneNumber(props: ICallByPhoneNumberProps) {
 
     const handlePress = async () => {
         const url = `tel:${phoneNumber}`;
-        const canOpen = await Linking.canOpenURL(url);
+        await Linking.canOpenURL(url);
     };
     return <TouchableOpacity style={callByPhoneStyle.container} onPress={handlePress}>
         <Image

@@ -1,5 +1,5 @@
 import React, {useMemo} from "react";
-import {Platform, StyleSheet} from "react-native";
+import {Platform, StyleSheet, TouchableOpacity} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useAppSelector} from "../../../hook/reduxHooks";
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
@@ -49,9 +49,16 @@ export default function TabRoute() {
     return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
         theme={MyTheme}>
         <Tab.Navigator
+            headerBackImage={()=>{
+                return <TouchableOpacity style={{
+                    backgroundColor: colors.PRIMARY.MAIN,
+                    width: 50,
+                    height: 50,
+                    borderRadius: 10
+                }}> </TouchableOpacity>
+            }}
             screenOptions={({route}) => {
                 return ({
-                    headerBackTitleVisible: false,
                     headerTintColor: accent_1,
                     tabBarStyle: {backgroundColor: accent_5, ...iosBottomBar},
                     headerShown: false,

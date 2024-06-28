@@ -16,11 +16,8 @@ interface IButtonStyled extends TouchableOpacityProps {
     textStyle?: StyleProp<TextStyle>;
 }
 
-let renderCount = 0
-
 const ButtonStyled = React.memo(function (props: IButtonStyled) {
     const {text, style, textColor, textStyle, ...rest} = props;
-    console.log(`Button by name ${text} - `, renderCount++);
     return (
         <TouchableOpacity style={[style, styles.container]} {...rest}>
             <Text style={[{color: textColor}, textStyle]}>{text}</Text>

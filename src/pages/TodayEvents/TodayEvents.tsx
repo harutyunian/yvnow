@@ -23,9 +23,6 @@ import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
 
-
-let count = 0
-
 function TodayEvents() {
     const [loadMore, setLoadMore] = useState(false)
     const [isDataEmpty, setIsDataEmpty] = useState(false)
@@ -58,10 +55,10 @@ function TodayEvents() {
                 const mode = await AsyncStorage.getItem('theme');
                 if (mode) {
                     switch (mode) {
-                        case "two":
+                        case "DARK":
                             dispatch(setDarkMode());
                             break
-                        case "tree":
+                        case "LIGHT":
                             dispatch(setLightMode());
                             break
                         default:
@@ -80,7 +77,6 @@ function TodayEvents() {
         fetchLanguage();
     }, [dispatch]);
 
-    console.log('today events - ', count++)
 
     useEffect(() => {
         setLoading(() => true);
@@ -106,7 +102,7 @@ function TodayEvents() {
     }, [bottomFilteredEvents, subFilter]);
 
 
-    async function getEventList(page: number, count: number = 10) {
+    async function getEventList(page: number, count: number = 5) {
         setLoadMore(true);
         try {
             const eventService = new EventService();
@@ -130,15 +126,18 @@ function TodayEvents() {
                 setErrorMessage(e.message);
             }
         } finally {
-            setLoadMore(false);
-            setLoading(false);
+            setTimeout(() => {
+                setLoadMore(false);
+                setLoading(() => false);
+            }, 2000)
         }
     }
 
 
-    const handleScroll = () => {
+    const handleScroll = useCallback(() => {
         !isDataEmpty && getEventList(page)
-    }
+    }, [loadMore, isDataEmpty, page])
+
     // memoed values for FlatList
     const renderItem = useCallback(({item}: { item: IEventCart }) => {
         return <EventCart event={item}/>
@@ -148,9 +147,12 @@ function TodayEvents() {
         const height = screenWidth / 2
         return {length: height, offset: height * index, index}
     }, [])
+
     const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
-    const keyExtractor = useCallback((item: IEventCart, index: number) => `${item.id}_${index}`, []); // useCallback for optimization
-    const maxToRenderPerBatch = useMemo(() => subFilteredEvents.length, [subFilteredEvents]); // useMemo for optimization
+    const keyExtractor = useCallback((item: IEventCart) => {
+        return `${item.id}_key`
+    }, []);
+    const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
     const windowSize = useMemo(() => 21, []); // useMemo for optimization
 
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
@@ -166,11 +168,10 @@ function TodayEvents() {
                         maxToRenderPerBatch,
                         windowSize
                     }}
-                    removeClippedSubviews
                     refreshing={loadMore}
                     showsVerticalScrollIndicator={false}
                     onEndReached={handleScroll}
-                    onEndReachedThreshold={1}
+                    onEndReachedThreshold={0}
                     scrollEventThrottle={16}
                     data={subFilteredEvents}
                     keyExtractor={keyExtractor}
@@ -180,6 +181,7 @@ function TodayEvents() {
             {(!isDataEmpty && loadMore) && <LottieView
                 autoPlay
                 style={{
+                    top: 30,
                     width: 200,
                     height: 100,
                     backgroundColor: 'transparent',
@@ -199,6 +201,7 @@ function TodayEvents() {
 
 const todayEventsStyle = StyleSheet.create({
     container: {
+        paddingTop: 20,
         flex: 1,
         display: "flex",
         marginTop: 2,
