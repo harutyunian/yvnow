@@ -57,7 +57,6 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                  else  bottomSheetRef.current?.collapse()
             }, 1000)
             await AsyncStorage.setItem('bottomSheet', 'true')
-            console.log('helav',isOpened)
         }catch(e){
 
         }
@@ -96,7 +95,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     const isConcertActive = useMemo(() => topFilter === TodayButtons.concert, [topFilter])
 
     return <BottomSheet
-        snapPoints={["7.5%", "26.5%"]}
+        snapPoints={["7.5%", "28.5%"]}
         index={-1}
         handleComponent={BottomSheetHandle}
         ref={bottomSheetRef}

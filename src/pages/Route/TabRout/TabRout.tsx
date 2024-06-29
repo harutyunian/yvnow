@@ -82,17 +82,17 @@ export default function TabRoute() {
         >
             <Tab.Screen
                 name={routes.today.key}
-                // options={{title: routes.today.name}}
+                options={{title: routes.today.name}}
                 component={TodayEventStackScreen}
             />
             <Tab.Screen
                 name={routes.map.key}
-                // options={{title: routes.map.name}}
+                options={{title: routes.map.name}}
                 component={MapStackScreen}
             />
             <Tab.Screen
                 name={routes.settings.key}
-                // options={{title: routes.settings.name}}
+                options={{title: routes.settings.name}}
                 component={SettingsStackScreen}
             />
         </Tab.Navigator>
