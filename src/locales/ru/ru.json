@@ -10,7 +10,11 @@
   },
   "profile": {
     "past": "Предыдущие",
-    "about": "О партнере"
+    "about": "Инфо"
+  },
+  "filters": {
+    "select_options": "Выберите варианты",
+    "reset": "Сбросить фильтры"
   },
   "tabs": {
     "today": "Сегодня",
@@ -24,9 +28,12 @@
     "light": "Светлый режим"
   },
   "partner": {
-    "see_partner_profile": "Посмотреть профиль партнера",
+    "date": "Дата",
+    "time": "Время",
+    "address": "Адрес",
+    "see_partner_profile": "Место Прохождение",
     "description": "Описание",
-    "partner_profile": "Профиль партнера",
+    "partner_profile": "Место",
     "event_details": "Подробности"
   },
   "loading": "Загрузка"

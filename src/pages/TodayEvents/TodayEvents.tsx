@@ -1,5 +1,7 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Text, View, StyleSheet, FlatList} from "react-native";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {FlashList} from "@shopify/flash-list";
+
+import {Text, View, StyleSheet, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
 import _ from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
@@ -12,20 +14,23 @@ import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {
     FilterAction,
-
     FilterActionType
 } from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {NoData} from "../../components/NoData/NoData";
 import {setFilters} from "../../store/reducer/filter/filterReducer";
 import {setLanguages} from "../../store/reducer/translation/translation";
 import {langs} from "../../store/reducer/translation/types";
-import {setDarkMode, setDynamicsMode, setLightMode} from "../../store/reducer/theme/themeReducer";
+import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer";
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
+// import * as events from "events";
 
+const screenWidth = Dimensions.get('window').width;
+const width = screenWidth - (screenWidth * 0.1)
+const height = screenWidth / 2
 
-export default function TodayEvents() {
+function TodayEvents() {
     const [loadMore, setLoadMore] = useState(false)
     const [isDataEmpty, setIsDataEmpty] = useState(false)
 
@@ -40,7 +45,6 @@ export default function TodayEvents() {
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
     const dispatch = useAppDispatch()
-
 
     useEffect(() => {
         const fetchLanguage = async () => {
@@ -58,17 +62,17 @@ export default function TodayEvents() {
                 const mode = await AsyncStorage.getItem('theme');
                 if (mode) {
                     switch (mode) {
-                        case "two":
+                        case "DARK":
                             dispatch(setDarkMode());
                             break
-                        case "tree":
+                        case "LIGHT":
                             dispatch(setLightMode());
                             break
                         default:
-                            dispatch(setDynamicsMode());
+                            dispatch(setDarkMode());
                     }
                 } else {
-                    dispatch(setDynamicsMode());
+                    dispatch(setDarkMode());
                 }
             } catch (error) {
                 console.error('Error fetching language:', error);
@@ -94,25 +98,25 @@ export default function TodayEvents() {
 
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(() => {
-        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        //dispatch(setFilters(uniqFilters))
+        const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
 
     //Bottom part filter
     const subFilteredEvents = useMemo(() => {
-        return FilterService.subFilter(bottomFilteredEvents, subFilter)
+        const events = FilterService.subFilter(bottomFilteredEvents, subFilter)
+        // return removeDuplicatesByValues(events, 'id')
+        return events
     }, [bottomFilteredEvents, subFilter]);
 
 
-    async function getEventList(page: number, count: number = 50) {
-        setLoadMore(() => true)
+    async function getEventList(page: number, count: number = 5) {
+        setLoadMore(true);
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
-            setIsDataEmpty(!events.length)
             const shuffledEvents = _.groupBy(events, event =>
                 isBetweenDates(event.startDate, event.endDate) ? 'live' : 'noLive'
             );
@@ -120,9 +124,10 @@ export default function TodayEvents() {
                 ..._.shuffle(shuffledEvents.live),
                 ..._.shuffle(shuffledEvents.noLive)
             ];
-            setTodayEvents(prev => [...prev, ...withLiveOrder]);
-            const eventsList = [...todayEvents,...withLiveOrder].map((el)=> el.filters).flat()
+            const eventsList = [...todayEvents, ...withLiveOrder].map((el) => el.filters).flat()
             const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
+            setTodayEvents(prev => [...prev, ...events]);
+            setIsDataEmpty(!events.length)
             dispatch(setFilters(uniqFilters))
             setPage(prev => prev + 1)
         } catch (e: any) {
@@ -130,57 +135,86 @@ export default function TodayEvents() {
                 setErrorMessage(e.message);
             }
         } finally {
-            setTimeout(() => setLoadMore(false), 500)
-            setLoading(() => false);
+            // setTimeout(() => {
+                setLoadMore(false);
+                setLoading(() => false);
+            // }, 0)
         }
     }
 
-    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}: any) => {
-        const paddingToBottom = 20;
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
-    };
+    // const prevPage = usePrevious(page)
 
-    const handleScroll = ({nativeEvent}: any) => {
-        if (isCloseToBottom(nativeEvent)) {
-            if (!loadMore) {
-                !isDataEmpty && getEventList(page)
-            }
+    const handleScroll = useCallback(() => {
+        if (!isDataEmpty && !loadMore) {
+            getEventList(page)
         }
-    }
-    const renderItem = ({item}: { item: IEventCart }) => <EventCart event={item}/>
+    }, [loadMore, isDataEmpty])
+
+    const renderItem = useCallback(({item}: { item: IEventCart }) => {
+        return <EventCart event={item}/>
+    }, [])
+    const getItemLayout = useCallback((_: any, index: number) => {
+        const screenWidth = Dimensions.get('window').width;
+        const height = screenWidth / 2
+        return {length: height, offset: height * index, index}
+    }, [])
+
+    const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
+    const keyExtractor = useCallback((item: IEventCart) => {
+        return `${item.id.toString()}_key`
+    }, []);
+    const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
+    const windowSize = useMemo(() => 21, []); // useMemo for optimization
 
     if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
     if (errorMessage) return <Text>{errorMessage}</Text>;
 
     return (
-        <View style={[todayEventsStyle.container]}>
+        <View style={[todayEventsStyle.container, {width: '100%', height: 1000}]}>
             {!loading && !subFilteredEvents.length ? <NoData/> :
-                <FlatList
-                    style={[{height: "100%"}]}
+                <FlashList
+                    {...{
+                        getItemLayout,
+                        initialNumToRender,
+                        maxToRenderPerBatch,
+                        windowSize
+                    }}
+                    estimatedItemSize={todayEvents.length}
+                    estimatedListSize={{height, width}}
+                    refreshing={loadMore}
                     showsVerticalScrollIndicator={false}
-                    onScroll={handleScroll}
+                    onEndReached={handleScroll}
+                    onEndReachedThreshold={0}
                     scrollEventThrottle={16}
                     data={subFilteredEvents}
-                    keyExtractor={(item) => `${item.id}`}
+                    keyExtractor={keyExtractor}
                     renderItem={renderItem}
                 />
             }
             {(!isDataEmpty && loadMore) && <LottieView
                 autoPlay
                 style={{
+                    top: 30,
                     width: 200,
                     height: 100,
                     backgroundColor: 'transparent',
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters {...{subFilter,topFilter, setTopFilter, setBottomFilter, setSubFilter}}  />
+            <BottomSheetFilters {...{
+                subFilter,
+                topFilter,
+                setTopFilter,
+                setBottomFilter,
+                setSubFilter
+            }}/>
         </View>
     );
 }
 
 const todayEventsStyle = StyleSheet.create({
     container: {
+        paddingTop: 20,
         flex: 1,
         display: "flex",
         marginTop: 2,
@@ -218,3 +252,4 @@ const todayEventsStyle = StyleSheet.create({
         alignItems: "center",
     },
 });
+export default React.memo(TodayEvents)

@@ -10,7 +10,11 @@
   },
   "profile": {
     "past": "Անցած",
-    "about": "Գործընկեր. մասին"
+    "about": "Ինֆո"
+  },
+  "filters": {
+    "select_options": "Ընտրել տարբերակները",
+    "reset": "Զրոյացնել ֆիլտրները"
   },
   "tabs": {
     "today": "Այսօր",
@@ -24,9 +28,12 @@
     "light": "Ցերեկային ռեժիմ"
   },
   "partner": {
-    "see_partner_profile": "Տեսնել գործընկերոջ էջը",
+    "date": "Օր",
+    "time": "Ժամ",
+    "address": "Հասցե",
+    "see_partner_profile": "Անցկացման վայրը",
     "description": "Բովանդակություն",
-    "partner_profile": "Գործընկերոջ էջ",
+    "partner_profile": "Ժամանցավայր",
     "event_details": "Միջոցառման մանրամասները"
   },
   "loading": "Բեռնում"

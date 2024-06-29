@@ -13,6 +13,10 @@
     "past": "Past",
     "about": "About"
   },
+  "filters": {
+    "select_options": "Select Options",
+    "reset": "Reset filters"
+  },
   "tabs": {
     "today": "Today",
     "map": "Map",
@@ -25,9 +29,12 @@
     "light": "Light"
   },
   "partner": {
-    "see_partner_profile": "See profile",
+    "date": "Data",
+    "time": "Time",
+    "address": "Address",
+    "see_partner_profile": "See venue",
     "description": "Description",
-    "partner_profile": "Partner profile",
+    "partner_profile": "Venue",
     "event_details": "Event Details"
   },
   "loading": "Loading"

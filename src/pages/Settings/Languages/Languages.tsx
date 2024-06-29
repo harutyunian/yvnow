@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function Languages() {
     const colors = useAppSelector(state => state.theme)
-    const {lang: selectedLanguage} = useAppSelector(state => state.translation)
+    // const {lang: selectedLanguage} = useAppSelector(state => state.translation)
 
     // const bg = colors.ACCENT['6']
     const tc = colors.ACCENT['1']
@@ -24,7 +24,6 @@ export function Languages() {
         })()
     }
 
-    console.log(selectedLanguage);
     return <View style={[languagesStyle.container]}>
         <Text style={[languagesStyle.lang, {color: tc}]}>Languages</Text>
             <Language
@@ -50,6 +49,7 @@ export function Languages() {
 
 const languagesStyle = StyleSheet.create({
     container: {
+        // backgroundColor: 'tomato',
         width: '100%',
         display: "flex",
         alignItems: 'center',

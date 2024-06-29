@@ -7,6 +7,7 @@ import {
     StyleProp,
     ViewStyle, TextStyle,
 } from "react-native";
+import _ from "lodash";
 
 interface IButtonStyled extends TouchableOpacityProps {
     text: string;
@@ -15,14 +16,16 @@ interface IButtonStyled extends TouchableOpacityProps {
     textStyle?: StyleProp<TextStyle>;
 }
 
-export default function ButtonStyled(props: IButtonStyled) {
+const ButtonStyled = React.memo(function (props: IButtonStyled) {
     const {text, style, textColor, textStyle, ...rest} = props;
     return (
         <TouchableOpacity style={[style, styles.container]} {...rest}>
             <Text style={[{color: textColor}, textStyle]}>{text}</Text>
         </TouchableOpacity>
     );
-}
+}, (prev, next) => {
+    return JSON.stringify(prev) === JSON.stringify(next)
+})
 
 const styles = StyleSheet.create({
     container: {
@@ -54,3 +57,4 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
     },
 });
+export default ButtonStyled

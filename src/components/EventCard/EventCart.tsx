@@ -15,7 +15,7 @@ interface IIEventCartProps {
     event: IEventCart;
 }
 
-export default function EventCart(props: IIEventCartProps) {
+const EventCart = React.memo(function (props: IIEventCartProps) {
     const {event} = props;
     const {imageUrls, view, startDate, endDate, title, user: {partner}} = event;
     const colors = useAppSelector((state) => state.theme);
@@ -32,7 +32,7 @@ export default function EventCart(props: IIEventCartProps) {
     const height = screenWidth / 2
 
     return (<TouchableOpacity
-            style={[style.container, {width, height}]}
+            style={[style.container, {shadowColor: colors.PRIMARY.MAIN, width, height}]}
             onPress={handlePressEvent}
         >
             {imageUrls && imageUrls.length && <ImageSlider {...{imageUrls}} />}
@@ -48,11 +48,10 @@ export default function EventCart(props: IIEventCartProps) {
                 <View style={{...style.cartInfoContainer}}>
                     <View style={{...style.top}}>
                         <View style={{...style.date}}>
-
                             <Text style={{...style.dateText}}>
-                                {dayjs(startDate).format("DD MMM YYYY")}
+                                {dayjs(startDate).format("DD MMM")}
                             </Text>
-                            <Text  style={{...style.dateText}}>
+                            <Text style={{...style.dateText}}>
                                 {dayjs(startDate).format("HH:mm - ")}
                                 {dayjs(endDate).format("HH:mm")}
                             </Text>
@@ -75,7 +74,7 @@ export default function EventCart(props: IIEventCartProps) {
             </LinearGradient>
         </TouchableOpacity>
     );
-}
+})
 
 const main = {
     width: 600,
@@ -154,3 +153,5 @@ const style = StyleSheet.create({
         padding: 20,
     },
 });
+
+export default EventCart

@@ -1,7 +1,7 @@
 export const standard = [
     {
-        "featureType": "administrative.land_parcel",
-        "elementType": "labels",
+        "featureType": "administrative",
+        "elementType": "geometry",
         "stylers": [
             {
                 "visibility": "off"
@@ -10,7 +10,6 @@ export const standard = [
     },
     {
         "featureType": "poi",
-        "elementType": "labels.text",
         "stylers": [
             {
                 "visibility": "off"
@@ -18,7 +17,8 @@ export const standard = [
         ]
     },
     {
-        "featureType": "poi.business",
+        "featureType": "road",
+        "elementType": "labels.icon",
         "stylers": [
             {
                 "visibility": "off"
@@ -26,43 +26,7 @@ export const standard = [
         ]
     },
     {
-        "featureType": "poi.park",
-        "elementType": "labels.text",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "labels",
+        "featureType": "transit",
         "stylers": [
             {
                 "visibility": "off"

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo} from "react";
 import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
 import {IFilters} from "../../types/event.type";
@@ -6,8 +6,7 @@ import {FilterTag} from "../FilterTag/FilterTag";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
-
-
+import {IColorScheme} from "../ButtomSheetFilters/ButtomSheetFilters";
 
 
 export enum FilterAction {
@@ -28,65 +27,72 @@ interface IFilterActionsSheetProps {
     setSelectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
     setUnselectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
     setFilterActions: React.Dispatch<React.SetStateAction<FilterActionType>>,
-    filterAction: FilterActionType
+    filterAction: FilterActionType,
+    colorSchemeFilter: IColorScheme
 }
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
-    const {setBottomFilter,
+    const {
+        setBottomFilter,
         setSubFilter,
         selectedFilters,
         unselectedFilters,
         setSelectedFilter,
         setUnselectedFilter,
         setFilterActions,
-        filterAction
-
+        filterAction,
+        colorSchemeFilter
     } = props
 
     const {lang} = useAppSelector(state => state.translation)
+    // const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
     const {t} = useTranslation()
 
-    const handlePress = (isPressed: boolean, filter: IFilters) => {
 
-        setUnselectedFilter((prev)=>{
-            if(isPressed) return prev.filter((filters)=>filters.id !== filter.id)
+    const handlePress = useCallback((isPressed: boolean, filter: IFilters) => {
+        setUnselectedFilter((prev) => {
+            if (isPressed) return prev.filter((filters) => filters.id !== filter.id)
             return [filter, ...prev]
         })
-        setSelectedFilter((prev)=>{
-            if(isPressed) return [filter, ...prev]
-            return prev.filter((filters)=>filters.id !== filter.id)
+        setSelectedFilter((prev) => {
+            if (isPressed) return [filter, ...prev]
+            return prev.filter((filters) => filters.id !== filter.id)
         })
         setSubFilter(prev => {
             return isPressed ? _.filter(prev, ({id}) => id !== filter.id) : _.xorBy(prev, [filter], 'id');
         });
-    };
+    }, [setUnselectedFilter, setSelectedFilter, setSubFilter])
 
     const handleFilterChange = (action: FilterActionType) => {
         setBottomFilter(action)
         setFilterActions(action)
     }
 
-    const isAllActive = filterAction === FilterAction.all;
-    const isLiveActive = filterAction === FilterAction.live;
-    const isUpcomingActive = filterAction === FilterAction.upcoming;
-    const isTodayActive = filterAction === FilterAction.today;
 
-    const btn_inactive = colors.ACCENT["6"];
-    const btn_active = colors.PRIMARY.MAIN;
-
-
-    const filterBackground = colors.ACCENT['3']
+    const isAllActive = useMemo(() => filterAction === FilterAction.all, [filterAction]);
+    const isLiveActive = useMemo(() => filterAction === FilterAction.live, [filterAction])
+    const isUpcomingActive = useMemo(() => filterAction === FilterAction.upcoming, [filterAction]);
+    const isTodayActive = useMemo(() => filterAction === FilterAction.today, [filterAction]);
+    const renderFilterTag = useCallback((filter: IFilters, isPressed: boolean) => ( // Memoized renderFilterTag
+        <FilterTag
+            isPressed={isPressed}
+            onPress={handlePress}
+            filter={filter}
+            text={filter[lang]}
+            key={filter.id}
+        />
+    ), [handlePress, lang])
 
     return <View style={[filterActionsSheetStyle.wrapper]}>
-        <View style={[filterActionsSheetStyle.filterContainer, {backgroundColor: filterBackground}]}>
+        <View style={[filterActionsSheetStyle.filterContainer]}>
             <ButtonStyled
                 text={t('types.all')}
                 textStyle={filterActionsSheetStyle.textStyle}
                 onPress={() => handleFilterChange(FilterAction.all)}
                 textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isAllActive ? btn_active : btn_inactive,
+                    backgroundColor: isAllActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -95,7 +101,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.live)}
                 textColor={isLiveActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isLiveActive ? btn_active : btn_inactive,
+                    backgroundColor: isLiveActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -104,7 +110,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.today)}
                 textColor={isTodayActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isTodayActive ? btn_active : btn_inactive,
+                    backgroundColor: isTodayActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
             <ButtonStyled
@@ -113,7 +119,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 onPress={() => handleFilterChange(FilterAction.upcoming)}
                 textColor={isUpcomingActive ? "white" : colors.ACCENT["1"]}
                 style={[filterActionsSheetStyle.button, {
-                    backgroundColor: isUpcomingActive ? btn_active : btn_inactive,
+                    backgroundColor: isUpcomingActive ? colorSchemeFilter.bnt_active : colorSchemeFilter.bnt_inactive,
                 }]}
             />
         </View>
@@ -123,18 +129,8 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 showsHorizontalScrollIndicator={false}
                 horizontal
             >
-                {unselectedFilters.map((filter) => <FilterTag
-                    isPressed
-                    onPress={handlePress}
-                    filter={filter}
-                    text={filter[lang]}
-                    key={filter.id}/>)
-                }
-                {selectedFilters.map((filter) => <FilterTag
-                    onPress={handlePress}
-                    filter={filter}
-                    text={filter[lang]}
-                    key={filter.id}/>)}
+                {unselectedFilters.map((filter) => renderFilterTag(filter, true))}
+                {selectedFilters.map((filter) => renderFilterTag(filter, false))}
             </ScrollView>
         </View>
     </View>
@@ -146,14 +142,13 @@ const filterActionsSheetStyle = StyleSheet.create({
         display: "flex",
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 10,
     },
     textStyle: {
         fontSize: 12,
         fontWeight: '500'
     },
     wrapper: {
-        top: 15,
+        rowGap: 10,
         padding: 0,
     },
     scroll: {},
@@ -161,12 +156,10 @@ const filterActionsSheetStyle = StyleSheet.create({
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10,
-        borderRadius: 10
+        justifyContent: 'space-between',
     },
     button: {
-        width: 75,
+        width: 90,
         height: 30,
     }
 })

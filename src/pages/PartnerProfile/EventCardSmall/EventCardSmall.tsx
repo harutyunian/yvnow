@@ -80,13 +80,13 @@ const eventCardSmallStyle = StyleSheet.create({
         width: "100%",
         height: 135,
         borderRadius: 15,
-        paddingTop: 16,
+        paddingTop: 10,
         paddingLeft: 16,
         paddingBottom: 16,
         display: "flex",
         alignItems: "center",
         flexDirection: "row",
-        marginTop: 15
+        marginBottom: 15
     },
     image: {
         borderRadius: 8,

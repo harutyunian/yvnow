@@ -14,6 +14,7 @@ export const USER = {
 }
 export const EVENTS = {
     TODAY: `${EVENT_MAIN}/today`,
+    EVENT_LIST_BY_DATE: `${EVENT_MAIN}/getEventsListByDate`,
     ALL: `${EVENT_MAIN}/all`,
     BY_USER_ID: `${EVENT_MAIN}/user/`,
     INCREMENT_View: `${EVENT_MAIN}/incrementView`
