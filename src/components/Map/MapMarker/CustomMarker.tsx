@@ -33,7 +33,7 @@ export default function CustomMarker(props: ICustomMarkerProps) {
     };
 
     return (
-        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} >
+        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} tracksViewChanges={false}>
             {isBetweenDates(startDate, endDate) ?
                 <>
                     <View style={customMapStyle.liveContainer}><Text

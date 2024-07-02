@@ -3,7 +3,7 @@ import {FlashList} from "@shopify/flash-list";
 
 import {Text, View, StyleSheet, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
-import _ from 'lodash'
+import _, {shuffle} from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
@@ -24,7 +24,6 @@ import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer"
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
-// import * as events from "events";
 
 const screenWidth = Dimensions.get('window').width;
 const width = screenWidth - (screenWidth * 0.1)
@@ -47,7 +46,7 @@ function TodayEvents() {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        const fetchLanguage = async () => {
+        const fetchLanguage = async function () {
             try {
                 type langType = langs.EN | langs.RU | langs.AM
                 const storedLang = await AsyncStorage.getItem('lang');
@@ -57,7 +56,7 @@ function TodayEvents() {
                 console.error('Error fetching language:', error);
             }
         };
-        const setMode = async (): Promise<void> => {
+        const setMode = async function (): Promise<void> {
             try {
                 const mode = await AsyncStorage.getItem('theme');
                 if (mode) {
@@ -91,25 +90,22 @@ function TodayEvents() {
     }, []);
 
     // Top Buttons Filter
-    const topFilteredEvents = useMemo(() => {
+    const topFilteredEvents = useMemo(function () {
         return FilterService.topFilter(todayEvents, topFilter)
     }, [topFilter, todayEvents])
 
 
     //Middle Buttons Filter
-    const bottomFilteredEvents = useMemo(() => {
+    const bottomFilteredEvents = useMemo(function () {
         const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
 
     //Bottom part filter
-    const subFilteredEvents = useMemo(() => {
-        const events = FilterService.subFilter(bottomFilteredEvents, subFilter)
-        // return removeDuplicatesByValues(events, 'id')
-        return events
+    const subFilteredEvents = useMemo(function () {
+        return FilterService.subFilter(bottomFilteredEvents, subFilter)
     }, [bottomFilteredEvents, subFilter]);
-
 
     async function getEventList(page: number, count: number = 5) {
         setLoadMore(true);
@@ -117,16 +113,18 @@ function TodayEvents() {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
             const {events} = result
-            const shuffledEvents = _.groupBy(events, event =>
-                isBetweenDates(event.startDate, event.endDate) ? 'live' : 'noLive'
-            );
+            const shuffledEvents = events.reduce<{ live: IEventCart[], noLive: IEventCart[] }>((acc, event) => {
+                if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
+                else acc.noLive.push(event)
+                return acc
+            }, {live: [], noLive: []})
             const withLiveOrder = [
-                ..._.shuffle(shuffledEvents.live),
-                ..._.shuffle(shuffledEvents.noLive)
+                ...shuffle(shuffledEvents.live),
+                ...shuffle(shuffledEvents.noLive)
             ];
             const eventsList = [...todayEvents, ...withLiveOrder].map((el) => el.filters).flat()
             const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
-            setTodayEvents(prev => [...prev, ...events]);
+            setTodayEvents(prev => [...prev, ...withLiveOrder]);
             setIsDataEmpty(!events.length)
             dispatch(setFilters(uniqFilters))
             setPage(prev => prev + 1)
@@ -135,22 +133,19 @@ function TodayEvents() {
                 setErrorMessage(e.message);
             }
         } finally {
-            // setTimeout(() => {
-                setLoadMore(false);
-                setLoading(() => false);
-            // }, 0)
+            setLoadMore(false);
+            setLoading(() => false);
         }
     }
 
-    // const prevPage = usePrevious(page)
 
-    const handleScroll = useCallback(() => {
+    const handleScroll = useCallback(function () {
         if (!isDataEmpty && !loadMore) {
             getEventList(page)
         }
     }, [loadMore, isDataEmpty])
 
-    const renderItem = useCallback(({item}: { item: IEventCart }) => {
+    const renderItem = useCallback(function ({item}: { item: IEventCart }) {
         return <EventCart event={item}/>
     }, [])
     const getItemLayout = useCallback((_: any, index: number) => {
@@ -189,8 +184,7 @@ function TodayEvents() {
                     data={subFilteredEvents}
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
-                />
-            }
+                />}
             {(!isDataEmpty && loadMore) && <LottieView
                 autoPlay
                 style={{

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {View, StyleSheet} from "react-native";
-import { PROVIDER_GOOGLE} from "react-native-maps";
+import {PROVIDER_GOOGLE} from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {aubergine} from "./mapStyles/aubergine";
@@ -14,7 +14,6 @@ import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import {TodayTabs} from "../../types/filter.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterService} from "../../services/FilterService/FilterService";
-
 
 
 export type locationType = { latitude: number; longitude: number } | null
@@ -58,6 +57,7 @@ export default function CustomMap() {
     return (
         <View style={mapStyle.container}>
             <MapView
+                tracksViewChanges={false}
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
                 showsMyLocationButton

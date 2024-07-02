@@ -49,7 +49,7 @@ export default function TabRoute() {
     return <SafeAreaView style={[styles.safeAreaContainer, {backgroundColor: accent_5}]}><NavigationContainer
         theme={MyTheme}>
         <Tab.Navigator
-            headerBackImage={()=>{
+            headerBackImage={() => {
                 return <TouchableOpacity style={{
                     backgroundColor: colors.PRIMARY.MAIN,
                     width: 50,
