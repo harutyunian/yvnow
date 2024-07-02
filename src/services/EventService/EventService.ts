@@ -10,10 +10,18 @@ export class EventService {
         this.httpService = new HttpService();
     }
 
-    async toDaysEvents(page: number, limit: number = 5): Promise<{ events: IEventCart[], total: number,uniqFilters: IFilters[] }> {
+    async toDaysEvents(page: number, limit: number = 5): Promise<{
+        events: IEventCart[],
+        total: number,
+        uniqFilters: IFilters[]
+    }> {
         try {
             const url = EVENTS.TODAY;
-            return  await this.httpService.get<Promise<{ events: IEventCart[], total: number, uniqFilters: IFilters[]  }>>(url, {
+            return await this.httpService.get<Promise<{
+                events: IEventCart[],
+                total: number,
+                uniqFilters: IFilters[]
+            }>>(url, {
                 params: {
                     currentTime: new Date().toISOString(),
                     page,
@@ -21,7 +29,7 @@ export class EventService {
                 }
             });
         } catch (e) {
-           // console.log("Something went wrong trying to get today events", e);
+            // console.log("Something went wrong trying to get today events", e);
             return Promise.reject(e);
         }
     }

@@ -8,6 +8,19 @@ export function isBetweenDates(startDateStr: string, endDateStr: string) {
     return _.inRange(currentDate.getTime(), startDate.getTime(), endDate.getTime() + 1);
 }
 
+
+export function shuffle(array: any) {
+    // Loop through the array from the last element to the first
+    for (let i = array.length - 1; i > 0; i--) {
+        // Generate a random index from 0 to i
+        const j = Math.floor(Math.random() * (i + 1));
+
+        // Swap elements at index i and j
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 export function isAfter8pm(): boolean {
     const currentHour = new Date().getHours();
     return _.inRange(currentHour, 0, 8) || _.inRange(currentHour, 20, 24);
@@ -25,7 +38,9 @@ export function formatNumber(number: number) {
 }
 
 export function removeDuplicateUsers(events: IEventCart[]) {
-    return _.uniqBy(events, (event) => event.user.id);
+    return _.uniqBy(events, function (event) {
+        return event.user.id
+    });
 }
 
 export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: keyof T

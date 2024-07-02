@@ -42,7 +42,7 @@ export default function PartnerProfile() {
     );
     const {t} = useTranslation()
 
-    useEffect(() => {
+    useEffect(function() {
         (async function () {
             try {
                 const eventService = new EventService();

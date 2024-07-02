@@ -1,7 +1,10 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import BottomSheet, {BottomSheetView, BottomSheetHandle} from "@gorhom/bottom-sheet";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import BottomSheet, {
+    BottomSheetHandle,
+    useBottomSheetDynamicSnapPoints,
+} from "@gorhom/bottom-sheet";
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
@@ -46,18 +49,21 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>([])
     const [filterAction, setFilterActions] = useState<FilterActionType>(FilterAction.all)
 
-    const handleChangeEventTabs = (type: TodayTabs) => setTopFilter(type)
+    function handleChangeEventTabs(type: TodayTabs) {
+        return function () {
+            setTopFilter(type)
+        }
+    }
 
-
-    const isFiltersOpenedFirstTime = async ()=>{
-        try{
+    const isFiltersOpenedFirstTime = async () => {
+        try {
             const isOpened = await AsyncStorage.getItem('bottomSheet');
             setTimeout(() => {
-                if(isOpened !== 'true') bottomSheetRef.current?.expand()
-                 else  bottomSheetRef.current?.collapse()
+                if (isOpened !== 'true') return bottomSheetRef?.current?.expand()
+                bottomSheetRef.current?.collapse()
             }, 1000)
             await AsyncStorage.setItem('bottomSheet', 'true')
-        }catch(e){
+        } catch (e) {
 
         }
     }
@@ -66,28 +72,29 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     }, []);
 
 
-
     // colors for bottom sheet
     const colorSchemeFilter = useMemo<IColorScheme>(() => {
-        if (colors.mode === 'DARK') return {...colorSchemeDark,
-            bnt_active: colors.PRIMARY.MAIN,
-            bnt_inactive: colors.ACCENT['6']
-        }
-        else return {...colorSchemeLight,
-            bnt_inactive: colors.ACCENT['6'],
-            bnt_active: colors.PRIMARY.MAIN,
-
-        }
+        return colors.mode === 'DARK' ? colorSchemeDark : colorSchemeLight
     }, [colors, dipatch])
 
 
     const handleResetFilters = () => {
+        setTopFilter(TodayButtons.all)
+        setFilterActions(FilterAction.all)
+        setBottomFilter(FilterAction.all)
         setSelectedFilter(filters)
         setUnselectedFilter([])
         setSubFilter([]);
-        handleChangeEventTabs(TodayButtons.all)
-        setFilterActions(FilterAction.all)
     }
+
+    const initialSnapPoints = useMemo(() => ['7.2%', '30%'], []);
+
+    const {
+        animatedHandleHeight,
+        animatedSnapPoints,
+        animatedContentHeight,
+        handleContentLayout,
+    } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
     const isAllActive = useMemo(() => topFilter === TodayButtons.all, [topFilter])
     const isEventActive = useMemo(() => topFilter === TodayButtons.event, [topFilter])
@@ -95,8 +102,11 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     const isConcertActive = useMemo(() => topFilter === TodayButtons.concert, [topFilter])
 
     return <BottomSheet
-        snapPoints={["7.5%", "28.5%"]}
-        index={-1}
+        index={0}
+        animateOnMount
+        snapPoints={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}
         handleComponent={BottomSheetHandle}
         ref={bottomSheetRef}
         handleStyle={[bottomSheetFilter.bottomSheetHeaderStyle, {
@@ -106,14 +116,12 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
             borderRightColor: colorSchemeFilter.bottomSheetBackground,
         }]}
         handleIndicatorStyle={{
-            backgroundColor: colorSchemeFilter.indicatorColor}}
+            backgroundColor: colorSchemeFilter.indicatorColor
+        }}
     >
-        <BottomSheetView
-            style={[bottomSheetFilter.contentContainer,
-                {
-                    backgroundColor: colorSchemeFilter.bottomSheetBackground,
-                }
-            ]}>
+        <View
+            onLayout={handleContentLayout}
+            style={[bottomSheetFilter.contentContainer, {backgroundColor: colorSchemeFilter.bottomSheetBackground}]}>
             <Text style={{
                 color: colors.ACCENT["1"],
                 fontSize: 18,
@@ -126,7 +134,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                     <ButtonStyled
                         text={t('types.all')}
                         textStyle={bottomSheetFilter.textStyle}
-                        onPress={() => handleChangeEventTabs(TodayButtons.all)}
+                        onPress={handleChangeEventTabs(TodayButtons.all)}
                         textColor={isAllActive ? "white" : colors.ACCENT["1"]}
                         style={[bottomSheetFilter.button, {
                             backgroundColor: isAllActive ?
@@ -138,7 +146,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                         text={t('types.event')}
                         textStyle={bottomSheetFilter.textStyle}
                         textColor={isEventActive ? "white" : colors.ACCENT["1"]}
-                        onPress={() => handleChangeEventTabs(TodayButtons.event)}
+                        onPress={handleChangeEventTabs(TodayButtons.event)}
                         style={[bottomSheetFilter.button, {
                             backgroundColor: isEventActive ?
                                 colorSchemeFilter.bnt_active :
@@ -149,7 +157,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                         text={t('types.show')}
                         textStyle={bottomSheetFilter.textStyle}
                         textColor={isShowActive ? "white" : colors.ACCENT["1"]}
-                        onPress={() => handleChangeEventTabs(TodayButtons.show)}
+                        onPress={handleChangeEventTabs(TodayButtons.show)}
                         style={[bottomSheetFilter.button, {
                             backgroundColor: isShowActive ?
                                 colorSchemeFilter.bnt_active :
@@ -160,7 +168,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                         text={t('types.concert')}
                         textStyle={bottomSheetFilter.textStyle}
                         textColor={isConcertActive ? "white" : colors.ACCENT["1"]}
-                        onPress={() => handleChangeEventTabs(TodayButtons.concert)}
+                        onPress={handleChangeEventTabs(TodayButtons.concert)}
                         style={[bottomSheetFilter.button, {
                             backgroundColor: isConcertActive ?
                                 colorSchemeFilter.bnt_active :
@@ -186,10 +194,10 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                     onPress={handleResetFilters}
                 >
                     <Text style={{color: 'white', fontSize: 16, fontWeight: '800'}}>{t('filters.reset')}</Text>
-                    <MaterialCommunityIcons name="filter-remove" size={20} color="white" />
+                    <MaterialCommunityIcons name="filter-remove" size={20} color="white"/>
                 </TouchableOpacity>
             </View>
-        </BottomSheetView>
+        </View>
     </BottomSheet>
 })
 

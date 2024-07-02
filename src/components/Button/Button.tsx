@@ -23,7 +23,7 @@ const ButtonStyled = React.memo(function (props: IButtonStyled) {
             <Text style={[{color: textColor}, textStyle]}>{text}</Text>
         </TouchableOpacity>
     );
-}, (prev, next) => {
+}, function(prev, next){
     return JSON.stringify(prev) === JSON.stringify(next)
 })
 

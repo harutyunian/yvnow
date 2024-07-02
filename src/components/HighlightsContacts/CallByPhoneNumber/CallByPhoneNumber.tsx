@@ -1,4 +1,5 @@
-import {Linking, StyleSheet, Text, TouchableOpacity} from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity} from "react-native";
+import * as Linking from "expo-linking";
 import {Image} from 'expo-image'
 import {useAppSelector} from "../../../hook/reduxHooks";
 import image from "../../../../assets/images";
@@ -11,16 +12,19 @@ export default function CallByPhoneNumber(props: ICallByPhoneNumberProps) {
     const {phoneNumber} = props
     const colors = useAppSelector(state => state.theme)
 
-    const handlePress = async () => {
-        const url = `tel:${phoneNumber}`;
-        await Linking.canOpenURL(url);
+    const handlePress = () => {
+        if(Platform.OS === 'ios'){
+            Linking.openURL(`tel: ${phoneNumber}`)
+        }else{
+            Linking.openURL(`telprompt: ${phoneNumber}`)
+        }
     };
     return <TouchableOpacity style={callByPhoneStyle.container} onPress={handlePress}>
         <Image
             style={[callByPhoneStyle.image]}
             source={image.phone_icon}
         />
-        <Text style={[{color: colors.ACCENT["1"]}]}>{phoneNumber}</Text>
+        <Text style={[{color: colors.ACCENT["1"]}]}>{phoneNumber}c</Text>
     </TouchableOpacity>
 }
 
