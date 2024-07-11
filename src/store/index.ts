@@ -4,6 +4,7 @@ import themeReducer from "./reducer/theme/themeReducer";
 import userReducer from './reducer/user/user';
 import translationReducer from "./reducer/translation/translation";
 import filterReduce from "./reducer/filter/filterReducer";
+import eventReducer from "./reducer/event/eventReducer";
 
 
 const rootReducer = combineReducers({
@@ -11,10 +12,9 @@ const rootReducer = combineReducers({
     eventDetails: eventDetailsReducer,
     user: userReducer,
     translation: translationReducer,
-    filters: filterReduce
+    filters: filterReduce,
+    events: eventReducer
 });
-const store = configureStore({
-    reducer: rootReducer
-});
+const store = configureStore({reducer: rootReducer});
 
 export default store;

@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo} from "react";
 import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
-import {IFilters} from "../../types/event.type";
+import {IEventCart, IFilters} from "../../types/event.type";
 import {FilterTag} from "../FilterTag/FilterTag";
 import {useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
@@ -21,6 +21,7 @@ export type FilterActionType = FilterAction.live | FilterAction.upcoming | Filte
 interface IFilterActionsSheetProps {
     setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
     setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
+    subFilteredEvents: IEventCart[],
     subFilter?: IFilters[],
     selectedFilters: IFilters[],
     unselectedFilters: IFilters[],
@@ -34,7 +35,7 @@ interface IFilterActionsSheetProps {
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const {
         setBottomFilter,
-        setSubFilter,
+        subFilteredEvents,
         selectedFilters,
         unselectedFilters,
         setSelectedFilter,
@@ -51,18 +52,19 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
 
 
     const handlePress = useCallback((isPressed: boolean, filter: IFilters) => {
-        setUnselectedFilter((prev) => {
+        const isFilterEmpty = subFilteredEvents.find(({filters}) => {
+            return filters.find(({id}) => id === filter.id)
+        });
+        setSelectedFilter((prev) => {
             if (isPressed) return prev.filter((filters) => filters.id !== filter.id)
             return [filter, ...prev]
         })
-        setSelectedFilter((prev) => {
+        if (!isFilterEmpty) return
+        setUnselectedFilter((prev) => {
             if (isPressed) return [filter, ...prev]
             return prev.filter((filters) => filters.id !== filter.id)
         })
-        setSubFilter(prev => {
-            return isPressed ? _.filter(prev, ({id}) => id !== filter.id) : _.xorBy(prev, [filter], 'id');
-        });
-    }, [setUnselectedFilter, setSelectedFilter, setSubFilter])
+    }, [unselectedFilters, selectedFilters])
 
     const handleFilterChange = (action: FilterActionType) => {
         setBottomFilter(action)
@@ -129,8 +131,8 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
                 showsHorizontalScrollIndicator={false}
                 horizontal
             >
-                {unselectedFilters.map((filter) => renderFilterTag(filter, true))}
-                {selectedFilters.map((filter) => renderFilterTag(filter, false))}
+                {selectedFilters.map((filter) => renderFilterTag(filter, true))}
+                {unselectedFilters.map((filter) => renderFilterTag(filter, false))}
             </ScrollView>
         </View>
     </View>
@@ -138,6 +140,7 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
 
 const filterActionsSheetStyle = StyleSheet.create({
     filterTagContainer: {
+        height: 30,
         width: "100%",
         display: "flex",
         justifyContent: 'center',
@@ -159,7 +162,7 @@ const filterActionsSheetStyle = StyleSheet.create({
         justifyContent: 'space-between',
     },
     button: {
-        width: 90,
-        height: 30,
+        width: 85,
+        height: 35,
     }
 })

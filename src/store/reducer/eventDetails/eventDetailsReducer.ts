@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import {IEventCart} from "../../../types/event.type";
 
 
-const initialState: IEventCart = {
+export const initialState: IEventCart = {
     id: 0,
     imageUrls: [],
     startDate: '',
@@ -27,7 +27,7 @@ const initialState: IEventCart = {
 }
 
 export const eventDetailsReducer = createSlice({
-    name: 'evemtDetails',
+    name: 'eventDetails',
     initialState,
     reducers: {
         setEventDetails(_, action) {
