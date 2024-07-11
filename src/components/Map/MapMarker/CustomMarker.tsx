@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {StyleSheet, View, Text} from "react-native";
 import {Image} from "expo-image";
 import {Marker, Callout} from "react-native-maps";
@@ -32,14 +32,24 @@ export default function CustomMarker(props: ICustomMarkerProps) {
         navigate.navigate(routes.partnerProfile.key as never);
     };
 
+    const random  = useMemo(()=>{
+            return Math.floor(Math.random() * (10 - (-10) + 1)) + (-10);
+
+    },[])
     return (
-        <Marker coordinate={{latitude: +latitude, longitude: +longitude}} tracksViewChanges={false}>
+        <Marker
+            coordinate={{latitude: +latitude, longitude: +longitude}}
+            // tracksViewChanges={false}
+            // routestation={random}
+            flat
+        >
             {isBetweenDates(startDate, endDate) ?
                 <>
                     <View style={customMapStyle.liveContainer}><Text
                         style={customMapStyle.liveText}>Live</Text></View>
                     <LottieView
                         autoPlay
+                        loop
                         style={[customMapStyle.lottieIcon]}
                         source={require('./../../../../assets/lottie/animated_marker.json')}
                     />

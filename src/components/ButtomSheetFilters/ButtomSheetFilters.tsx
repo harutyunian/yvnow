@@ -11,13 +11,14 @@ import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActi
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import {TodayTabs} from "../../types/filter.type";
-import {IFilters} from "../../types/event.type";
+import {IEventCart, IFilters} from "../../types/event.type";
 import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 interface IBottomSheetFiltersProps {
     topFilter: TodayTabs,
+    subFilteredEvents: IEventCart[],
     setTopFilter: React.Dispatch<React.SetStateAction<TodayTabs>>,
     setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
     setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>
@@ -35,7 +36,7 @@ export interface IColorScheme {
 
 
 const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps) {
-    const {topFilter, setTopFilter, setBottomFilter, setSubFilter} = props
+    const {subFilteredEvents, topFilter, setTopFilter, setBottomFilter, setSubFilter} = props
 
     const dipatch = useAppDispatch()
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -45,9 +46,14 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
 
     const filters = useAppSelector(state => state.filters)
 
-    const [selectedFilters, setSelectedFilter] = useState<IFilters[]>(filters || [])
-    const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>([])
+    const [selectedFilters, setSelectedFilter] = useState<IFilters[]>([])
+    const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>(filters || [])
     const [filterAction, setFilterActions] = useState<FilterActionType>(FilterAction.all)
+
+
+    useEffect(() => {
+        setUnselectedFilter(filters)
+    }, [filters]);
 
     function handleChangeEventTabs(type: TodayTabs) {
         return function () {
@@ -104,6 +110,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
     return <BottomSheet
         index={0}
         animateOnMount
+        // @ts-ignore
         snapPoints={animatedSnapPoints}
         handleHeight={animatedHandleHeight}
         contentHeight={animatedContentHeight}
@@ -178,6 +185,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                 </View>
                 <FilterActionsSheet
                     {...{
+                        subFilteredEvents,
                         setSubFilter,
                         filterAction,
                         setBottomFilter,
@@ -242,8 +250,8 @@ const bottomSheetFilter = StyleSheet.create({
         fontWeight: '500'
     },
     button: {
-        width: 90,
-        height: 30,
+        width: 85,
+        height: 35,
     },
     contentContainer: {
         flex: 1,

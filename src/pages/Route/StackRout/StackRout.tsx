@@ -41,7 +41,7 @@ const useStackOptions = (): NativeStackNavigationOptions => {
     return {
         headerShown: true,
         freezeOnBlur: true,
-        animation: 'simple_push',
+        animation: 'simple_push'
     }
 }
 export const TodayEventStackScreen = React.memo(function () {

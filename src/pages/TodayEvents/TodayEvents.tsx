@@ -24,6 +24,7 @@ import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer"
 import {FilterService} from "../../services/FilterService/FilterService";
 import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
+import {addNewEventLists} from "../../store/reducer/event/eventReducer";
 
 const screenWidth = Dimensions.get('window').width;
 const width = screenWidth - (screenWidth * 0.1)
@@ -98,6 +99,11 @@ function TodayEvents() {
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(function () {
         const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
+        const filterList = eventLists.reduce<IFilters[]>((acc, {filters}) => {
+            return [...acc, ...filters]
+        }, [])
+        const uniqFilters = removeDuplicatesByValues(filterList, 'id')
+        dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
@@ -108,7 +114,7 @@ function TodayEvents() {
     }, [bottomFilteredEvents, subFilter]);
 
     async function getEventList(page: number, count: number = 5) {
-        setLoadMore(true);
+        setLoadMore(() => true);
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
@@ -124,16 +130,18 @@ function TodayEvents() {
             ];
             const eventsList = [...todayEvents, ...withLiveOrder].map((el) => el.filters).flat()
             const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
+            dispatch(addNewEventLists(withLiveOrder))
+            dispatch(setFilters(uniqFilters))
             setTodayEvents(prev => [...prev, ...withLiveOrder]);
             setIsDataEmpty(!events.length)
-            dispatch(setFilters(uniqFilters))
-            setPage(prev => prev + 1)
+
         } catch (e: any) {
             if (e && e.message) {
                 setErrorMessage(e.message);
             }
         } finally {
-            setLoadMore(false);
+            setPage(prev => prev + 1)
+            setLoadMore(() => false);
             setLoading(() => false);
         }
     }
@@ -196,6 +204,7 @@ function TodayEvents() {
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
             <BottomSheetFilters {...{
+                subFilteredEvents,
                 subFilter,
                 topFilter,
                 setTopFilter,

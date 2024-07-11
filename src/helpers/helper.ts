@@ -69,3 +69,29 @@ export function isDateGreaterThanEndOfDay(date: Date | string): boolean {
 
     return date > endOfDay;
 }
+
+interface IorderedByCategory {
+    live: IEventCart[],
+    upcoming: IEventCart[]
+}
+
+export  function uniqForMapMarker(events: IEventCart[]): IEventCart[] {
+    const seenIds = new Set();
+    const result = events.reduce<IEventCart[]>((acc, event) => {
+        const { startDate, endDate, user } = event;
+        const category = isBetweenDates(startDate, endDate) ? 'live' : 'upcoming';
+
+        if (!seenIds.has(user.id)) {
+            seenIds.add(user.id);
+            if (category === 'live') {
+                acc.unshift(event); // Prioritize live events
+            } else {
+                acc.push(event);
+            }
+        }
+        return acc;
+    }, []);
+
+    return result;
+}
+
