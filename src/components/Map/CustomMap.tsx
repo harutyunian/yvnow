@@ -13,7 +13,7 @@ import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import {TodayTabs} from "../../types/filter.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterService} from "../../services/FilterService/FilterService";
-import {removeDuplicatesByValues, uniqForMapMarker} from "../../helpers/helper";
+import {uniqForMapMarker} from "../../helpers/helper";
 
 
 export type locationType = { latitude: number; longitude: number } | null
@@ -73,6 +73,7 @@ export default function CustomMap() {
                 })}
             </MapView>
             <BottomSheetFilters {...{
+                subFilteredEvents,
                 topFilter,
                 subFilter: filters,
                 setSubFilter,

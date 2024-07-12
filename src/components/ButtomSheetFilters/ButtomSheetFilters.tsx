@@ -88,8 +88,8 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
         setTopFilter(TodayButtons.all)
         setFilterActions(FilterAction.all)
         setBottomFilter(FilterAction.all)
-        setSelectedFilter(filters)
-        setUnselectedFilter([])
+        setSelectedFilter([])
+        setUnselectedFilter(filters)
         setSubFilter([]);
     }
 
@@ -109,6 +109,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
 
     return <BottomSheet
         index={0}
+        // enableDynamicSizing
         animateOnMount
         // @ts-ignore
         snapPoints={animatedSnapPoints}
