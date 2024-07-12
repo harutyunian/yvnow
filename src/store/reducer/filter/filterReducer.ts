@@ -1,14 +1,18 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IFilters} from "../../../types/event.type";
 
-const initialState:IFilters[] = []
+const initialState: IFilters[] = []
 
 export const filterReduce = createSlice({
     name: 'filters',
     initialState,
     reducers: {
-        setFilters(_,action:PayloadAction<IFilters[]>){
-            return action.payload
+        setFilters(state, action: PayloadAction<IFilters[]>) {
+            if (action.payload) {
+                const filters = [...state, ...action.payload];
+                return Array.from(new Map(filters.map(item => [item.id, item])).values());
+            }
+            return state
         }
     }
 })

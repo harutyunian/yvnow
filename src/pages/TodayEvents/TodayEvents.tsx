@@ -3,13 +3,12 @@ import {FlashList} from "@shopify/flash-list";
 
 import {Text, View, StyleSheet, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
-import _, {shuffle} from 'lodash'
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {isBetweenDates, removeDuplicatesByValues} from "../../helpers/helper";
+import {removeDuplicatesByValues} from "../../helpers/helper";
 import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {
@@ -98,11 +97,7 @@ function TodayEvents() {
 
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(function () {
-        const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        const filterList = eventLists.reduce<IFilters[]>((acc, {filters}) => {
-            return [...acc, ...filters]
-        }, [])
-        const uniqFilters = removeDuplicatesByValues(filterList, 'id')
+        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         dispatch(setFilters(uniqFilters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
@@ -113,28 +108,16 @@ function TodayEvents() {
         return FilterService.subFilter(bottomFilteredEvents, subFilter)
     }, [bottomFilteredEvents, subFilter]);
 
-    async function getEventList(page: number, count: number = 5) {
+    async function getEventList(page: number, count: number = 6) {
         setLoadMore(() => true);
         try {
             const eventService = new EventService();
             const result = await eventService.toDaysEvents(page, count);
-            const {events} = result
-            const shuffledEvents = events.reduce<{ live: IEventCart[], noLive: IEventCart[] }>((acc, event) => {
-                if (isBetweenDates(event.startDate, event.endDate)) acc.live.push(event)
-                else acc.noLive.push(event)
-                return acc
-            }, {live: [], noLive: []})
-            const withLiveOrder = [
-                ...shuffle(shuffledEvents.live),
-                ...shuffle(shuffledEvents.noLive)
-            ];
-            const eventsList = [...todayEvents, ...withLiveOrder].map((el) => el.filters).flat()
-            const uniqFilters = removeDuplicatesByValues<IFilters>(eventsList, 'id')
-            dispatch(addNewEventLists(withLiveOrder))
-            dispatch(setFilters(uniqFilters))
-            setTodayEvents(prev => [...prev, ...withLiveOrder]);
+            const {events, uniqFilters: filterList} = result
+            dispatch(addNewEventLists(events))
+            dispatch(setFilters(filterList))
+            setTodayEvents(prev => [...prev, ...events]);
             setIsDataEmpty(!events.length)
-
         } catch (e: any) {
             if (e && e.message) {
                 setErrorMessage(e.message);
@@ -163,9 +146,7 @@ function TodayEvents() {
     }, [])
 
     const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
-    const keyExtractor = useCallback((item: IEventCart) => {
-        return `${item.id.toString()}_key`
-    }, []);
+    const keyExtractor = useCallback((item: any, i: number) => `${i}-${item.id}`, []);
     const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
     const windowSize = useMemo(() => 21, []); // useMemo for optimization
 
