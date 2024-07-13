@@ -63,7 +63,7 @@ const EventCart = React.memo(function (props: IIEventCartProps) {
                         )}
                     </View>
                     <View style={{...style.description}}>
-                        <Text style={{...style.eventTitle}}>{partner}</Text>
+                        {partner && <Text style={{...style.eventTitle}}>{partner}</Text>}
                         <Text style={{...style.eventTitle}}>{title}</Text>
                         <View style={{...style.addressContainer, right: 5, top: 5}}>
                             <EyeIcon style={{...style.locationIcon}}/>
