@@ -8,7 +8,6 @@ import {EventService} from "../../services/EventService/EventService";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {removeDuplicatesByValues} from "../../helpers/helper";
 import {useAppDispatch,} from "../../hook/reduxHooks";
 import {TodayButtons} from "./switchButtons.enum";
 import {
@@ -97,8 +96,8 @@ function TodayEvents() {
 
     //Middle Buttons Filter
     const bottomFilteredEvents = useMemo(function () {
-        const {eventLists, uniqFilters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(uniqFilters))
+        const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
+        dispatch(setFilters(filters))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 

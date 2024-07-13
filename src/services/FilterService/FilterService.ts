@@ -7,7 +7,6 @@ import {
     isBetweenDates,
     isDateGreaterThanEndOfDay,
     isIncludedToday,
-    removeDuplicatesByValues
 } from "../../helpers/helper";
 
 export class FilterService {
@@ -33,17 +32,15 @@ export class FilterService {
                 const {startDate} = event;
                 return isDateGreaterThanEndOfDay(startDate);
             });
-        }
-        else if (bottomFilter === FilterAction.today) {
+        } else if (bottomFilter === FilterAction.today) {
             eventLists = _.filter(topFilteredEvents, event => {
                 const {startDate} = event;
                 return isIncludedToday(startDate);
             });
         }
-        const filters = _.flatMap(eventLists, event => event.filters || []).map((el)=>({...el, selected: false}));
-        // removing duplicates for staying filters which included event
-        const uniqFilters = removeDuplicatesByValues<IFilters>(filters, 'id')
-        return {eventLists, uniqFilters}
+        const filters = eventLists.map((event) => event.filters).flat();
+
+        return {eventLists, filters }
     }
 
     static subFilter(bottomFilteredEvents: IEventCart[], filtersList: IFilters[]) {

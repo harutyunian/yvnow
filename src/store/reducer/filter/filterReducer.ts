@@ -9,8 +9,7 @@ export const filterReduce = createSlice({
     reducers: {
         setFilters(state, action: PayloadAction<IFilters[]>) {
             if (action.payload) {
-                const filters = [...state, ...action.payload];
-                return Array.from(new Map(filters.map(item => [item.id, item])).values());
+                return Array.from(new Map(action.payload.map(item => [item.id, item])).values());
             }
             return state
         }

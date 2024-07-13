@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Text, View, StyleSheet, ScrollView} from "react-native";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Text, View, StyleSheet, ScrollView, Dimensions} from "react-native";
 import {Image} from 'expo-image'
 import {useAppSelector} from "../../hook/reduxHooks";
 import {
@@ -14,6 +14,7 @@ import {About} from "./About/About";
 import {isBetweenDates} from "../../helpers/helper";
 import EventCart from "../../components/EventCard/EventCart";
 import {useTranslation} from "../../hook/translationHook";
+import {FlashList} from "@shopify/flash-list";
 
 enum ProfileContent {
     event = "event",
@@ -26,6 +27,10 @@ type ProfileContentType =
     | ProfileContent.past
     | ProfileContent.about;
 
+
+const screenWidth = Dimensions.get('window').width;
+const width = screenWidth - (screenWidth * 0.1)
+const height = screenWidth / 2
 export default function PartnerProfile() {
     const colors = useAppSelector((state) => state.theme);
     const btn_inactive = colors.ACCENT["6"];
@@ -42,7 +47,7 @@ export default function PartnerProfile() {
     );
     const {t} = useTranslation()
 
-    useEffect(function() {
+    useEffect(function () {
         (async function () {
             try {
                 const eventService = new EventService();
@@ -64,6 +69,25 @@ export default function PartnerProfile() {
     const isEventActive = profileTypes === ProfileContent.event;
     const isAboutActive = profileTypes === ProfileContent.about;
     const isPastActive = profileTypes === ProfileContent.past;
+
+    const renderItem = useCallback(({item}: { item: IEventCart }) => {
+        const el = item;
+        if (isEventActive) {
+            if (isBetweenDates(el.startDate, el.endDate)) return <EventCart event={el} key={el.id}/>
+            return <EventCardSmall event={{...el, user}} key={el.id}/>
+        }
+        return <EventCardSmall event={{...el, user}} key={el.id}/>
+    }, [isEventActive, isPastActive, user, partnerEvents])
+
+    const data = useMemo(() => {
+        return isEventActive ? partnerEvents.notStarted : partnerEvents.passed
+    }, [isEventActive, isPastActive, partnerEvents.notStarted, partnerEvents.passed])
+
+    const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
+    const keyExtractor = useCallback((item: any, i: number) => `${i}-${item.id}`, []);
+    const maxToRenderPerBatch = useMemo(() => 10, []); // useMemo for optimization
+    const windowSize = useMemo(() => 21, []); // useMemo for optimization
+
 
     return (
         <View style={[partnerProfileStyle.container]}>
@@ -114,46 +138,55 @@ export default function PartnerProfile() {
                     onPress={() => handlePressProfileButtons(ProfileContent.event)}
                     text={t('types.event')}
                     textColor={isEventActive ? "white" : colors.ACCENT["1"]}
-                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isEventActive ? btn_active : btn_inactive,}]}
+                    style={[partnerProfileStyle.buttonStyle, {backgroundColor: isEventActive ? btn_active : btn_inactive,}]}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.past)}
                     text={t('profile.past')}
                     textColor={isPastActive ? "white" : colors.ACCENT["1"]}
-                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isPastActive ? btn_active : btn_inactive,}]}
+                    style={[partnerProfileStyle.buttonStyle, {backgroundColor: isPastActive ? btn_active : btn_inactive,}]}
                 />
                 <ButtonStyled
                     onPress={() => handlePressProfileButtons(ProfileContent.about)}
                     text={t('profile.about')}
                     textColor={isAboutActive ? "white" : colors.ACCENT["1"]}
-                    style={[partnerProfileStyle.buttonStyle,{backgroundColor: isAboutActive ? btn_active : btn_inactive,}]}
+                    style={[partnerProfileStyle.buttonStyle, {backgroundColor: isAboutActive ? btn_active : btn_inactive,}]}
                 />
             </View>
-            <ScrollView>
-                <View style={[{paddingTop: 10, paddingBottom: 250, display: 'flex', alignItems: 'center'}]}>
-                    {isEventActive && partnerEvents.notStarted.map((el) => {
-                        if (isBetweenDates(el.startDate, el.endDate)) {
-                            return <EventCart event={el} key={el.id}/>
-                        }
-                        return <EventCardSmall event={{...el, user}} key={el.id}/>
-                    })}
-                    {isPastActive && partnerEvents.passed.map((el) => (
-                        <EventCardSmall event={{...el, user}} key={el.id}/>
-                    ))}
-                    {isAboutActive && <About user={user}/>}
-                </View>
-            </ScrollView>
+            <View style={[{
+                width: '100%',
+                flex: 1,
+                paddingTop: 10,
+                display: 'flex',
+                alignItems: 'center',
+            }]}>
+                {!isAboutActive && <FlashList
+                    {...{
+                        data,
+                        renderItem,
+                        windowSize,
+                        keyExtractor,
+                        initialNumToRender,
+                        maxToRenderPerBatch,
+                        estimatedItemSize: 30,
+                        showsVerticalScrollIndicator: false,
+                        estimatedListSize: {height, width}
+                    }}
+                />}
+                {isAboutActive && <About user={user}/>}
+            </View>
         </View>
     );
 }
 
 const partnerProfileStyle = StyleSheet.create({
     container: {
+        flex: 1,
         paddingTop: 10,
         paddingLeft: 20,
         paddingRight: 20,
     },
-    buttonStyle:{
+    buttonStyle: {
         paddingHorizontal: 10,
         height: 37,
         width: 100,

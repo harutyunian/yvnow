@@ -16,8 +16,6 @@ export class EventService {
         uniqFilters: IFilters[]
     }> {
 
-
-        console.log(dayjs(new Date()).toISOString())
         try {
             const url = EVENTS.TODAY;
             return await this.httpService.get<Promise<{
