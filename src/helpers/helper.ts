@@ -70,11 +70,6 @@ export function isDateGreaterThanEndOfDay(date: Date | string): boolean {
     return date > endOfDay;
 }
 
-interface IorderedByCategory {
-    live: IEventCart[],
-    upcoming: IEventCart[]
-}
-
 export  function uniqForMapMarker(events: IEventCart[]): IEventCart[] {
     const seenIds = new Set();
     const result = events.reduce<IEventCart[]>((acc, event) => {
@@ -95,3 +90,6 @@ export  function uniqForMapMarker(events: IEventCart[]): IEventCart[] {
     return result;
 }
 
+const share = () =>{
+
+}

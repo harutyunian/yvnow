@@ -5,24 +5,18 @@ import {Text, View, StyleSheet, Dimensions} from "react-native";
 import LottieView from 'lottie-react-native';
 import EventCart from "../../components/EventCard/EventCart";
 import {EventService} from "../../services/EventService/EventService";
-import {IEventCart, IFilters} from "../../types/event.type";
+import {IEventCart} from "../../types/event.type";
 import {Loader} from "../../components/Loader/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useAppDispatch,} from "../../hook/reduxHooks";
-import {TodayButtons} from "./switchButtons.enum";
-import {
-    FilterAction,
-    FilterActionType
-} from "../../components/FiltersActionsSheet/FilterActionsSheet";
+import {useAppDispatch, useAppSelector,} from "../../hook/reduxHooks";
 import {NoData} from "../../components/NoData/NoData";
-import {setFilters} from "../../store/reducer/filter/filterReducer";
+import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
 import {setLanguages} from "../../store/reducer/translation/translation";
 import {langs} from "../../store/reducer/translation/types";
 import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer";
 import {FilterService} from "../../services/FilterService/FilterService";
-import {TodayTabs} from "../../types/filter.type";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
-import {addNewEventLists} from "../../store/reducer/event/eventReducer";
+import {addNewEventLists, setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
 
 const screenWidth = Dimensions.get('window').width;
 const width = screenWidth - (screenWidth * 0.1)
@@ -34,15 +28,17 @@ function TodayEvents() {
 
     const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]); //This list we are getting from server
 
-    const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all) // Top part filters state
-    const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
-    const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
+    // const [topFilter, setTopFilter] = useState<EventTabs>(TodayButtons.all) // Top part filters state
+    // const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
+    //const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
 
 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
     const [errorMessage, setErrorMessage] = useState<string>("");
     const dispatch = useAppDispatch()
+
+    const {selectedFilters, topFilter, bottomFilter} = useAppSelector(state => state.filters)
 
     useEffect(() => {
         const fetchLanguage = async function () {
@@ -98,14 +94,20 @@ function TodayEvents() {
     const bottomFilteredEvents = useMemo(function () {
         const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
         dispatch(setFilters(filters))
+        dispatch(setUnselectedFilters({
+            filters,
+            filterType: 'updateAll'
+        }))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
 
     //Bottom part filter
     const subFilteredEvents = useMemo(function () {
-        return FilterService.subFilter(bottomFilteredEvents, subFilter)
-    }, [bottomFilteredEvents, subFilter]);
+        const events = FilterService.subFilter(bottomFilteredEvents, selectedFilters)
+        dispatch(setSubFilteredEvents(events))
+        return events
+    }, [bottomFilteredEvents, selectedFilters]);
 
     async function getEventList(page: number, count: number = 6) {
         setLoadMore(() => true);
@@ -115,6 +117,7 @@ function TodayEvents() {
             const {events, uniqFilters: filterList} = result
             dispatch(addNewEventLists(events))
             dispatch(setFilters(filterList))
+            dispatch(setUnselectedFilters({filters: filterList, filterType: 'updateAll'}))
             setTodayEvents(prev => [...prev, ...events]);
             setIsDataEmpty(!events.length)
         } catch (e: any) {
@@ -153,7 +156,7 @@ function TodayEvents() {
     if (errorMessage) return <Text>{errorMessage}</Text>;
 
     return (
-        <View style={[todayEventsStyle.container, {width: '100%', height: 1000}]}>
+        <View style={[todayEventsStyle.container, {width: '100%', flex: 1}]}>
             {!loading && !subFilteredEvents.length ? <NoData/> :
                 <FlashList
                     {...{
@@ -176,21 +179,14 @@ function TodayEvents() {
             {(!isDataEmpty && loadMore) && <LottieView
                 autoPlay
                 style={{
-                    top: 30,
+                    top: -30,
                     width: 200,
                     height: 100,
                     backgroundColor: 'transparent',
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters {...{
-                subFilteredEvents,
-                subFilter,
-                topFilter,
-                setTopFilter,
-                setBottomFilter,
-                setSubFilter
-            }}/>
+            <BottomSheetFilters />
         </View>
     );
 }

@@ -5,14 +5,14 @@
 
 
 import {IEventCart, IFilters} from "../../types/event.type";
-import {FilterActionType, TodayTabs} from "../../types/filter.type";
+import {FilterActionType, EventTabs} from "../../types/filter.type";
 import {FilterService} from "../FilterService/FilterService";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterAction} from "../../components/FiltersActionsSheet/FilterActionsSheet";
 
 export class EventCachingService {
     private events: Map<any, any>;
-    private topFilter: TodayTabs;
+    private topFilter: EventTabs;
     private bottomFilter: FilterActionType;
 
 
@@ -40,7 +40,7 @@ export class EventCachingService {
         return new EventCachingService([...event, ...data])
     }
 
-    topFilterCatch(topFilteredEvents: IEventCart[], mainFilter: TodayTabs) {
+    topFilterCatch(topFilteredEvents: IEventCart[], mainFilter: EventTabs) {
         this.topFilter = mainFilter
         const hasData = this.events.has(mainFilter) && this.events.get(mainFilter).has(this.bottomFilter)
         if (hasData) return this.events.get(mainFilter).get(this.bottomFilter)

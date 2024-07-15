@@ -5,7 +5,7 @@ import MapView from "react-native-map-clustering";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {aubergine} from "./mapStyles/aubergine";
 import {IEventCart, IFilters} from "../../types/event.type";
-import {useAppSelector} from "../../hook/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {FilterAction, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {DARK} from "../../store/reducer/types";
 import {standard} from "./mapStyles/standard";
@@ -14,6 +14,8 @@ import {TodayTabs} from "../../types/filter.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterService} from "../../services/FilterService/FilterService";
 import {uniqForMapMarker} from "../../helpers/helper";
+import {setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
+import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
 
 
 export type locationType = { latitude: number; longitude: number } | null
@@ -21,32 +23,30 @@ export default function CustomMap() {
     //Yerevan coordinates
     const coordinates = {lat: 40.1680387, lng: 44.5057575};
     const colors = useAppSelector(state => state.theme)
-    const filters = useAppSelector(state => state.filters)
-    const events = useAppSelector(state => state.events)
+    const {selectedFilters, bottomFilter, topFilter} = useAppSelector(state => state.filters)
+    const {events} = useAppSelector(state => state.events)
 
-    const [topFilter, setTopFilter] = useState<TodayTabs>(TodayButtons.all) // Top part filters state
-    const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
-    const [subFilter, setSubFilter] = useState<IFilters[]>(filters || []) // Sub filters
-    const [uniqEvents, setUniqEvents] = useState<IEventCart[]>(events)
-
+    const dispatch = useAppDispatch()
 
     const topFilteredEvents = useMemo(() => {
-        return FilterService.topFilter(uniqEvents, topFilter)
-    }, [topFilter, uniqEvents])
+        return FilterService.topFilter(events, topFilter)
+    }, [topFilter, events])
 
     const bottomFilteredEvents = useMemo(() => {
-        const {eventLists} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
+        const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
+        dispatch(setFilters(filters))
+        dispatch(setUnselectedFilters({
+            filters,
+            filterType: 'updateAll'
+        }))
         return eventLists
     }, [topFilteredEvents, bottomFilter])
 
     const subFilteredEvents = useMemo(() => {
-        return FilterService.subFilter(bottomFilteredEvents, subFilter)
-    }, [bottomFilteredEvents, subFilter])
-
-    useEffect(() => {
-        const uniqs = uniqForMapMarker(events);
-        setUniqEvents(uniqs)
-    }, [events]);
+        const events = FilterService.subFilter(bottomFilteredEvents, selectedFilters)
+        dispatch(setSubFilteredEvents(events))
+        return uniqForMapMarker(events)
+    }, [bottomFilteredEvents, selectedFilters])
 
     return (
         <View style={mapStyle.container}>
@@ -72,14 +72,7 @@ export default function CustomMap() {
                     return <CustomMarker key={index} {...event}/>;
                 })}
             </MapView>
-            <BottomSheetFilters {...{
-                subFilteredEvents,
-                topFilter,
-                subFilter: filters,
-                setSubFilter,
-                setTopFilter,
-                setBottomFilter
-            }}/>
+            <BottomSheetFilters/>
         </View>
     );
 }

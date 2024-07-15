@@ -1,7 +1,7 @@
 import {IEventCart, IFilters,} from "../../types/event.type";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import _ from "lodash";
-import {FilterActionType, TodayTabs} from "../../types/filter.type";
+import {FilterActionType, EventTabs} from "../../types/filter.type";
 import {FilterAction} from "../../components/FiltersActionsSheet/FilterActionsSheet";
 import {
     isBetweenDates,
@@ -12,7 +12,7 @@ import {
 export class FilterService {
 
 
-    static topFilter(events: IEventCart[], mainFilter: TodayTabs) {
+    static topFilter(events: IEventCart[], mainFilter: EventTabs) {
         if (mainFilter === TodayButtons.all) {
             return events
         }
