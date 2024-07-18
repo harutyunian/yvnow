@@ -117,7 +117,10 @@ function TodayEvents() {
             const {events, uniqFilters: filterList} = result
             dispatch(addNewEventLists(events))
             dispatch(setFilters(filterList))
-            dispatch(setUnselectedFilters({filters: filterList, filterType: 'updateAll'}))
+            // dispatch(setUnselectedFilters({
+            //         filters: filterList,
+            //         filterType: 'updateAll'
+            //     }))
             setTodayEvents(prev => [...prev, ...events]);
             setIsDataEmpty(!events.length)
         } catch (e: any) {
@@ -186,7 +189,7 @@ function TodayEvents() {
                 }}
                 source={require('./../../../assets/lottie/load_more.json')}
             />}
-            <BottomSheetFilters />
+            <BottomSheetFilters/>
         </View>
     );
 }

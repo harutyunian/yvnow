@@ -11,7 +11,7 @@ import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActi
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import {EventTabs} from "../../types/filter.type";
-import {IEventCart, IFilters} from "../../types/event.type";
+import {IFilters} from "../../types/event.type";
 import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {resetAllFilters, setActionFilter} from "../../store/reducer/filter/filterReducer";
@@ -29,13 +29,11 @@ export interface IColorScheme {
 
 
 const BottomSheetFilters = React.memo(function () {
-
-
     const dipatch = useAppDispatch()
     const bottomSheetRef = useRef<BottomSheet>(null);
     const {t} = useTranslation()
 
-    const {subFilteredEvents} = useAppSelector(state=>state.events)
+    const {subFilteredEvents} = useAppSelector(state => state.events)
     const colors = useAppSelector(state => state.theme)
     const {filters, topFilter} = useAppSelector(state => state.filters)
     const dispatch = useAppDispatch();
@@ -178,7 +176,7 @@ const BottomSheetFilters = React.memo(function () {
                 <FilterActionsSheet
                     {...{
                         subFilteredEvents,
-                       // setSubFilter,
+                        // setSubFilter,
                         filterAction,
                         // setBottomFilter,
                         selectedFilters,

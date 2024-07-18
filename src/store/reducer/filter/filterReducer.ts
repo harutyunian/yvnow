@@ -3,6 +3,7 @@ import {IFilters} from "../../../types/event.type";
 import {EventTabs} from "../../../types/filter.type";
 import {FilterAction, FilterActionType} from "../../../components/FiltersActionsSheet/FilterActionsSheet";
 import {TodayButtons} from "../../../pages/TodayEvents/switchButtons.enum";
+import {removeMatchingObjects} from "../../../helpers/helper";
 
 interface IInitialState {
     filters: IFilters[],
@@ -43,14 +44,13 @@ export const filterReduce = createSlice({
     reducers: {
         setFilters(state, action: PayloadAction<IFilters[]>) {
             if (action.payload) {
-                const filters = Array.from(new Map(action.payload.map(item => [item.id, item])).values());
-                return {...state, filters}
+                state.filters = Array.from(new Map(action.payload.map(item => [item.id, item])).values());
             }
-            return state
         },
         setSelectedFilter(state, action: PayloadAction<ISelectedFilter>) {
             const {filterType, filter} = action.payload;
             if (filterType === 'add') {
+                console.log('setSelectedFilter')
                 const newSelectedFilters = new Map(state.selectedFilters.map(f => [f.id, f]));
                 newSelectedFilters.set(filter.id, filter);
                 return {...state, selectedFilters: Array.from(newSelectedFilters.values())};
@@ -63,7 +63,11 @@ export const filterReduce = createSlice({
         setUnselectedFilters(state, action: PayloadAction<IUnselectedFilter>) {
             const {filterType, filters} = action.payload;
             if (filterType === 'updateAll') {
-                const unselectedFilters = Array.from(new Map(filters.map(item => [item.id, item])).values());
+                let unselectedFilters = Array.from(new Map(filters.map(item => [item.id, item])).values());
+                const selectedFilter = state.selectedFilters
+                if (selectedFilter.length) {
+                    unselectedFilters = removeMatchingObjects(selectedFilter, unselectedFilters)
+                }
                 return {...state, unselectedFilters};
             } else if (filterType === 'add') {
                 const newUnselectedFilters = new Map(state.unselectedFilters.map(f => [f.id, f]));
@@ -76,24 +80,19 @@ export const filterReduce = createSlice({
             }
             return state;
         },
-
         setActionFilter(state, action: PayloadAction<IActionFilter>) {
             const {filterType, actionType} = action.payload;
-
             if (filterType === 'topFilter') {
-                return {...state, topFilter: actionType as EventTabs}
+                state.topFilter = actionType as EventTabs;
+            } else {
+                state.bottomFilter = actionType as FilterActionType;
             }
-            return {...state, bottomFilter: actionType as FilterActionType}
         },
-        resetAllFilters(state){
-            return {
-                ...state,
-                filters: state.filters,
-                selectedFilters: [],
-                unselectedFilters: state.filters,
-                topFilter: TodayButtons.all,
-                bottomFilter: FilterAction.all
-            }
+        resetAllFilters(state) {
+            state.selectedFilters = [];
+            state.unselectedFilters = state.filters;
+            state.topFilter = TodayButtons.all;
+            state.bottomFilter = FilterAction.all;
         }
 
     }

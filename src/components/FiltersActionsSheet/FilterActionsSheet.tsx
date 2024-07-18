@@ -30,9 +30,8 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     } = props
 
     const {lang} = useAppSelector(state => state.translation)
-    // const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
-    const {selectedFilters, unselectedFilters,bottomFilter} = useAppSelector(state => state.filters)
+    const {selectedFilters, unselectedFilters, bottomFilter} = useAppSelector(state => state.filters)
     const dispatch = useAppDispatch()
     const {t} = useTranslation()
 
