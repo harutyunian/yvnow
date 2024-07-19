@@ -10,19 +10,12 @@ import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
 import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
-import {TodayTabs} from "../../types/filter.type";
-import {IEventCart, IFilters} from "../../types/event.type";
+import {EventTabs} from "../../types/filter.type";
+import {IFilters} from "../../types/event.type";
 import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {resetAllFilters, setActionFilter} from "../../store/reducer/filter/filterReducer";
 
-
-interface IBottomSheetFiltersProps {
-    topFilter: TodayTabs,
-    subFilteredEvents: IEventCart[],
-    setTopFilter: React.Dispatch<React.SetStateAction<TodayTabs>>,
-    setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
-    setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>
-}
 
 export interface IColorScheme {
     bnt_active: string,
@@ -35,16 +28,15 @@ export interface IColorScheme {
 }
 
 
-const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps) {
-    const {subFilteredEvents, topFilter, setTopFilter, setBottomFilter, setSubFilter} = props
-
+const BottomSheetFilters = React.memo(function () {
     const dipatch = useAppDispatch()
     const bottomSheetRef = useRef<BottomSheet>(null);
     const {t} = useTranslation()
 
+    const {subFilteredEvents} = useAppSelector(state => state.events)
     const colors = useAppSelector(state => state.theme)
-
-    const filters = useAppSelector(state => state.filters)
+    const {filters, topFilter} = useAppSelector(state => state.filters)
+    const dispatch = useAppDispatch();
 
     const [selectedFilters, setSelectedFilter] = useState<IFilters[]>([])
     const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>(filters || [])
@@ -55,9 +47,12 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
         setUnselectedFilter(filters)
     }, [filters]);
 
-    function handleChangeEventTabs(type: TodayTabs) {
+    function handleChangeEventTabs(type: EventTabs) {
         return function () {
-            setTopFilter(type)
+            dispatch(setActionFilter({
+                actionType: type,
+                filterType: 'topFilter',
+            }))
         }
     }
 
@@ -85,12 +80,7 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
 
 
     const handleResetFilters = () => {
-        setTopFilter(TodayButtons.all)
-        setFilterActions(FilterAction.all)
-        setBottomFilter(FilterAction.all)
-        setSelectedFilter([])
-        setUnselectedFilter(filters)
-        setSubFilter([]);
+        dispatch(resetAllFilters())
     }
 
     const initialSnapPoints = useMemo(() => ['7.2%', '30%'], []);
@@ -109,7 +99,6 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
 
     return <BottomSheet
         index={0}
-        // enableDynamicSizing
         animateOnMount
         // @ts-ignore
         snapPoints={animatedSnapPoints}
@@ -187,9 +176,9 @@ const BottomSheetFilters = React.memo(function (props: IBottomSheetFiltersProps)
                 <FilterActionsSheet
                     {...{
                         subFilteredEvents,
-                        setSubFilter,
+                        // setSubFilter,
                         filterAction,
-                        setBottomFilter,
+                        // setBottomFilter,
                         selectedFilters,
                         setFilterActions,
                         unselectedFilters,

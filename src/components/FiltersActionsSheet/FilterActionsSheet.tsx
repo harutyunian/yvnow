@@ -1,12 +1,12 @@
 import React, {useCallback, useMemo} from "react";
-import _ from 'lodash'
 import {ScrollView, StyleSheet, View} from "react-native";
 import {IEventCart, IFilters} from "../../types/event.type";
 import {FilterTag} from "../FilterTag/FilterTag";
-import {useAppSelector} from "../../hook/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
 import {IColorScheme} from "../ButtomSheetFilters/ButtomSheetFilters";
+import {setActionFilter, setSelectedFilter, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
 
 
 export enum FilterAction {
@@ -19,63 +19,53 @@ export enum FilterAction {
 export type FilterActionType = FilterAction.live | FilterAction.upcoming | FilterAction.all | FilterAction.today
 
 interface IFilterActionsSheetProps {
-    setBottomFilter: React.Dispatch<React.SetStateAction<FilterActionType>>;
-    setSubFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
     subFilteredEvents: IEventCart[],
-    subFilter?: IFilters[],
-    selectedFilters: IFilters[],
-    unselectedFilters: IFilters[],
-    setSelectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
-    setUnselectedFilter: React.Dispatch<React.SetStateAction<IFilters[]>>,
-    setFilterActions: React.Dispatch<React.SetStateAction<FilterActionType>>,
-    filterAction: FilterActionType,
     colorSchemeFilter: IColorScheme
 }
 
 export function FilterActionsSheet(props: IFilterActionsSheetProps) {
     const {
-        setBottomFilter,
         subFilteredEvents,
-        selectedFilters,
-        unselectedFilters,
-        setSelectedFilter,
-        setUnselectedFilter,
-        setFilterActions,
-        filterAction,
         colorSchemeFilter
     } = props
 
     const {lang} = useAppSelector(state => state.translation)
-    // const filters = useAppSelector(state => state.filters)
     const colors = useAppSelector(state => state.theme)
+    const {selectedFilters, unselectedFilters, bottomFilter} = useAppSelector(state => state.filters)
+    const dispatch = useAppDispatch()
     const {t} = useTranslation()
 
 
-    const handlePress = useCallback((isPressed: boolean, filter: IFilters) => {
+    const handlePress = (isPressed: boolean, filter: IFilters) => {
         const isFilterEmpty = subFilteredEvents.find(({filters}) => {
             return filters.find(({id}) => id === filter.id)
         });
-        setSelectedFilter((prev) => {
-            if (isPressed) return prev.filter((filters) => filters.id !== filter.id)
-            return [filter, ...prev]
-        })
-        if (!isFilterEmpty) return
-        setUnselectedFilter((prev) => {
-            if (isPressed) return [filter, ...prev]
-            return prev.filter((filters) => filters.id !== filter.id)
-        })
-    }, [unselectedFilters, selectedFilters])
+
+        if (isFilterEmpty) {
+            dispatch(setUnselectedFilters({
+                filters: [filter],
+                filterType: !isPressed ? 'remove' : 'add'
+            }))
+        }
+
+        dispatch(setSelectedFilter({
+            filterType: isPressed ? 'remove' : 'add',
+            filter: filter
+        }))
+    }
 
     const handleFilterChange = (action: FilterActionType) => {
-        setBottomFilter(action)
-        setFilterActions(action)
+        dispatch(setActionFilter({
+            actionType: action,
+            filterType: 'bottomFilter'
+        }))
     }
 
 
-    const isAllActive = useMemo(() => filterAction === FilterAction.all, [filterAction]);
-    const isLiveActive = useMemo(() => filterAction === FilterAction.live, [filterAction])
-    const isUpcomingActive = useMemo(() => filterAction === FilterAction.upcoming, [filterAction]);
-    const isTodayActive = useMemo(() => filterAction === FilterAction.today, [filterAction]);
+    const isAllActive = useMemo(() => bottomFilter === FilterAction.all, [bottomFilter]);
+    const isLiveActive = useMemo(() => bottomFilter === FilterAction.live, [bottomFilter])
+    const isUpcomingActive = useMemo(() => bottomFilter === FilterAction.upcoming, [bottomFilter]);
+    const isTodayActive = useMemo(() => bottomFilter === FilterAction.today, [bottomFilter]);
     const renderFilterTag = useCallback((filter: IFilters, isPressed: boolean) => ( // Memoized renderFilterTag
         <FilterTag
             isPressed={isPressed}

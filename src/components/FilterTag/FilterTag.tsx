@@ -23,7 +23,7 @@ export function FilterTag(props: IFilterTagProps) {
     return <TouchableOpacity onPress={handlePress} style={[filterTagStyle.wrapper]}>
         <Badge style={[filterTagStyle.container]}
                _text={{...filterTagStyle.textStyle, color: colors.ACCENT["1"]}}
-               colorScheme={pressed ? 'success' : colors.FILTER_COLOR}
+               colorScheme={isPressed ? 'success' : colors.FILTER_COLOR}
                variant={'outline'}
         >
             {text}

@@ -173,7 +173,11 @@ export default function PartnerProfile() {
                         estimatedListSize: {height, width}
                     }}
                 />}
-                {isAboutActive && <About user={user}/>}
+                {isAboutActive &&
+                    <ScrollView  showsVerticalScrollIndicator={false}>
+                        <About user={user}/>
+                    </ScrollView>
+                }
             </View>
         </View>
     );
