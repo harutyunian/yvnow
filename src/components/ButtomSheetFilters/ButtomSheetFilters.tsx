@@ -1,17 +1,15 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {
     BottomSheetHandle,
-    useBottomSheetDynamicSnapPoints,
 } from "@gorhom/bottom-sheet";
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import ButtonStyled from "../Button/Button";
 import {TodayButtons} from "../../pages/TodayEvents/switchButtons.enum";
-import {FilterAction, FilterActionsSheet, FilterActionType} from "../FiltersActionsSheet/FilterActionsSheet";
+import {FilterActionsSheet} from "../FiltersActionsSheet/FilterActionsSheet";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {useTranslation} from "../../hook/translationHook";
 import {EventTabs} from "../../types/filter.type";
-import {IFilters} from "../../types/event.type";
 import {colorSchemeDark, colorSchemeLight} from "./colorScheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {resetAllFilters, setActionFilter} from "../../store/reducer/filter/filterReducer";
@@ -29,23 +27,14 @@ export interface IColorScheme {
 
 
 const BottomSheetFilters = React.memo(function () {
-    const dipatch = useAppDispatch()
     const bottomSheetRef = useRef<BottomSheet>(null);
     const {t} = useTranslation()
 
     const {subFilteredEvents} = useAppSelector(state => state.events)
     const colors = useAppSelector(state => state.theme)
-    const {filters, topFilter} = useAppSelector(state => state.filters)
+    const {topFilter} = useAppSelector(state => state.filters)
     const dispatch = useAppDispatch();
 
-    const [selectedFilters, setSelectedFilter] = useState<IFilters[]>([])
-    const [unselectedFilters, setUnselectedFilter] = useState<IFilters[]>(filters || [])
-    const [filterAction, setFilterActions] = useState<FilterActionType>(FilterAction.all)
-
-
-    useEffect(() => {
-        setUnselectedFilter(filters)
-    }, [filters]);
 
     function handleChangeEventTabs(type: EventTabs) {
         return function () {
@@ -65,32 +54,20 @@ const BottomSheetFilters = React.memo(function () {
             }, 1000)
             await AsyncStorage.setItem('bottomSheet', 'true')
         } catch (e) {
-
         }
     }
     useEffect(() => {
         isFiltersOpenedFirstTime()
     }, []);
 
-
     // colors for bottom sheet
     const colorSchemeFilter = useMemo<IColorScheme>(() => {
         return colors.mode === 'DARK' ? colorSchemeDark : colorSchemeLight
-    }, [colors, dipatch])
+    }, [colors, dispatch])
 
 
-    const handleResetFilters = () => {
-        dispatch(resetAllFilters())
-    }
-
-    const initialSnapPoints = useMemo(() => ['7.2%', '30%'], []);
-
-    const {
-        animatedHandleHeight,
-        animatedSnapPoints,
-        animatedContentHeight,
-        handleContentLayout,
-    } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+    const handleResetFilters = () => dispatch(resetAllFilters())
+    const initialSnapPoints = useMemo(() => [60, 226], []);
 
     const isAllActive = useMemo(() => topFilter === TodayButtons.all, [topFilter])
     const isEventActive = useMemo(() => topFilter === TodayButtons.event, [topFilter])
@@ -98,14 +75,16 @@ const BottomSheetFilters = React.memo(function () {
     const isConcertActive = useMemo(() => topFilter === TodayButtons.concert, [topFilter])
 
     return <BottomSheet
-        index={0}
+        index={1}
         animateOnMount
-        // @ts-ignore
-        snapPoints={animatedSnapPoints}
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}
+        enablePanDownToClose
+        //@ts-ignore
+        snapPoints={initialSnapPoints}
         handleComponent={BottomSheetHandle}
         ref={bottomSheetRef}
+        backgroundStyle={{
+            backgroundColor: colorSchemeFilter.bottomSheetBackground,
+        }}
         handleStyle={[bottomSheetFilter.bottomSheetHeaderStyle, {
             backgroundColor: colorSchemeFilter.bottomSheetBackground,
             borderTopColor: colorSchemeFilter.bottomSheetBackground,
@@ -117,8 +96,10 @@ const BottomSheetFilters = React.memo(function () {
         }}
     >
         <View
-            onLayout={handleContentLayout}
-            style={[bottomSheetFilter.contentContainer, {backgroundColor: colorSchemeFilter.bottomSheetBackground}]}>
+            style={
+                [bottomSheetFilter.contentContainer,
+                    {backgroundColor: colorSchemeFilter.bottomSheetBackground}
+                ]}>
             <Text style={{
                 color: colors.ACCENT["1"],
                 fontSize: 18,
@@ -173,20 +154,7 @@ const BottomSheetFilters = React.memo(function () {
                         }]}
                     />
                 </View>
-                <FilterActionsSheet
-                    {...{
-                        subFilteredEvents,
-                        // setSubFilter,
-                        filterAction,
-                        // setBottomFilter,
-                        selectedFilters,
-                        setFilterActions,
-                        unselectedFilters,
-                        setSelectedFilter,
-                        colorSchemeFilter,
-                        setUnselectedFilter
-                    }}
-                />
+                <FilterActionsSheet  {...{subFilteredEvents, colorSchemeFilter}} />
                 <TouchableOpacity
                     style={[bottomSheetFilter.resetButton, {backgroundColor: colorSchemeFilter.bnt_active}]}
                     onPress={handleResetFilters}
@@ -245,7 +213,6 @@ const bottomSheetFilter = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        // paddingBottom: 45,
         paddingHorizontal: 5,
         paddingTop: 0,
     },

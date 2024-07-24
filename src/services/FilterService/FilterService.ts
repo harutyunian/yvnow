@@ -6,7 +6,7 @@ import {FilterAction} from "../../components/FiltersActionsSheet/FilterActionsSh
 import {
     isBetweenDates,
     isDateGreaterThanEndOfDay,
-    isIncludedToday,
+    isIncludedToday, removeDuplicatesByValues,
 } from "../../helpers/helper";
 
 export class FilterService {
@@ -40,15 +40,16 @@ export class FilterService {
         }
         const filters = eventLists.map((event) => event.filters).flat();
 
-        return {eventLists, filters }
+        return {eventLists, filters}
     }
 
     static subFilter(bottomFilteredEvents: IEventCart[], filtersList: IFilters[]) {
         if (_.isEmpty(filtersList)) {
             return bottomFilteredEvents;
         }
-        return bottomFilteredEvents.filter(({filters}) => {
+        const events = bottomFilteredEvents.filter(({filters}) => {
             return filters.some(filter => _.isEqual(_.find(filtersList, {'id': filter.id}), filter));
         });
+        return removeDuplicatesByValues(events, 'id')
     }
 }

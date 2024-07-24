@@ -1,12 +1,13 @@
-import React, {useCallback, useMemo} from "react";
-import {ScrollView, StyleSheet, View} from "react-native";
-import {IEventCart, IFilters} from "../../types/event.type";
-import {FilterTag} from "../FilterTag/FilterTag";
-import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
-import {useTranslation} from "../../hook/translationHook";
+import React, { useCallback, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
+import { ScrollView } from 'react-native-gesture-handler'
+import { IEventCart, IFilters } from "../../types/event.type";
+import { FilterTag } from "../FilterTag/FilterTag";
+import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
+import { useTranslation } from "../../hook/translationHook";
 import ButtonStyled from "../Button/Button";
-import {IColorScheme} from "../ButtomSheetFilters/ButtomSheetFilters";
-import {setActionFilter, setSelectedFilter, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
+import { IColorScheme } from "../ButtomSheetFilters/ButtomSheetFilters";
+import { setActionFilter, setSelectedFilter, setUnselectedFilters } from "../../store/reducer/filter/filterReducer";
 
 
 export enum FilterAction {
@@ -29,16 +30,16 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
         colorSchemeFilter
     } = props
 
-    const {lang} = useAppSelector(state => state.translation)
+    const { lang } = useAppSelector(state => state.translation)
     const colors = useAppSelector(state => state.theme)
-    const {selectedFilters, unselectedFilters, bottomFilter} = useAppSelector(state => state.filters)
+    const { selectedFilters, unselectedFilters, bottomFilter } = useAppSelector(state => state.filters)
     const dispatch = useAppDispatch()
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
 
     const handlePress = (isPressed: boolean, filter: IFilters) => {
-        const isFilterEmpty = subFilteredEvents.find(({filters}) => {
-            return filters.find(({id}) => id === filter.id)
+        const isFilterEmpty = subFilteredEvents.find(({ filters }) => {
+            return filters.find(({ id }) => id === filter.id)
         });
 
         if (isFilterEmpty) {
@@ -118,7 +119,6 @@ export function FilterActionsSheet(props: IFilterActionsSheetProps) {
         <View style={[filterActionsSheetStyle.filterTagContainer]}>
             <ScrollView
                 style={[filterActionsSheetStyle.scroll]}
-                showsHorizontalScrollIndicator={false}
                 horizontal
             >
                 {selectedFilters.map((filter) => renderFilterTag(filter, true))}

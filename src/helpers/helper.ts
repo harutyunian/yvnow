@@ -51,7 +51,15 @@ export function compareArrayObjects<T>(arr1: T[], arr2: T[], comparisonProp: key
 }
 
 export function removeDuplicatesByValues<T extends Record<string, any>>(arr: T[], key: keyof T): T[] {
-    return _.uniqBy(arr, key);
+    const uniqueIds = new Set<number>();
+    return arr.filter(item => {
+        if (uniqueIds.has(item[key])) {
+            return false;
+        } else {
+            uniqueIds.add(item[key]);
+            return true;
+        }
+    });
 }
 
 export function isIncludedToday(date: string | Date): boolean {
