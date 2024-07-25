@@ -1,16 +1,16 @@
-import React, { useMemo, useEffect, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import React, {useMemo, useEffect, useCallback} from "react";
+import {View, StyleSheet} from "react-native";
+import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
-import { aubergine } from "./mapStyles/aubergine";
-import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
-import { DARK } from "../../store/reducer/types";
-import { standard } from "./mapStyles/standard";
+import {aubergine} from "./mapStyles/aubergine";
+import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
+import {DARK} from "../../store/reducer/types";
+import {standard} from "./mapStyles/standard";
 import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
-import { FilterService } from "../../services/FilterService/FilterService";
-import { uniqForMapMarker } from "../../helpers/helper";
-import { setSubFilteredEvents } from "../../store/reducer/event/eventReducer";
-import { setFilters, setUnselectedFilters } from "../../store/reducer/filter/filterReducer";
+import {FilterService} from "../../services/FilterService/FilterService";
+import {uniqForMapMarker} from "../../helpers/helper";
+import {setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
+import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
 
 const lat1 = 40.15839363088361;
 const lng1 = 44.401019811630256;
@@ -34,8 +34,11 @@ export type locationType = { latitude: number; longitude: number } | null;
 
 export default function CustomMap() {
     const dispatch = useAppDispatch();
-
-    const { theme: colors, filters: { selectedFilters, bottomFilter, topFilter }, events: { events } } = useAppSelector(state => state);
+    const {
+        theme: colors,
+        filters: {selectedFilters, bottomFilter, topFilter},
+        events: {events}
+    } = useAppSelector(state => state);
 
     // Filter events based on top filter
     const topFilteredEvents = useMemo(() => {
@@ -43,7 +46,7 @@ export default function CustomMap() {
     }, [topFilter, events]);
 
     // Get bottom filtered events and dispatch filter updates
-    const { eventLists, filters } = useMemo(() => {
+    const {eventLists, filters} = useMemo(() => {
         return FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter);
     }, [topFilteredEvents, bottomFilter]);
 
@@ -55,37 +58,45 @@ export default function CustomMap() {
         }));
     }, [dispatch, filters]);
 
-    // Filter events based on selected filters and ensure uniqueness
     const subFilteredEvents = useMemo(() => {
         const events = FilterService.subFilter(eventLists, selectedFilters);
         const eventsUniq = uniqForMapMarker(events);
-        console.log('Events before uniqueness check:', events); // Debug log
-        console.log('Unique Events:', eventsUniq); // Debug log
         dispatch(setSubFilteredEvents(eventsUniq));
         return eventsUniq;
-    }, [eventLists, selectedFilters, dispatch]); // Added `dispatch` to dependency array
+    }, [eventLists, selectedFilters, dispatch]);
 
-    // Render markers for the map
     const renderMarkers = useCallback(() => {
-        return subFilteredEvents.map((event) => (
-            <CustomMarker key={event.user.id} {...event} />  // Use user.id for a unique key
+        return subFilteredEvents.map((event, index) => (
+            <CustomMarker key={index} {...event} />
         ));
     }, [subFilteredEvents]);
 
     return (
         <View style={mapStyle.container}>
             <MapView
-                style={mapStyle.map}
-                provider={PROVIDER_GOOGLE}
+                {...{
+                    minZoomLevel: 10,
+                    key: `MAP_KEY_25`,
+                    showsScale: false,
+                    style: mapStyle.map,
+                    showsTraffic: false,
+                    showsCompass: false,
+                    showsIndoors: false,
+                    toolbarEnabled: false,
+                    moveOnMarkerPress: false,
+                    provider: PROVIDER_GOOGLE,
+                    initialRegion: initialRegion,
+                    showsIndoorLevelPicker: false,
+                    mapPadding: {top: 20, right: 20, bottom: 100, left: 20},
+                    customMapStyle: colors.mode === DARK ? aubergine : standard
+                }}
+                loadingEnabled
+                showsUserLocation
                 showsMyLocationButton
-                showsUserLocation={true}
-                mapPadding={{ top: 20, right: 20, bottom: 100, left: 20 }}
-                initialRegion={initialRegion}
-                customMapStyle={colors.mode === DARK ? aubergine : standard}
             >
                 {renderMarkers()}
             </MapView>
-            <BottomSheetFilters />
+            <BottomSheetFilters/>
         </View>
     );
 }

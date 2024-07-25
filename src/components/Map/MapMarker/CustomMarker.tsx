@@ -14,7 +14,7 @@ import image from "../../../../assets/images";
 interface ICustomMarkerProps extends IEventCart {
 }
 
-export default function CustomMarker(props: ICustomMarkerProps) {
+export default React.memo(function CustomMarker(props: ICustomMarkerProps) {
     const {user, startDate, endDate} = props;
     const {location: {lat: latitude, lng: longitude}, avatar} = user;
 
@@ -66,7 +66,12 @@ export default function CustomMarker(props: ICustomMarkerProps) {
             </Callout>
         </Marker>
     );
-}
+}, (prevProps, nextProps) => {
+    const {user: {location: prevLocation}} = prevProps;
+    const {user: {location: nextLocation}} = nextProps;
+    return nextLocation.lat !== prevLocation.lat && nextLocation.lng !== prevLocation.lng;
+
+})
 
 const customMapStyle = StyleSheet.create({
     container: {

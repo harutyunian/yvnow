@@ -77,7 +77,6 @@ const BottomSheetFilters = React.memo(function () {
     return <BottomSheet
         index={1}
         animateOnMount
-        enablePanDownToClose
         //@ts-ignore
         snapPoints={initialSnapPoints}
         handleComponent={BottomSheetHandle}
