@@ -10,10 +10,8 @@ import {
 } from "../StackRout/StackRout";
 import {useTranslatedRoutes} from "../../../hook/translatedRoutes";
 import {SafeAreaView} from "react-native-safe-area-context";
-
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {Fontisto, Feather} from '@expo/vector-icons';
-import CustomMap from "../../../components/Map/CustomMap";
 
 const Tab = createBottomTabNavigator();
 
@@ -89,7 +87,7 @@ export default function TabRoute() {
             <Tab.Screen
                 name={routes.map.key}
                 options={{title: routes.map.name}}
-                component={CustomMap}
+                component={MapStackScreen}
             />
             <Tab.Screen
                 name={routes.settings.key}

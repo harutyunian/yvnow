@@ -25,13 +25,13 @@ export default React.memo(function CustomMarker(props: ICustomMarkerProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [avatarLoaded, setAvatarLoaded] = useState(false);
 
-
+    console.log(avatar);
     useEffect(() => {
         return () => {
             setImageLoaded(() => false);
             setAvatarLoaded(() => false)
         }
-    })
+    }, [])
     const handlePressCallout = () => {
         dispatch(setUser(user));
         navigate.navigate(routes.partnerProfile.key as never);
@@ -67,11 +67,15 @@ export default React.memo(function CustomMarker(props: ICustomMarkerProps) {
         </Marker>
     );
 }, (prevProps, nextProps) => {
-    const {user: {location: prevLocation}} = prevProps;
-    const {user: {location: nextLocation}} = nextProps;
-    return nextLocation.lat !== prevLocation.lat && nextLocation.lng !== prevLocation.lng;
-
-})
+    return (
+        prevProps.user.id === nextProps.user.id &&
+        prevProps.startDate === nextProps.startDate &&
+        prevProps.endDate === nextProps.endDate &&
+        prevProps.user.location.lat === nextProps.user.location.lat &&
+        prevProps.user.location.lng === nextProps.user.location.lng &&
+        prevProps.user.avatar === nextProps.user.avatar
+    );
+});
 
 const customMapStyle = StyleSheet.create({
     container: {

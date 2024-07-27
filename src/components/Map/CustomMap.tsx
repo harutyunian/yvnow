@@ -75,22 +75,18 @@ export default function CustomMap() {
         <View style={mapStyle.container}>
             <MapView
                 {...{
-                    minZoomLevel: 10,
-                    key: `MAP_KEY_25`,
                     showsScale: false,
                     style: mapStyle.map,
                     showsTraffic: false,
                     showsCompass: false,
                     showsIndoors: false,
                     toolbarEnabled: false,
-                    moveOnMarkerPress: false,
                     provider: PROVIDER_GOOGLE,
                     initialRegion: initialRegion,
                     showsIndoorLevelPicker: false,
                     mapPadding: {top: 20, right: 20, bottom: 100, left: 20},
                     customMapStyle: colors.mode === DARK ? aubergine : standard
                 }}
-                loadingEnabled
                 showsUserLocation
                 showsMyLocationButton
             >
