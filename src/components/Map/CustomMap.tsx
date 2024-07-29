@@ -32,6 +32,8 @@ const initialRegion = {
 
 export type locationType = { latitude: number; longitude: number } | null;
 
+
+
 export default function CustomMap() {
     const dispatch = useAppDispatch();
     const {
@@ -39,6 +41,7 @@ export default function CustomMap() {
         filters: {selectedFilters, bottomFilter, topFilter},
         events: {events}
     } = useAppSelector(state => state);
+ 
 
     // Filter events based on top filter
     const topFilteredEvents = useMemo(() => {
@@ -65,28 +68,29 @@ export default function CustomMap() {
         return eventsUniq;
     }, [eventLists, selectedFilters, dispatch]);
 
+
     const renderMarkers = useCallback(() => {
-        return subFilteredEvents.map((event, index) => (
+        return subFilteredEvents.map((event,index) => (
             <CustomMarker key={index} {...event} />
         ));
     }, [subFilteredEvents]);
 
+
+
     return (
         <View style={mapStyle.container}>
             <MapView
-                {...{
-                    showsScale: false,
-                    style: mapStyle.map,
-                    showsTraffic: false,
-                    showsCompass: false,
-                    showsIndoors: false,
-                    toolbarEnabled: false,
-                    provider: PROVIDER_GOOGLE,
-                    initialRegion: initialRegion,
-                    showsIndoorLevelPicker: false,
-                    mapPadding: {top: 20, right: 20, bottom: 100, left: 20},
-                    customMapStyle: colors.mode === DARK ? aubergine : standard
-                }}
+                showsScale={false}
+                showsTraffic={false}
+                showsCompass={false}
+                showsIndoors={false}
+                toolbarEnabled={false}
+                showsIndoorLevelPicker={false}
+                style={mapStyle.map}
+                provider={PROVIDER_GOOGLE}
+                initialRegion={initialRegion}
+                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
+                customMapStyle={colors.mode === DARK ? aubergine : standard}
                 showsUserLocation
                 showsMyLocationButton
             >
