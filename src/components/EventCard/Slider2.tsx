@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Image} from 'expo-image';
+import {Image, View, StyleSheet, Text} from 'react-native';
+import {Image as ExpoImage} from 'expo-image';
 
 
 interface IImageSliderProps {
@@ -9,12 +9,13 @@ interface IImageSliderProps {
 
 const ImageSlider = (props: IImageSliderProps) => {
     const {imageUrls} = props
-
     return <View style={[styles.slide]}>
-        <Image
-            priority='high'
+        <ExpoImage
+            priority='normal'
             style={styles.image}
-            source={{uri: imageUrls[0]}}/>
+            src={imageUrls[0]}
+            source={{uri: imageUrls[0]}}
+        />
     </View>
 };
 

@@ -32,10 +32,9 @@ const screenWidth = Dimensions.get('window').width;
 const width = screenWidth - (screenWidth * 0.1)
 const height = screenWidth / 2
 export default function PartnerProfile() {
-    const colors = useAppSelector((state) => state.theme);
+    const {theme: colors, user} = useAppSelector((state) => state);
     const btn_inactive = colors.ACCENT["6"];
     const btn_active = colors.PRIMARY.MAIN;
-    const user = useAppSelector((state) => state.user);
     const {id: userId, avatar, partner, address} = user;
 
     const [partnerEvents, setPartnerEvents] = useState<{

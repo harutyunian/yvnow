@@ -1,4 +1,5 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image} from "expo-image"
 import {useAppSelector} from "../../../../hook/reduxHooks";
 
 interface ILanguageProps {
@@ -23,7 +24,10 @@ export function Language(props: ILanguageProps) {
 
     return <TouchableOpacity onPress={onLangPress} style={[languageStyle.container, {backgroundColor: background}]}>
         <View style={languageStyle.wrapper}>
-            <Image style={[languageStyle.flag]} source={flagPath} resizeMode='cover'/>
+            <Image 
+            style={[languageStyle.flag]} 
+            source={flagPath}
+            />
             <Text style={[{color: tc}, languageStyle.text]}>{lang}</Text>
         </View>
     </TouchableOpacity>

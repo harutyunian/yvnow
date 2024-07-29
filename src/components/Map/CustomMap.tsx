@@ -1,7 +1,6 @@
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useMemo, useEffect, useCallback} from "react";
 import {View, StyleSheet} from "react-native";
-import {PROVIDER_GOOGLE} from "react-native-maps";
-import MapView from "react-native-map-clustering";
+import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
 import CustomMarker from "./MapMarker/CustomMarker";
 import {aubergine} from "./mapStyles/aubergine";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
@@ -29,54 +28,73 @@ const initialRegion = {
     longitude: centerLng,
     latitudeDelta,
     longitudeDelta,
-}
-export type locationType = { latitude: number; longitude: number } | null
+};
+
+export type locationType = { latitude: number; longitude: number } | null;
+
+
+
 export default function CustomMap() {
-    //Yerevan coordinates
-    const coordinates = {lat: 40.1680387, lng: 44.5057575};
-    const colors = useAppSelector(state => state.theme)
-    const {selectedFilters, bottomFilter, topFilter} = useAppSelector(state => state.filters)
-    const {events} = useAppSelector(state => state.events)
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+    const {
+        theme: colors,
+        filters: {selectedFilters, bottomFilter, topFilter},
+        events: {events}
+    } = useAppSelector(state => state);
+ 
 
+    // Filter events based on top filter
     const topFilteredEvents = useMemo(() => {
-        return FilterService.topFilter(events, topFilter)
-    }, [topFilter, events])
+        return FilterService.topFilter(events, topFilter);
+    }, [topFilter, events]);
 
-    const bottomFilteredEvents = useMemo(() => {
-        const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(filters))
+    // Get bottom filtered events and dispatch filter updates
+    const {eventLists, filters} = useMemo(() => {
+        return FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter);
+    }, [topFilteredEvents, bottomFilter]);
+
+    useEffect(() => {
+        dispatch(setFilters(filters));
         dispatch(setUnselectedFilters({
             filters,
             filterType: 'updateAll'
-        }))
-        return eventLists
-    }, [topFilteredEvents, bottomFilter])
+        }));
+    }, [dispatch, filters]);
 
     const subFilteredEvents = useMemo(() => {
-        const events = FilterService.subFilter(bottomFilteredEvents, selectedFilters)
-        dispatch(setSubFilteredEvents(events))
-        return uniqForMapMarker(events)
-    }, [bottomFilteredEvents, selectedFilters])
+        const events = FilterService.subFilter(eventLists, selectedFilters);
+        const eventsUniq = uniqForMapMarker(events);
+        dispatch(setSubFilteredEvents(eventsUniq));
+        return eventsUniq;
+    }, [eventLists, selectedFilters, dispatch]);
+
+
+    const renderMarkers = useCallback(() => {
+        return subFilteredEvents.map((event,index) => (
+            <CustomMarker key={index} {...event} />
+        ));
+    }, [subFilteredEvents]);
+
+
 
     return (
         <View style={mapStyle.container}>
             <MapView
-                spiralEnabled
-                // animationEnabled
-                tracksViewChanges={false}
+                showsScale={false}
+                showsTraffic={false}
+                showsCompass={false}
+                showsIndoors={false}
+                toolbarEnabled={false}
+                showsIndoorLevelPicker={false}
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
-                showsMyLocationButton
-                showsUserLocation={true}
-                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
-                followsUserLocation={true}
                 initialRegion={initialRegion}
+                mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 customMapStyle={colors.mode === DARK ? aubergine : standard}
+                showsUserLocation
+                showsMyLocationButton
             >
-                {subFilteredEvents.map((event, index) => {
-                    return <CustomMarker key={index} {...event}/>;
-                })}
+                {renderMarkers()}
             </MapView>
             <BottomSheetFilters/>
         </View>
@@ -84,34 +102,12 @@ export default function CustomMap() {
 }
 
 const mapStyle = StyleSheet.create({
-    wrapper: {
-        backgroundColor: 'yellow',
-        width: "80%"
-    },
-    filterContainer: {
-        display: 'flex',
-        alignItems: "flex-start",
-        zIndex: 1,
-        position: 'absolute',
-        width: '100%',
-        bottom: 0,
-    },
     container: {
         ...StyleSheet.absoluteFillObject,
         justifyContent: "flex-start",
         alignItems: "center",
     },
-    textTabWrapper: {
-        width: '100%',
-        height: 100,
-        display: "flex",
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     map: {
         ...StyleSheet.absoluteFillObject,
-    },
-    calloutText: {
-        fontWeight: "bold",
     },
 });

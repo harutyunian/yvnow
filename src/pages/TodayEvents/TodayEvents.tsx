@@ -234,4 +234,4 @@ const todayEventsStyle = StyleSheet.create({
         alignItems: "center",
     },
 });
-export default React.memo(TodayEvents)
+export default TodayEvents
