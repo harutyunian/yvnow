@@ -118,9 +118,16 @@ const style = StyleSheet.create({
         width: 270,
     },
     eventTitle: {
+        textShadowColor: "#000",
+        textShadowOffset: {width: -3, height: 3},
+        textShadowRadius: 3,
+        shadowOpacity: 1,
+        shadowColor: '#000',
+        shadowOffset: {width: 3, height: 3},
+        shadowRadius: 3,
         color: "#FFF",
         fontSize: 16,
-        fontWeight: "700",
+        fontWeight: "800"
     },
     locationIcon: {
         display: "flex",

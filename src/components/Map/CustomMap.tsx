@@ -1,7 +1,6 @@
-import React, {useMemo, useEffect, useCallback} from "react";
+import React, {useMemo, useEffect, useState} from "react";
 import {View, StyleSheet} from "react-native";
 import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
-import CustomMarker from "./MapMarker/CustomMarker";
 import {aubergine} from "./mapStyles/aubergine";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHooks";
 import {DARK} from "../../store/reducer/types";
@@ -11,6 +10,9 @@ import {FilterService} from "../../services/FilterService/FilterService";
 import {uniqForMapMarker} from "../../helpers/helper";
 import {setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
 import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
+import {getCluster} from "./Cluster/getCluster";
+import {markerWithCluster} from "./Cluster/MarkerWithCluster";
+
 
 const lat1 = 40.15839363088361;
 const lng1 = 44.401019811630256;
@@ -32,16 +34,16 @@ const initialRegion = {
 
 export type locationType = { latitude: number; longitude: number } | null;
 
-
-
 export default function CustomMap() {
+    const [regions, setRegions] = useState(initialRegion);
+
     const dispatch = useAppDispatch();
     const {
         theme: colors,
         filters: {selectedFilters, bottomFilter, topFilter},
         events: {events}
     } = useAppSelector(state => state);
- 
+
 
     // Filter events based on top filter
     const topFilteredEvents = useMemo(() => {
@@ -65,21 +67,26 @@ export default function CustomMap() {
         const events = FilterService.subFilter(eventLists, selectedFilters);
         const eventsUniq = uniqForMapMarker(events);
         dispatch(setSubFilteredEvents(eventsUniq));
-        return eventsUniq;
+        return eventsUniq
     }, [eventLists, selectedFilters, dispatch]);
 
-
-    const renderMarkers = useCallback(() => {
-        return subFilteredEvents.map((event,index) => (
-            <CustomMarker key={index} {...event} />
-        ));
-    }, [subFilteredEvents]);
-
-
+    const cluster = useMemo(() => {
+        const allCoords = subFilteredEvents.map(c => ({
+            ...c,
+            geometry: {
+                coordinates: [
+                    c.user.location.lng,
+                    c.user.location.lat
+                ]
+            }
+        }));
+        return getCluster(allCoords, regions);
+    }, [subFilteredEvents, regions])
 
     return (
         <View style={mapStyle.container}>
             <MapView
+                onRegionChangeComplete={setRegions}
                 showsScale={false}
                 showsTraffic={false}
                 showsCompass={false}
@@ -89,12 +96,13 @@ export default function CustomMap() {
                 style={mapStyle.map}
                 provider={PROVIDER_GOOGLE}
                 initialRegion={initialRegion}
+                region={regions}
                 mapPadding={{top: 20, right: 20, bottom: 100, left: 20}}
                 customMapStyle={colors.mode === DARK ? aubergine : standard}
                 showsUserLocation
                 showsMyLocationButton
             >
-                {renderMarkers()}
+                {cluster.markers.map((marker, index: number) => markerWithCluster(marker, index))}
             </MapView>
             <BottomSheetFilters/>
         </View>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text,Platform } from "react-native";
-import { WebView } from "react-native-webview";
+import { StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
 import { Marker, Callout } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +10,7 @@ import { setUser } from "../../../store/reducer/user/user";
 import { isBetweenDates } from "../../../helpers/helper";
 import { useTranslatedRoutes } from "../../../hook/translatedRoutes";
 import image from "../../../../assets/images";
+import Svg, {Circle, ClipPath, Defs, Image as SvgImage} from "react-native-svg";
 
 interface ICustomMarkerProps extends IEventCart {}
 
@@ -44,32 +44,11 @@ const CustomMarker = (props: ICustomMarkerProps) => {
     navigate.navigate(routes.partnerProfile.key as never);
   };
 
-  const renderAvatar = () => {
-    if (Platform.OS === "android") {
-      return (
-        <WebView
-          style={customMapStyle.partnerLogo}
-          source={{ uri: avatar }}
-          onLoad={() => setImgLoaded((prev) => ({ ...prev, avatar: true }))}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-        />
-      );
-    } else {
-      return (
-        <Image
-          source={{ uri: avatar }}
-          style={customMapStyle.partnerLogo}
-          onLoad={() => setImgLoaded((prev) => ({ ...prev, avatar: true }))}
-        />
-      );
-    }
-  };
 
   return (
     <Marker
       coordinate={{ latitude: +latitude, longitude: +longitude }}
-      tracksViewChanges={!imgLoaded.avatar && !imgLoaded.icon}
+      tracksViewChanges={!imgLoaded.icon}
     >
       {isBetweenDates(startDate, endDate) && (
         <View style={customMapStyle.liveContainer}>
@@ -82,17 +61,27 @@ const CustomMarker = (props: ICustomMarkerProps) => {
         onLoad={() => setImgLoaded((prev) => ({ ...prev, icon: true }))} 
       />
       <View style={customMapStyle.avatarContainer}>
-        <Image
-          priority={'high'}
-          source={{ uri: avatar }}
-          style={customMapStyle.partnerLogo}
-          onLoad={() => setImgLoaded((prev) => ({ ...prev, avatar: true }))}
-        />
+        <Svg
+            height="100%"
+            width="100%"
+            viewBox="0 0 100 100"
+        >
+          <Defs>
+            <ClipPath id="clip">
+              <Circle cx="50" cy="50" r="50" />
+            </ClipPath>
+          </Defs>
+          <SvgImage
+              href={{ uri: avatar }}
+              width="100%"
+              height="100%"
+              clipPath="url(#clip)"
+          />
+        </Svg>
       </View>
       <Callout
         tooltip
         style={customMapStyle.calloutContainer}
-        preserveAspectRatio="xMidYMid slice"
         onPress={handlePressCallout}
       >
         <MiniProfile user={user} />
