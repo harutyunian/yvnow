@@ -1,22 +1,23 @@
-export interface IUser{
+export interface IUser {
     id: number,
     avatar: string,
     partner: string
     address: string,
     profilePictures: string[],
     description: string,
-    location:{
+    location: {
         lat: string | number,
         lng: string | number
     }
 }
 
-export interface IFilters{
+export interface IFilters {
     id: number,
     am: string,
     ru: string,
     en: string
 }
+
 export interface IEventCart {
     id: number,
     view: number,
@@ -25,7 +26,7 @@ export interface IEventCart {
     endDate: string,
     title: string,
     filters: IFilters[],
-    type: string,
+    type: 'show' | 'event' | 'concert',
     description: string,
     user: IUser
 }

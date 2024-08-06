@@ -1,5 +1,6 @@
-import {IEventCart} from "../types/event.type";
+import {IEventCart, IFilters} from "../types/event.type";
 import _ from 'lodash';
+import {FilterAction, TodayButtons} from "../pages/TodayEvents/switchButtons.enum";
 
 export function isBetweenDates(startDateStr: string, endDateStr: string) {
     const currentDate = new Date(); // Current date and time
@@ -106,3 +107,28 @@ export const removeMatchingObjects = <T extends HasId>(arr1: T[], arr2: T[]): T[
     const arr1Ids = new Set(arr1.map(item => item.id));
     return arr2.filter(item => !arr1Ids.has(item.id));
 };
+
+
+interface IMatchingFilters {
+    eventFilters: IFilters[],
+    topFilter: TodayButtons,
+    bottomFilter: FilterAction
+}
+
+
+export const isFilterMatchesByEvent = (event: IEventCart, eventFilter: IMatchingFilters): boolean => {
+    const {startDate, endDate, filters, type} = event
+    const {eventFilters, topFilter, bottomFilter} = eventFilter
+    const isLive = isBetweenDates(startDate, endDate);
+    const isToday = isIncludedToday(startDate);
+    const isUpcoming = isDateGreaterThanEndOfDay(endDate);
+
+    if(eventFilters.length === 0 && bottomFilter === FilterAction.all && topFilter === TodayButtons.all) return false
+
+    const checkEventType = type === topFilter.toLowerCase()
+    const isMatchEventFilters = filters.some((filter) => eventFilters.some(({id}) => id === filter.id))
+
+    if (bottomFilter === FilterAction.all) return checkEventType && isMatchEventFilters
+    else if (checkEventType) return isMatchEventFilters && (isLive || isToday || isUpcoming)
+    return false
+}

@@ -2,6 +2,18 @@ module.exports = function (api) {
     api.cache(true);
     return {
         presets: ['module:metro-react-native-babel-preset'],
-        plugins: ['react-native-reanimated/plugin']
+        plugins: [
+            [
+                '@tamagui/babel-plugin',
+                {
+                    components: ['tamagui'],
+                    config: './tamagui.config.ts',
+                    logTimings: true,
+                    disableExtraction: true,
+                },
+            ],
+
+            'react-native-reanimated/plugin',
+        ]
     };
 };

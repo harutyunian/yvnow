@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {Image, View, StyleSheet, Text, ActivityIndicator} from 'react-native';
-import {Image as ExpoImage} from 'expo-image';
-
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
+import {Image as ExpoImage} from 'expo-image'
 
 interface IImageSliderProps {
     imageUrls: string[]
@@ -13,9 +12,9 @@ const ImageSlider = (props: IImageSliderProps) => {
     const haveImage = imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0  && imageUrls[0]
     return <View style={[styles.slide]}>
         {!loaded && <ActivityIndicator/>}
+
         {haveImage && <ExpoImage
             onLoad={() => setLoaded(true)}
-            priority='normal'
             style={styles.image}
             src={imageUrls[0]}
             source={{uri: imageUrls[0]}}

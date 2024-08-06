@@ -4,6 +4,8 @@ import store from "./src/store";
 import Route from "./src/pages/Route/Route";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
+import {TamaguiProvider} from "tamagui";
+import tamaguiConfig from "./tamagui.config";
 
 
 export default function App() {
@@ -11,10 +13,12 @@ export default function App() {
 
     return (
         <Provider store={store}>
-            <GestureHandlerRootView style={{flex: 1}}>
-                <BottomSheetModalProvider>
-                    <Route/>
-                </BottomSheetModalProvider>
-            </GestureHandlerRootView>
+            <TamaguiProvider config={tamaguiConfig}>
+                <GestureHandlerRootView style={{flex: 1}}>
+                    <BottomSheetModalProvider>
+                        <Route/>
+                    </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+            </TamaguiProvider>
         </Provider>);
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, TouchableOpacity, View, Text, Dimensions} from "react-native";
+// import {Text} from 'tamagui'
 import {LinearGradient} from "expo-linear-gradient";
 import {useNavigation} from "@react-navigation/native";
 import dayjs from "dayjs";
