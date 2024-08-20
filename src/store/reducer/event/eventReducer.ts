@@ -1,31 +1,32 @@
-import {IEventCart} from "../../../types/event.type";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { IEventCart } from "../../../types/event.type";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
-interface  IInitialState {
-    events: IEventCart[] | [],
-    subFilteredEvents: IEventCart[] | [],
+interface IInitialState {
+  events: IEventCart[] | [];
+  subFilteredEvents: IEventCart[] | [];
 }
 
 const initialState: IInitialState = {
-    events: [],
-    subFilteredEvents: []
-}
-
+  events: [],
+  subFilteredEvents: [],
+};
 
 export const eventReducer = createSlice({
-    name: 'events',
-    initialState,
-    reducers: {
-        addNewEventLists(state, action: PayloadAction<IEventCart[]>) {
-            return { ...state, events: [...state.events, ...action.payload]}
-        },
-        setSubFilteredEvents(state, action: PayloadAction<IEventCart[]>) {
-            return { ...state, subFilteredEvents: action.payload}
-        }
-    }
+  name: "events",
+  initialState,
+  reducers: {
+    emptyEventList(state) {
+      return { ...state, events: [] };
+    },
+    addNewEventLists(state, action: PayloadAction<IEventCart[]>) {
+      return { ...state, events: [...state.events, ...action.payload] };
+    },
+    setSubFilteredEvents(state, action: PayloadAction<IEventCart[]>) {
+      return { ...state, subFilteredEvents: action.payload };
+    },
+  },
 });
 
-
-export const {addNewEventLists,setSubFilteredEvents} = eventReducer.actions
-export default eventReducer.reducer
+export const { emptyEventList, addNewEventLists, setSubFilteredEvents } =
+  eventReducer.actions;
+export default eventReducer.reducer;

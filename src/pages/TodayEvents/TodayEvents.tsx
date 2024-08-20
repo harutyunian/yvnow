@@ -1,237 +1,198 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {FlashList} from "@shopify/flash-list";
-
-import {Text, View, StyleSheet, Dimensions} from "react-native";
-import LottieView from 'lottie-react-native';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FlashList } from "@shopify/flash-list";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
+import LottieView from "lottie-react-native";
 import EventCart from "../../components/EventCard/EventCart";
-import {EventService} from "../../services/EventService/EventService";
-import {IEventCart} from "../../types/event.type";
-import {Loader} from "../../components/Loader/Loader";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useAppDispatch, useAppSelector,} from "../../hook/reduxHooks";
-import {NoData} from "../../components/NoData/NoData";
-import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
-import {setLanguages} from "../../store/reducer/translation/translation";
-import {langs} from "../../store/reducer/translation/types";
-import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer";
-import {FilterService} from "../../services/FilterService/FilterService";
+import { IEventCart, IQuery } from "../../types/event.type";
+import { Loader } from "../../components/Loader/Loader";
+import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
+import { NoData } from "../../components/NoData/NoData";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
-import {addNewEventLists, setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
+import { setInitialLang } from "../../store/reducer/theme/actions";
+import { setInitialThemeMode } from "../../store/reducer/translation/action";
+import { FilterAction, TodayButtons } from "./switchButtons.enum";
+import { FilterService } from "../../services/FilterService/FilterService";
+import { setActiveFilters } from "../../store/reducer/filter/filterReducer";
+import { EventService } from "../../services/EventService/EventService";
+import { addNewEventLists } from "../../store/reducer/event/eventReducer";
+import { setLoader } from "../../store/reducer/loading/loadingSlice";
 
-const screenWidth = Dimensions.get('window').width;
-const width = screenWidth - (screenWidth * 0.1)
-const height = screenWidth / 2
+const screenWidth = Dimensions.get("window").width;
+const width = screenWidth - screenWidth * 0.1;
+const height = screenWidth / 2;
 
+const initialQuery = {
+  page: 1,
+  limit: 6,
+  filters: [],
+  type: TodayButtons.all,
+  bottomFilter: FilterAction.all,
+};
 function TodayEvents() {
-    const [loadMore, setLoadMore] = useState(false)
-    const [isDataEmpty, setIsDataEmpty] = useState(false)
+  const [query, setQuery] = useState<IQuery>(initialQuery);
+  const [errorMessage, setErrorMessage] = useState();
 
-    const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]); //This list we are getting from server
+  const [isDataEmpty, setisDataEmpty] = useState(false);
 
-    // const [topFilter, setTopFilter] = useState<EventTabs>(TodayButtons.all) // Top part filters state
-    // const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
-    //const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
+  const { events } = useAppSelector((state) => state.events);
+  const { loadMore, eventLoading } = useAppSelector((state) => state.loader);
+  const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    setInitialThemeMode(dispatch);
+    setInitialLang(dispatch);
+  }, [dispatch]);
 
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1)
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const dispatch = useAppDispatch()
+  useEffect(() => {
+    let isMounted = true;
+    (async function () {
+      try {
+        if (!isMounted) return;
+        dispatch(setLoader({ name: "eventLoading", val: true }));
+        const filterService = new FilterService();
+        const activeFilterList = await filterService.getActiveFilters();
+        dispatch(setActiveFilters(activeFilterList));
+        await getEvents(query);
+        return activeFilterList;
+      } catch (e: any) {
+        setErrorMessage(e.message);
+      } finally {
+        dispatch(setLoader({ name: "eventLoading", val: false }));
+      }
+    })();
 
-    const {selectedFilters, topFilter, bottomFilter} = useAppSelector(state => state.filters)
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-    useEffect(() => {
-        const fetchLanguage = async function () {
-            try {
-                type langType = langs.EN | langs.RU | langs.AM
-                const storedLang = await AsyncStorage.getItem('lang');
-                const lang: langType | undefined = storedLang ? (storedLang as langType) : langs.EN;
-                dispatch(setLanguages(lang));
-            } catch (error) {
-                console.error('Error fetching language:', error);
-            }
-        };
-        const setMode = async function (): Promise<void> {
-            try {
-                const mode = await AsyncStorage.getItem('theme');
-                if (mode) {
-                    switch (mode) {
-                        case "DARK":
-                            dispatch(setDarkMode());
-                            break
-                        case "LIGHT":
-                            dispatch(setLightMode());
-                            break
-                        default:
-                            dispatch(setDarkMode());
-                    }
-                } else {
-                    dispatch(setDarkMode());
-                }
-            } catch (error) {
-                console.error('Error fetching language:', error);
-            }
-        };
-        //First show dynamic mode
-        setMode();
-        //First should be show english
-        fetchLanguage();
-    }, [dispatch]);
-
-
-    useEffect(() => {
-        setLoading(() => true);
-        getEventList(page)
-    }, []);
-
-    // Top Buttons Filter
-    const topFilteredEvents = useMemo(function () {
-        return FilterService.topFilter(todayEvents, topFilter)
-    }, [topFilter, todayEvents])
-
-
-    //Middle Buttons Filter
-    const bottomFilteredEvents = useMemo(function () {
-        const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(filters))
-        dispatch(setUnselectedFilters({
-            filters,
-            filterType: 'updateAll'
-        }))
-        return eventLists
-    }, [topFilteredEvents, bottomFilter])
-
-
-    //Bottom part filter
-    const subFilteredEvents = useMemo(function () {
-        const events = FilterService.subFilter(bottomFilteredEvents, selectedFilters)
-        dispatch(setSubFilteredEvents(events))
-        return events
-    }, [bottomFilteredEvents, selectedFilters]);
-
-    async function getEventList(page: number, count: number = 6) {
-        setLoadMore(() => true);
-        try {
-            const eventService = new EventService();
-            const result = await eventService.toDaysEvents(page, count);
-            const {events, uniqFilters: filterList} = result
-            dispatch(addNewEventLists(events))
-            dispatch(setFilters(filterList))
-            // dispatch(setUnselectedFilters({
-            //         filters: filterList,
-            //         filterType: 'updateAll'
-            //     }))
-            setTodayEvents(prev => [...prev, ...events]);
-            setIsDataEmpty(!events.length)
-        } catch (e: any) {
-            if (e && e.message) {
-                setErrorMessage(e.message);
-            }
-        } finally {
-            setPage(prev => prev + 1)
-            setLoadMore(() => false);
-            setLoading(() => false);
-        }
+  async function getEvents(query: IQuery) {
+    try {
+      const eventService = new EventService();
+      const { events } = await eventService.getEventsByFilter(query);
+      dispatch(addNewEventLists(events));
+      setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
+    } catch (e: any) {
+      setErrorMessage(e.message);
     }
+  }
+  const handleScroll = () => {
+    if (loadMore) return;
+    (async function () {
+      dispatch(setLoader({ val: true, name: "loadMore" }));
+      await getEvents(query);
+      dispatch(setLoader({ val: false, name: "loadMore" }));
+    })();
+  };
 
+  const renderItem = useCallback(function ({ item }: { item: IEventCart }) {
+    return <EventCart event={item} />;
+  }, []);
 
-    const handleScroll = useCallback(function () {
-        if (!isDataEmpty && !loadMore) {
-            getEventList(page)
-        }
-    }, [loadMore, isDataEmpty])
+  const getItemLayout = useCallback((_: any, index: number) => {
+    const screenWidth = Dimensions.get("window").width;
+    const height = screenWidth / 2;
+    return { length: height, offset: height * index, index };
+  }, []);
 
-    const renderItem = useCallback(function ({item}: { item: IEventCart }) {
-        return <EventCart event={item}/>
-    }, [])
-    const getItemLayout = useCallback((_: any, index: number) => {
-        const screenWidth = Dimensions.get('window').width;
-        const height = screenWidth / 2
-        return {length: height, offset: height * index, index}
-    }, [])
+  const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
+  const keyExtractor = useCallback(
+    (item: any, i: number) => `${i}-${item.id}`,
+    []
+  );
+  const maxToRenderPerBatch = useMemo(() => 10, []); // useMemo for optimization
+  const windowSize = useMemo(() => 21, []); // useMemo for optimization
 
-    const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
-    const keyExtractor = useCallback((item: any, i: number) => `${i}-${item.id}`, []);
-    const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
-    const windowSize = useMemo(() => 21, []); // useMemo for optimization
-
-    if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
-    if (errorMessage) return <Text>{errorMessage}</Text>;
-
+  if (eventLoading)
     return (
-        <View style={[todayEventsStyle.container, {width: '100%', flex: 1}]}>
-            {!loading && !subFilteredEvents.length ? <NoData/> :
-                <FlashList
-                    {...{
-                        getItemLayout,
-                        initialNumToRender,
-                        maxToRenderPerBatch,
-                        windowSize
-                    }}
-                    estimatedItemSize={todayEvents.length}
-                    estimatedListSize={{height, width}}
-                    refreshing={loadMore}
-                    showsVerticalScrollIndicator={false}
-                    onEndReached={handleScroll}
-                    onEndReachedThreshold={0}
-                    scrollEventThrottle={16}
-                    data={subFilteredEvents}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderItem}
-                />}
-            {(!isDataEmpty && loadMore) && <LottieView
-                autoPlay
-                style={{
-                    top: -30,
-                    width: 200,
-                    height: 100,
-                    backgroundColor: 'transparent',
-                }}
-                source={require('./../../../assets/lottie/load_more.json')}
-            />}
-            <BottomSheetFilters/>
-        </View>
+      <View style={[todayEventsStyle.loading]}>
+        <Loader />
+      </View>
     );
+  if (errorMessage) return <Text>{errorMessage}</Text>;
+
+  return (
+    <View style={[todayEventsStyle.container, { paddingBottom: height / 3 }]}>
+      {!eventLoading && !events.length ? (
+        <NoData />
+      ) : (
+        <FlashList
+          {...{
+            getItemLayout,
+            initialNumToRender,
+            maxToRenderPerBatch,
+            windowSize,
+          }}
+          estimatedItemSize={events.length}
+          estimatedListSize={{ height, width }}
+          refreshing={loadMore}
+          showsVerticalScrollIndicator={false}
+          onEndReached={handleScroll}
+          onEndReachedThreshold={1}
+          scrollEventThrottle={16}
+          data={events}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      )}
+      {loadMore && (
+        <LottieView
+          autoPlay
+          style={{
+            top: -30,
+            width: 100,
+            height: 50,
+            backgroundColor: "transparent",
+          }}
+          source={require("./../../../assets/lottie/load_more.json")}
+        />
+      )}
+      <BottomSheetFilters />
+    </View>
+  );
 }
 
 const todayEventsStyle = StyleSheet.create({
-    container: {
-        paddingTop: 20,
-        flex: 1,
-        display: "flex",
-        marginTop: 2,
-        rowGap: 5,
-        alignItems: "center",
-        justifyContent: 'space-between',
-        width: "100%",
-    },
-    contentContainer: {
-        flex: 1,
-        padding: 24,
-        backgroundColor: 'grey',
-    },
-    scrollViewContainer: {},
-    scrollViewContent: {
-        flex: 1,
-    },
-    button: {
-        backgroundColor: 'green',
-        width: 90,
-        height: 40,
-    },
-    buttonWrapper: {
-        display: 'flex',
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        columnGap: 5,
-    },
-    loading: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
+  container: {
+    paddingTop: 20,
+    flex: 1,
+    display: "flex",
+    marginTop: 2,
+    rowGap: 5,
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "grey",
+  },
+  scrollViewContainer: {},
+  scrollViewContent: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: "green",
+    width: 90,
+    height: 40,
+  },
+  buttonWrapper: {
+    display: "flex",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    columnGap: 5,
+  },
+  loading: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
-export default TodayEvents
+export default TodayEvents;
+function emptyEventList(): any {
+  throw new Error("Function not implemented.");
+}
