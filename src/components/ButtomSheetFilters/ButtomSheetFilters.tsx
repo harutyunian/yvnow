@@ -54,9 +54,9 @@ const BottomSheetFilters = React.memo(function () {
     try {
       const isOpened = await AsyncStorage.getItem("bottomSheet");
       bottomSheetRef?.current?.expand();
-      // setTimeout(() => {
-      //   if (isOpened === "true") bottomSheetRef.current?.collapse();
-      // }, 1000);
+      setTimeout(() => {
+        if (isOpened === "true") bottomSheetRef.current?.collapse();
+      }, 1000);
       await AsyncStorage.setItem("bottomSheet", "true");
     } catch (e) {}
   };
@@ -94,7 +94,7 @@ const BottomSheetFilters = React.memo(function () {
     return colors.mode === "DARK" ? colorSchemeDark : colorSchemeLight;
   }, [colors, dispatch]);
 
-  const initialSnapPoints = useMemo(() => [60, "45%"], []);
+  const initialSnapPoints = useMemo(() => [60, 250], []);
   const isAllActive = topFilter === TodayButtons.all;
   const isEventActive = topFilter === TodayButtons.event;
   const isShowActive = topFilter === TodayButtons.show;

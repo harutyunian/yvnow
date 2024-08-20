@@ -7,7 +7,7 @@ import { DARK } from "../../store/reducer/types";
 import { standard } from "./mapStyles/standard";
 import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import { getCluster } from "./Cluster/getCluster";
-import { markerWithCluster } from "./Cluster/MarkerWithCluster";
+import CustomMarker from "./MapMarker/CustomMarker";
 
 const lat1 = 40.15839363088361;
 const lng1 = 44.401019811630256;
@@ -31,6 +31,8 @@ export type locationType = { latitude: number; longitude: number } | null;
 
 export default function CustomMap() {
   const [regions, setRegions] = useState(initialRegion);
+  const { users } = useAppSelector((state) => state.user);
+  const { eventLoading } = useAppSelector((state) => state.loader);
 
   const {
     theme: colors,
@@ -49,9 +51,9 @@ export default function CustomMap() {
 
   return (
     <View style={[mapStyle.container]}>
-      {Platform.OS === "android" && (
+      {eventLoading && (
         <View style={[mapStyle.comingsoon]}>
-          <Text style={mapStyle.commingsoonText}>Coming soon!</Text>
+          <Text style={mapStyle.commingsoonText}>Loading...</Text>
         </View>
       )}
       <MapView
@@ -71,10 +73,10 @@ export default function CustomMap() {
         showsUserLocation
         showsMyLocationButton
       >
-        {Platform.OS === "ios" &&
-          cluster.markers.map((marker, index: number) =>
-            markerWithCluster(marker, index)
-          )}
+        {!eventLoading &&
+          users.map((user) => {
+            return <CustomMarker key={user.id} {...{ user }} />;
+          })}
       </MapView>
       {Platform.OS === "ios" && <BottomSheetFilters />}
     </View>
@@ -86,7 +88,7 @@ const mapStyle = StyleSheet.create({
     flex: 1,
     height: "100%",
     width: "100%",
-    backgroundColor: "rgba(28,29,9,0.6)",
+    //  backgroundColor: "rgba(28,29,9,0.6)",
     position: "absolute",
     zIndex: 1000,
     display: "flex",

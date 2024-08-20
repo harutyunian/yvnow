@@ -16,6 +16,7 @@ import { setActiveFilters } from "../../store/reducer/filter/filterReducer";
 import { EventService } from "../../services/EventService/EventService";
 import { addNewEventLists } from "../../store/reducer/event/eventReducer";
 import { setLoader } from "../../store/reducer/loading/loadingSlice";
+import { setUserList } from "../../store/reducer/user/user";
 
 const screenWidth = Dimensions.get("window").width;
 const width = screenWidth - screenWidth * 0.1;
@@ -69,8 +70,9 @@ function TodayEvents() {
   async function getEvents(query: IQuery) {
     try {
       const eventService = new EventService();
-      const { events } = await eventService.getEventsByFilter(query);
+      const { events, users } = await eventService.getEventsByFilter(query);
       dispatch(addNewEventLists(events));
+      dispatch(setUserList(users));
       setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
     } catch (e: any) {
       setErrorMessage(e.message);

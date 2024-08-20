@@ -1,27 +1,51 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {IUser} from "../../../types/event.type"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IUser } from "../../../types/event.type";
 
-const initialState: IUser = {
-    id: 0,
-    avatar: '',
-    profilePictures: [],
-    description: '',
-    partner: '',
-    address: '',
-    location: {
-        lat: '',
-        lng: ''
-    },
+interface IInitialState {
+  selectedUser: IUser;
+  users: IUser[];
 }
-export const userReducer = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        setUser(_, action: PayloadAction<IUser>) {
-            return {...action.payload}
-        }
-    }
-})
 
-export const {setUser} = userReducer.actions
-export default userReducer.reducer
+const initialState: IInitialState = {
+  selectedUser: {
+    id: 0,
+    avatar: "",
+    profilePictures: [],
+    description: "",
+    partner: "",
+    address: "",
+    location: {
+      lat: "",
+      lng: "",
+    },
+  },
+  users: [
+    {
+      id: 0,
+      avatar: "",
+      profilePictures: [],
+      description: "",
+      partner: "",
+      address: "",
+      location: {
+        lat: "",
+        lng: "",
+      },
+    },
+  ],
+};
+export const userReducer = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    setUser(state, action: PayloadAction<IUser>) {
+      state.selectedUser = action.payload;
+    },
+    setUserList(state, action: PayloadAction<IUser[]>) {
+      state.users = action.payload;
+    },
+  },
+});
+
+export const { setUser, setUserList } = userReducer.actions;
+export default userReducer.reducer;

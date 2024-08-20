@@ -1,6 +1,6 @@
 import HttpService from "../Http/HttpService";
 import { EVENTS } from "../../constants/server";
-import { IEventCart, IFilters, IQuery } from "../../types/event.type";
+import { IEventCart, IFilters, IQuery, IUser } from "../../types/event.type";
 import dayjs from "dayjs";
 
 export class EventService {
@@ -61,7 +61,7 @@ export class EventService {
 
   async getEventsByFilter(
     query: IQuery
-  ): Promise<{ events: IEventCart[]; total: number }> {
+  ): Promise<{ events: IEventCart[]; users: IUser[]; total: number }> {
     try {
       const url = EVENTS.GET_EVENT_LIST_BY_QUERY;
       return await this.httpService.get(url, {

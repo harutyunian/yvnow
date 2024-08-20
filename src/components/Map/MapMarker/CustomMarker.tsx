@@ -4,18 +4,22 @@ import { Image as ExpoImage } from "expo-image";
 import { Marker, Callout } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import { useAppDispatch } from "../../../hook/reduxHooks";
-import { IEventCart } from "../../../types/event.type";
+import { IEventCart, IUser } from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import { setUser } from "../../../store/reducer/user/user";
 import { isBetweenDates } from "../../../helpers/helper";
 import { useTranslatedRoutes } from "../../../hook/translatedRoutes";
 import image from "../../../../assets/images";
 
-interface ICustomMarkerProps extends IEventCart {}
+interface ICustomMarkerProps {
+  user: IUser;
+}
 
 const CustomMarker = (props: ICustomMarkerProps) => {
-  const { user, startDate, endDate } = props;
+  const { user } = props;
   const {
+    //@ts-ignore
+    isLive,
     location: { lat: latitude, lng: longitude },
     avatar,
   } = user;
@@ -46,9 +50,9 @@ const CustomMarker = (props: ICustomMarkerProps) => {
   return (
     <Marker
       coordinate={{ latitude: +latitude, longitude: +longitude }}
-      tracksViewChanges={!imgLoaded.avatar}
+      // tracksViewChanges={!imgLoaded.avatar}
     >
-      {isBetweenDates(startDate, endDate) && (
+      {isLive && (
         <View style={customMapStyle.liveContainer}>
           <Text style={customMapStyle.liveText}>Live</Text>
         </View>
