@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BottomSheet, { BottomSheetHandle } from "@gorhom/bottom-sheet";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,10 +18,11 @@ import { resetQuery, setQuery } from "../../store/reducer/query/querySlice";
 import { IQuery } from "../../types/event.type";
 import { EventService } from "../../services/EventService/EventService";
 import {
-  addNewEventLists,
+  addEventByFilter,
   emptyEventList,
 } from "../../store/reducer/event/eventReducer";
 import { setLoader } from "../../store/reducer/loading/loadingSlice";
+import { setUserList } from "../../store/reducer/user/user";
 
 export interface IColorScheme {
   bnt_active: string;
@@ -38,6 +39,7 @@ const BottomSheetFilters = React.memo(function () {
   const { t } = useTranslation();
 
   const colors = useAppSelector((state) => state.theme);
+  const { eventLoading } = useAppSelector((state) => state.loader);
   const { topFilter, selectedFilters } = useAppSelector(
     (state) => state.filters
   );
@@ -61,18 +63,28 @@ const BottomSheetFilters = React.memo(function () {
     } catch (e) {}
   };
 
-  const getEventList = async (query: IQuery) => {
-    try {
-      dispatch(emptyEventList());
-      dispatch(setLoader({ name: "eventLoading", val: true }));
-      const eventService = new EventService();
-      const result = await eventService.getEventsByFilter(query);
-      dispatch(addNewEventLists(result.events));
-      dispatch(setLoader({ name: "eventLoading", val: false }));
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const getEventList = useCallback(
+    async (query: IQuery) => {
+      if (eventLoading) return;
+      try {
+        dispatch(emptyEventList());
+        dispatch(setLoader({ name: "eventLoading", val: true }));
+        const eventService = new EventService();
+        const result = await eventService.getEventsByFilter({
+          ...query,
+          page: 1,
+        });
+        dispatch(addEventByFilter(result.events));
+        dispatch(setUserList(result.users));
+
+        dispatch(setLoader({ name: "eventLoading", val: false }));
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [query]
+  );
+
   const onShowEvent = () => {
     const filters = selectedFilters.length
       ? selectedFilters.map(({ id }) => id)
@@ -83,6 +95,7 @@ const BottomSheetFilters = React.memo(function () {
   const onResetFilters = () => {
     dispatch(resetFilters());
     dispatch(resetQuery());
+    getEventList({ ...query, filters: [] });
   };
 
   useEffect(() => {

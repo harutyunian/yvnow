@@ -18,6 +18,9 @@ export const eventReducer = createSlice({
     emptyEventList(state) {
       return { ...state, events: [] };
     },
+    addEventByFilter(state, action: PayloadAction<IEventCart[]>) {
+      state.events = action.payload;
+    },
     addNewEventLists(state, action: PayloadAction<IEventCart[]>) {
       return { ...state, events: [...state.events, ...action.payload] };
     },
@@ -27,6 +30,10 @@ export const eventReducer = createSlice({
   },
 });
 
-export const { emptyEventList, addNewEventLists, setSubFilteredEvents } =
-  eventReducer.actions;
+export const {
+  emptyEventList,
+  addNewEventLists,
+  setSubFilteredEvents,
+  addEventByFilter,
+} = eventReducer.actions;
 export default eventReducer.reducer;

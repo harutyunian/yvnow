@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ILoader {
+  firstFetchDone: boolean;
   loadMore: boolean;
   eventLoading: boolean;
   mapLoading: boolean;
@@ -8,6 +9,7 @@ interface ILoader {
 }
 
 const initialState: ILoader = {
+  firstFetchDone: false,
   loadMore: false,
   eventLoading: false,
   mapLoading: false,
