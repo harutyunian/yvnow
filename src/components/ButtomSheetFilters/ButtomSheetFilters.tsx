@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BottomSheet, { BottomSheetHandle } from "@gorhom/bottom-sheet";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -34,10 +40,26 @@ export interface IColorScheme {
   filtersBackground: string;
 }
 
+export interface IDisable {
+  showEventsDisable: boolean;
+  resetFilterDisable: boolean;
+}
+export const disabledButtons = {
+  showEventsDisable: true,
+  resetFilterDisable: true,
+};
+export const endabledButtons = {
+  showEventsDisable: false,
+  resetFilterDisable: false,
+};
+
 const BottomSheetFilters = React.memo(function () {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { t } = useTranslation();
 
+  // show events and reset filters buttons
+  const [disabledActionButtons, setDisabledActionButtons] =
+    useState<IDisable>(disabledButtons);
   const colors = useAppSelector((state) => state.theme);
   const { eventLoading } = useAppSelector((state) => state.loader);
   const { topFilter, selectedFilters } = useAppSelector(
@@ -48,6 +70,7 @@ const BottomSheetFilters = React.memo(function () {
   const dispatch = useAppDispatch();
 
   function handleChangeEventTabs(type: EventTabs) {
+    setDisabledActionButtons(endabledButtons);
     dispatch(setActionFilter({ filterType: "topFilter", actionType: type }));
     dispatch(setQuery({ type }));
   }
@@ -79,7 +102,7 @@ const BottomSheetFilters = React.memo(function () {
 
         dispatch(setLoader({ name: "eventLoading", val: false }));
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     },
     [query]
@@ -91,11 +114,16 @@ const BottomSheetFilters = React.memo(function () {
       : [];
     dispatch(setQuery({ filters }));
     getEventList({ ...query, filters });
+    setDisabledActionButtons({
+      showEventsDisable: true,
+      resetFilterDisable: false,
+    });
   };
-  const onResetFilters = () => {
+  const onResetFilters = async () => {
     dispatch(resetFilters());
     dispatch(resetQuery());
-    getEventList({ ...query, filters: [] });
+    setDisabledActionButtons(disabledButtons);
+    await getEventList({ ...query, filters: [] });
   };
 
   useEffect(() => {
@@ -107,7 +135,7 @@ const BottomSheetFilters = React.memo(function () {
     return colors.mode === "DARK" ? colorSchemeDark : colorSchemeLight;
   }, [colors, dispatch]);
 
-  const initialSnapPoints = useMemo(() => [60, 250], []);
+  const initialSnapPoints = useMemo(() => [60, 230], []);
   const isAllActive = topFilter === TodayButtons.all;
   const isEventActive = topFilter === TodayButtons.event;
   const isShowActive = topFilter === TodayButtons.show;
@@ -219,11 +247,13 @@ const BottomSheetFilters = React.memo(function () {
           </View>
           <FilterActionsSheet
             {...{
+              setDisabledActionButtons,
               colorSchemeFilter,
             }}
           />
           <View style={bottomSheetFilter.actionButtonsWrapper}>
             <TouchableOpacity
+              disabled={disabledActionButtons.resetFilterDisable}
               style={[
                 { backgroundColor: colorSchemeFilter.bnt_active },
                 bottomSheetFilter.resetButton,
@@ -240,13 +270,16 @@ const BottomSheetFilters = React.memo(function () {
               />
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={disabledActionButtons?.showEventsDisable}
               onPress={onShowEvent}
               style={[
                 bottomSheetFilter.fetchEvents,
                 { backgroundColor: colors.PRIMARY.SECOND },
               ]}
             >
-              <Text style={bottomSheetFilter.buttonText}>Show events</Text>
+              <Text style={bottomSheetFilter.buttonText}>
+                {t("buttonSheet.showEvents")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -269,6 +302,8 @@ const bottomSheetFilter = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "800",
+    flexShrink: 1,
+    flexWrap: "wrap",
   },
   fetchEvents: {
     width: "45%",
@@ -291,7 +326,7 @@ const bottomSheetFilter = StyleSheet.create({
     flexDirection: "row",
     width: "45%",
     borderRadius: 10,
-    height: 38,
+    minHeight: 38,
   },
   bottomSheetHeaderStyle: {
     paddingVertical: 0,

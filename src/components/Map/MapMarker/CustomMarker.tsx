@@ -4,10 +4,9 @@ import { Image as ExpoImage } from "expo-image";
 import { Marker, Callout } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import { useAppDispatch } from "../../../hook/reduxHooks";
-import { IEventCart, IUser } from "../../../types/event.type";
+import { IUser } from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import { setUser } from "../../../store/reducer/user/user";
-import { isBetweenDates } from "../../../helpers/helper";
 import { useTranslatedRoutes } from "../../../hook/translatedRoutes";
 import image from "../../../../assets/images";
 
@@ -20,10 +19,12 @@ const CustomMarker = (props: ICustomMarkerProps) => {
   const {
     //@ts-ignore
     isLive,
-    location: { lat: latitude, lng: longitude },
+    location,
     avatar,
   } = user;
 
+  if (!location) return null;
+  const { lat: latitude, lng: longitude } = location;
   const dispatch = useAppDispatch();
   const navigate = useNavigation();
   const routes = useTranslatedRoutes();

@@ -8,6 +8,7 @@ import { standard } from "./mapStyles/standard";
 import BottomSheetFilters from "../ButtomSheetFilters/ButtomSheetFilters";
 import { getCluster } from "./Cluster/getCluster";
 import CustomMarker from "./MapMarker/CustomMarker";
+import { Loader } from "../Loader/Loader";
 
 const lat1 = 40.15839363088361;
 const lng1 = 44.401019811630256;
@@ -34,26 +35,26 @@ export default function CustomMap() {
   const { users } = useAppSelector((state) => state.user);
   const { eventLoading } = useAppSelector((state) => state.loader);
 
-  const {
-    theme: colors,
-    events: { events },
-  } = useAppSelector((state) => state);
+  const { theme: colors } = useAppSelector((state) => state);
 
-  const cluster = useMemo(() => {
-    const allCoords = events.map((c) => ({
-      ...c,
-      geometry: {
-        coordinates: [c.user.location.lng, c.user.location.lat],
-      },
-    }));
-    return getCluster(allCoords, regions);
-  }, [events, regions]);
+  // es heto enq ogtagortselu jnjel chka
+  // const cluster = useMemo(() => {
+  //   const allCoords = events.map((c) => ({
+  //     ...c,
+  //     geometry: {
+  //       coordinates: [c.user.location.lng, c.user.location.lat],
+  //     },
+  //   }));
+  //   return getCluster(allCoords, regions);
+  // }, [events, regions]);
 
   return (
     <View style={[mapStyle.container]}>
       {eventLoading && (
         <View style={[mapStyle.comingsoon]}>
-          <Text style={mapStyle.commingsoonText}>Loading...</Text>
+          <Text style={mapStyle.commingsoonText}>
+            <Loader />
+          </Text>
         </View>
       )}
       <MapView

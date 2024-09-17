@@ -8,10 +8,11 @@ import { IEventCart } from "../../types/event.type";
 import EventCardSmall from "./EventCardSmall/EventCardSmall";
 import { EventService } from "../../services/EventService/EventService";
 import { About } from "./About/About";
-import { isBetweenDates } from "../../helpers/helper";
+import { isBetweenDates, removeDuplicatesByValues } from "../../helpers/helper";
 import EventCart from "../../components/EventCard/EventCart";
 import { useTranslation } from "../../hook/translationHook";
 import { FlashList } from "@shopify/flash-list";
+import { Loader } from "../../components/Loader/Loader";
 
 enum ProfileContent {
   event = "event",
@@ -37,14 +38,17 @@ export default function PartnerProfile() {
     notStarted: IEventCart[];
     passed: IEventCart[];
   }>({ notStarted: [], passed: [] });
+
   const [profileTypes, setProfileTypes] = useState<ProfileContentType>(
     ProfileContent.event
   );
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   useEffect(function () {
     (async function () {
       try {
+        setLoading(() => true);
         const eventService = new EventService();
         const events = await eventService.getEventByUserId(userId);
         const withLiveOrder = events.notStarted.reduce(
@@ -59,17 +63,17 @@ export default function PartnerProfile() {
             noLive: IEventCart[];
           }
         );
+
         const eventsNotStarted = [
-          ...withLiveOrder.live,
-          ...withLiveOrder.noLive,
+          ...removeDuplicatesByValues(withLiveOrder.live, "id"),
+          ...removeDuplicatesByValues(withLiveOrder.noLive, "id"),
         ];
         setPartnerEvents({
           notStarted: eventsNotStarted,
           passed: events.passed,
         });
-      } catch (e) {
-        //console.log(e);
-      }
+        setLoading(() => false);
+      } catch (e) {}
     })();
   }, []);
 
@@ -111,13 +115,13 @@ export default function PartnerProfile() {
     partnerEvents.passed,
   ]);
 
-  const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
   const keyExtractor = useCallback(
     (item: any, i: number) => `${i}-${item.id}`,
     []
   );
-  const maxToRenderPerBatch = useMemo(() => 10, []); // useMemo for optimization
-  const windowSize = useMemo(() => 21, []); // useMemo for optimization
+  const initialNumToRender = useMemo(() => 10, []);
+  const maxToRenderPerBatch = useMemo(() => 10, []);
+  const windowSize = useMemo(() => 21, []);
 
   return (
     <View style={[partnerProfileStyle.container]}>
@@ -205,7 +209,12 @@ export default function PartnerProfile() {
           },
         ]}
       >
-        {!isAboutActive && (
+        {loading && (
+          <View>
+            <Loader />
+          </View>
+        )}
+        {!loading && !isAboutActive && (
           <FlashList
             {...{
               data,
@@ -220,7 +229,7 @@ export default function PartnerProfile() {
             }}
           />
         )}
-        {isAboutActive && (
+        {!loading && isAboutActive && (
           <ScrollView showsVerticalScrollIndicator={false}>
             <About user={user.selectedUser} />
           </ScrollView>

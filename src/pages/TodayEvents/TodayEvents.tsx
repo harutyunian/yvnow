@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
+import React, { useCallback, useEffect, useState } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import LottieView from "lottie-react-native";
-import EventCart from "../../components/EventCard/EventCart";
-import { IEventCart, IQuery } from "../../types/event.type";
+import { IQuery } from "../../types/event.type";
 import { Loader } from "../../components/Loader/Loader";
 import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
 import { NoData } from "../../components/NoData/NoData";
@@ -17,18 +15,18 @@ import { addNewEventLists } from "../../store/reducer/event/eventReducer";
 import { setLoader } from "../../store/reducer/loading/loadingSlice";
 import { setUserList } from "../../store/reducer/user/user";
 import { setQuery } from "../../store/reducer/query/querySlice";
+import EventFlashList from "./EventsFlashList/EventFlashList";
 
 const screenWidth = Dimensions.get("window").width;
-const width = screenWidth - screenWidth * 0.1;
 const height = screenWidth / 2;
 
 function TodayEvents() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
-  const { events } = useAppSelector((state) => state.events);
   const query = useAppSelector((state) => state.query);
   const { loadMore, eventLoading } = useAppSelector((state) => state.loader);
   const dispatch = useAppDispatch();
+  const { events } = useAppSelector((state) => state.events);
 
   useEffect(() => {
     setInitialThemeMode(dispatch);
@@ -37,7 +35,6 @@ function TodayEvents() {
 
   useEffect(() => {
     let isMounted = true;
-
     if (!isMounted) return;
 
     (async () => {
@@ -68,30 +65,6 @@ function TodayEvents() {
     }
   }, []);
 
-  const handleScroll = useCallback(async () => {
-    if (loadMore) return;
-    dispatch(setLoader({ val: true, name: "loadMore" }));
-    await fetchEvents(query);
-    dispatch(setLoader({ val: false, name: "loadMore" }));
-  }, [loadMore, query]);
-
-  const renderItem = useCallback(
-    ({ item }: { item: IEventCart }) => <EventCart event={item} />,
-    []
-  );
-
-  const getItemLayout = useCallback((_, index: number) => {
-    return { length: height, offset: height * index, index };
-  }, []);
-
-  const initialNumToRender = useMemo(() => 10, []);
-  const keyExtractor = useCallback(
-    (item: IEventCart, index: number) => `${index}-${item.id}`,
-    []
-  );
-  const maxToRenderPerBatch = useMemo(() => 10, []);
-  const windowSize = useMemo(() => 21, []);
-
   if (errorMessage) return <Text>{errorMessage}</Text>;
 
   return (
@@ -103,27 +76,10 @@ function TodayEvents() {
       )}
       {!eventLoading && (
         <View style={[styles.container, { paddingBottom: height / 3 }]}>
-          {!eventLoading && !events.length ? (
+          {events.length === 0 ? (
             <NoData />
           ) : (
-            <FlashList
-              {...{
-                getItemLayout,
-                initialNumToRender,
-                maxToRenderPerBatch,
-                windowSize,
-              }}
-              estimatedItemSize={height}
-              estimatedListSize={{ height, width }}
-              refreshing={loadMore}
-              showsVerticalScrollIndicator={false}
-              onEndReached={handleScroll}
-              onEndReachedThreshold={1}
-              scrollEventThrottle={16}
-              data={events}
-              keyExtractor={keyExtractor}
-              renderItem={renderItem}
-            />
+            <EventFlashList {...{ fetchEvents }} />
           )}
           {loadMore && (
             <LottieView

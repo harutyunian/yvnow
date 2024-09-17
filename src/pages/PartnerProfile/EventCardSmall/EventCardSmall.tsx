@@ -48,11 +48,14 @@ export default function EventCardSmall(props: EventCardSmall) {
         />
       )}
       <View style={[eventCardSmallStyle.infoWrapper]}>
-        <Text
-          style={[eventCardSmallStyle.title, { color: colors.ACCENT["1"] }]}
-        >
-          {title}
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text
+            style={[eventCardSmallStyle.title, { color: colors.ACCENT["1"] }]}
+          >
+            {title} Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            Beatae, fuga.
+          </Text>
+        </View>
         <View style={[eventCardSmallStyle.dateContainer]}>
           <View style={[eventCardSmallStyle.dateWrapper]}>
             <CalendarIcon
@@ -90,7 +93,9 @@ export default function EventCardSmall(props: EventCardSmall) {
 const eventCardSmallStyle = StyleSheet.create({
   container: {
     width: "100%",
-    height: 135,
+    minHeight: 135,
+    alignSelf: "flex-start",
+    flex: 1,
     borderRadius: 15,
     paddingTop: 10,
     paddingLeft: 16,
@@ -108,16 +113,19 @@ const eventCardSmallStyle = StyleSheet.create({
   infoWrapper: {
     paddingLeft: 17,
     display: "flex",
-    height: 100,
+    flex: 1,
   },
   title: {
+    top: 8,
     fontSize: 16,
     fontWeight: "500",
+    flexShrink: 1,
   },
   mainText: {
     fontSize: 12,
     fontWeight: "400",
     color: "#64748B",
+    flexShrink: 1,
   },
   dateContainer: {
     display: "flex",

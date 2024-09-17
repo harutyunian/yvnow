@@ -11,6 +11,7 @@ const initialState: IQuery = {
   bottomFilter: FilterAction.all,
 };
 
+let i = 0;
 export const querySlice = createSlice({
   name: "query",
   initialState,

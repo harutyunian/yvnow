@@ -3,9 +3,12 @@
   "upcoming": "Upcoming",
   "today": "Today",
   "partnerProfileButton": "See partner's profile",
+  "buttonSheet": {
+    "showEvents": "Show events"
+  },
   "types": {
     "all": "All",
-    "event":  "Event",
+    "event": "Event",
     "show": "Show",
     "concert": "Pool"
   },

@@ -1,3 +1,4 @@
+import { removeDuplicatesByValues } from "../../../helpers/helper";
 import { IEventCart } from "../../../types/event.type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -22,7 +23,13 @@ export const eventReducer = createSlice({
       state.events = action.payload;
     },
     addNewEventLists(state, action: PayloadAction<IEventCart[]>) {
-      return { ...state, events: [...state.events, ...action.payload] };
+      return {
+        ...state,
+        events: removeDuplicatesByValues(
+          [...state.events, ...action.payload],
+          "id"
+        ),
+      };
     },
     setSubFilteredEvents(state, action: PayloadAction<IEventCart[]>) {
       return { ...state, subFilteredEvents: action.payload };

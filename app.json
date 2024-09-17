@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yvnow",
     "slug": "Yvnow",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "orientation": "portrait",
     "icon": "./assets/logo_yvnow.png",
     "userInterfaceStyle": "light",
@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -27,11 +25,8 @@
       "bundleIdentifier": "com.yvnow.event"
     },
     "android": {
-      "versionCode": 19,
-      "permissions": [
-        "INTERNET",
-        "android.permission.ACCESS_COARSE_LOCATION"
-      ],
+      "versionCode": 21,
+      "permissions": ["INTERNET", "android.permission.ACCESS_COARSE_LOCATION"],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAsWhPWiIZGBiExSlWcd4hPAQ94mF7zOsE"
