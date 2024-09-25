@@ -20,7 +20,7 @@ export const eventReducer = createSlice({
       return { ...state, events: [] };
     },
     addEventByFilter(state, action: PayloadAction<IEventCart[]>) {
-      state.events = action.payload;
+      state.events = removeDuplicatesByValues(action.payload, "id");
     },
     addNewEventLists(state, action: PayloadAction<IEventCart[]>) {
       return {

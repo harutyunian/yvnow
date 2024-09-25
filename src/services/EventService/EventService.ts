@@ -5,9 +5,14 @@ import dayjs from "dayjs";
 
 export class EventService {
   private readonly httpService;
+  catchForGetEvgents: Map<any, any>;
 
   constructor() {
     this.httpService = new HttpService();
+    //in react native we have a problem about catching
+    // same request we doing more then one time
+    // So need automaticly do page ++ to get new events
+    this.catchForGetEvgents = new Map();
   }
 
   async toDaysEvents(

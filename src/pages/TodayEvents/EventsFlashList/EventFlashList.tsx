@@ -66,5 +66,5 @@ function FlashListEvent({ fetchEvents }: IProps) {
   );
 }
 
-const EventFlashList = React.memo(FlashListEvent, () => true);
+const EventFlashList = React.memo(FlashListEvent);
 export default EventFlashList;

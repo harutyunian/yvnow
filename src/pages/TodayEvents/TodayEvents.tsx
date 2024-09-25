@@ -22,21 +22,38 @@ const height = screenWidth / 2;
 
 function TodayEvents() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   const query = useAppSelector((state) => state.query);
   const { loadMore, eventLoading } = useAppSelector((state) => state.loader);
   const dispatch = useAppDispatch();
   const { events } = useAppSelector((state) => state.events);
 
+  const fetchEvents = useCallback(
+    async (query: IQuery) => {
+      try {
+        console.log("fetchEvents");
+        const eventService = new EventService();
+        const { events, users } = await eventService.getEventsByFilter(query);
+        dispatch(addNewEventLists(events));
+        dispatch(setUserList(users));
+        dispatch(setQuery({ page: query.page + 1 }));
+      } catch (e: any) {
+        setErrorMessage(e.message);
+      }
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     setInitialThemeMode(dispatch);
     setInitialLang(dispatch);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
+    if (initialFetchDone) return;
+    setInitialFetchDone(true);
     let isMounted = true;
-    if (!isMounted) return;
-
     (async () => {
       try {
         if (!isMounted) return;
@@ -44,26 +61,18 @@ function TodayEvents() {
         const filterService = new FilterService();
         const activeFilterList = await filterService.getActiveFilters();
         dispatch(setActiveFilters(activeFilterList));
-        await fetchEvents(query);
+        await fetchEvents(query); // Fetching events
         dispatch(setLoader({ name: "eventLoading", val: false }));
         dispatch(setLoader({ name: "firstFetchDone", val: true }));
       } catch (e: any) {
         setErrorMessage(e.message);
       }
     })();
-  }, []);
 
-  const fetchEvents = useCallback(async (query: IQuery) => {
-    try {
-      const eventService = new EventService();
-      const { events, users } = await eventService.getEventsByFilter(query);
-      dispatch(addNewEventLists(events));
-      dispatch(setUserList(users));
-      dispatch(setQuery({ page: query.page + 1 }));
-    } catch (e: any) {
-      setErrorMessage(e.message);
-    }
-  }, []);
+    return () => {
+      isMounted = false; // Changed: Cleanup function to set the flag as false when the component unmounts
+    };
+  }, [dispatch, fetchEvents, query, initialFetchDone]);
 
   if (errorMessage) return <Text>{errorMessage}</Text>;
 
