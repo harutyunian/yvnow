@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "../eventapp"
+	},
+	{
+		"path": "."
+	},
+	{
+		"path": "../Abch/astroplate-main"
+	}
+],
+  "settings": {}
+}

@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Image } from "expo-image";
+import { Image as ExpoImage } from "expo-image";
 import { Marker, Callout } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import { useAppDispatch } from "../../../hook/reduxHooks";
-import { IEventCart } from "../../../types/event.type";
+import { IUser } from "../../../types/event.type";
 import MiniProfile from "../../MiniProfile/MiniProfile";
 import { setUser } from "../../../store/reducer/user/user";
-import { isBetweenDates } from "../../../helpers/helper";
 import { useTranslatedRoutes } from "../../../hook/translatedRoutes";
 import image from "../../../../assets/images";
-import Svg, {Circle, ClipPath, Defs, Image as SvgImage} from "react-native-svg";
 
-interface ICustomMarkerProps extends IEventCart {}
+interface ICustomMarkerProps {
+  user: IUser;
+}
 
 const CustomMarker = (props: ICustomMarkerProps) => {
-  const { user, startDate, endDate } = props;
+  const { user } = props;
   const {
-    location: { lat: latitude, lng: longitude },
+    //@ts-ignore
+    isLive,
+    location,
     avatar,
   } = user;
 
+  if (!location) return null;
+  const { lat: latitude, lng: longitude } = location;
   const dispatch = useAppDispatch();
   const navigate = useNavigation();
   const routes = useTranslatedRoutes();
@@ -44,40 +48,31 @@ const CustomMarker = (props: ICustomMarkerProps) => {
     navigate.navigate(routes.partnerProfile.key as never);
   };
 
-
   return (
     <Marker
       coordinate={{ latitude: +latitude, longitude: +longitude }}
-      tracksViewChanges={!imgLoaded.icon}
+      // tracksViewChanges={!imgLoaded.avatar}
     >
-      {isBetweenDates(startDate, endDate) && (
+      {isLive && (
         <View style={customMapStyle.liveContainer}>
           <Text style={customMapStyle.liveText}>Live</Text>
         </View>
       )}
-      <Image
+      <ExpoImage
+        priority={"high"}
+        autoplay={false}
         source={image.marker_icon}
         style={customMapStyle.markerIcon}
-        onLoad={() => setImgLoaded((prev) => ({ ...prev, icon: true }))} 
+        onLoad={() => setImgLoaded((prev) => ({ ...prev, icon: true }))}
       />
       <View style={customMapStyle.avatarContainer}>
-        <Svg
-            height="100%"
-            width="100%"
-            viewBox="0 0 100 100"
-        >
-          <Defs>
-            <ClipPath id="clip">
-              <Circle cx="50" cy="50" r="50" />
-            </ClipPath>
-          </Defs>
-          <SvgImage
-              href={{ uri: avatar }}
-              width="100%"
-              height="100%"
-              clipPath="url(#clip)"
-          />
-        </Svg>
+        <ExpoImage
+          priority={"high"}
+          autoplay={false}
+          style={customMapStyle.avatar}
+          source={{ uri: avatar }}
+          onLoad={() => setImgLoaded((prev) => ({ ...prev, avatar: true }))}
+        />
       </View>
       <Callout
         tooltip
@@ -131,6 +126,12 @@ const customMapStyle = StyleSheet.create({
     height: 26,
     left: 5,
     bottom: 33,
+    borderRadius: 26,
+  },
+  avatar: {
+    borderRadius: 26,
+    width: 26,
+    height: 26,
   },
   partnerLogo: {
     width: "100%",

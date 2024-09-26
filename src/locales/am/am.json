@@ -2,11 +2,14 @@
   "live": "Լայվ",
   "upcoming": "Սպասվող",
   "partnerProfileButton": "Տես գործընկերոջ պրոֆիլը",
+  "buttonSheet": {
+    "showEvents": "Ցույց տալ"
+  },
   "types": {
     "all": "Բոլորը",
     "event": "Իվենթ",
     "show": "Շոու",
-    "concert": "Փուլ"
+    "concert": "Համերգ"
   },
   "profile": {
     "past": "Անցած",

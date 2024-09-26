@@ -2,11 +2,14 @@
   "live": "Лаив",
   "upcoming": "Ожидаемые",
   "partnerProfileButton": "Посмотреть профиль партнера",
+  "buttonSheet": {
+    "showEvents": "Показать"
+  },
   "types": {
     "all": "Все",
     "event": "Меропр.",
     "show": "Шоу",
-    "concert": "Бассейн"
+    "concert": "Kонцерт"
   },
   "profile": {
     "past": "Предыдущие",

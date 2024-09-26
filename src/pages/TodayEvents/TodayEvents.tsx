@@ -1,237 +1,131 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {FlashList} from "@shopify/flash-list";
-
-import {Text, View, StyleSheet, Dimensions} from "react-native";
-import LottieView from 'lottie-react-native';
-import EventCart from "../../components/EventCard/EventCart";
-import {EventService} from "../../services/EventService/EventService";
-import {IEventCart} from "../../types/event.type";
-import {Loader} from "../../components/Loader/Loader";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useAppDispatch, useAppSelector,} from "../../hook/reduxHooks";
-import {NoData} from "../../components/NoData/NoData";
-import {setFilters, setUnselectedFilters} from "../../store/reducer/filter/filterReducer";
-import {setLanguages} from "../../store/reducer/translation/translation";
-import {langs} from "../../store/reducer/translation/types";
-import {setDarkMode, setLightMode} from "../../store/reducer/theme/themeReducer";
-import {FilterService} from "../../services/FilterService/FilterService";
+import React, { useCallback, useEffect, useState } from "react";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
+import LottieView from "lottie-react-native";
+import { IQuery } from "../../types/event.type";
+import { Loader } from "../../components/Loader/Loader";
+import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
+import { NoData } from "../../components/NoData/NoData";
 import BottomSheetFilters from "../../components/ButtomSheetFilters/ButtomSheetFilters";
-import {addNewEventLists, setSubFilteredEvents} from "../../store/reducer/event/eventReducer";
+import { setInitialLang } from "../../store/reducer/theme/actions";
+import { setInitialThemeMode } from "../../store/reducer/translation/action";
+import { FilterService } from "../../services/FilterService/FilterService";
+import { setActiveFilters } from "../../store/reducer/filter/filterReducer";
+import { EventService } from "../../services/EventService/EventService";
+import { addNewEventLists } from "../../store/reducer/event/eventReducer";
+import { setLoader } from "../../store/reducer/loading/loadingSlice";
+import { setUserList } from "../../store/reducer/user/user";
+import { setQuery } from "../../store/reducer/query/querySlice";
+import EventFlashList from "./EventsFlashList/EventFlashList";
 
-const screenWidth = Dimensions.get('window').width;
-const width = screenWidth - (screenWidth * 0.1)
-const height = screenWidth / 2
+const screenWidth = Dimensions.get("window").width;
+const height = screenWidth / 2;
 
 function TodayEvents() {
-    const [loadMore, setLoadMore] = useState(false)
-    const [isDataEmpty, setIsDataEmpty] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
-    const [todayEvents, setTodayEvents] = useState<IEventCart[]>([]); //This list we are getting from server
+  const query = useAppSelector((state) => state.query);
+  const { loadMore, eventLoading } = useAppSelector((state) => state.loader);
+  const dispatch = useAppDispatch();
+  const { events } = useAppSelector((state) => state.events);
 
-    // const [topFilter, setTopFilter] = useState<EventTabs>(TodayButtons.all) // Top part filters state
-    // const [bottomFilter, setBottomFilter] = useState<FilterActionType>(FilterAction.all) // Bottom part filter state
-    //const [subFilter, setSubFilter] = useState<IFilters[]>([]) // Sub filters
+  const fetchEvents = useCallback(
+    async (query: IQuery) => {
+      try {
+        console.log("fetchEvents");
+        const eventService = new EventService();
+        const { events, users } = await eventService.getEventsByFilter(query);
+        dispatch(addNewEventLists(events));
+        dispatch(setUserList(users));
+        dispatch(setQuery({ page: query.page + 1 }));
+      } catch (e: any) {
+        setErrorMessage(e.message);
+      }
+    },
+    [dispatch]
+  );
 
+  useEffect(() => {
+    setInitialThemeMode(dispatch);
+    setInitialLang(dispatch);
+  }, [dispatch]);
 
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1)
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const dispatch = useAppDispatch()
+  useEffect(() => {
+    if (initialFetchDone) return;
+    setInitialFetchDone(true);
+    let isMounted = true;
+    (async () => {
+      try {
+        if (!isMounted) return;
+        dispatch(setLoader({ name: "eventLoading", val: true }));
+        const filterService = new FilterService();
+        const activeFilterList = await filterService.getActiveFilters();
+        dispatch(setActiveFilters(activeFilterList));
+        await fetchEvents(query); // Fetching events
+        dispatch(setLoader({ name: "eventLoading", val: false }));
+        dispatch(setLoader({ name: "firstFetchDone", val: true }));
+      } catch (e: any) {
+        setErrorMessage(e.message);
+      }
+    })();
 
-    const {selectedFilters, topFilter, bottomFilter} = useAppSelector(state => state.filters)
+    return () => {
+      isMounted = false; // Changed: Cleanup function to set the flag as false when the component unmounts
+    };
+  }, [dispatch, fetchEvents, query, initialFetchDone]);
 
-    useEffect(() => {
-        const fetchLanguage = async function () {
-            try {
-                type langType = langs.EN | langs.RU | langs.AM
-                const storedLang = await AsyncStorage.getItem('lang');
-                const lang: langType | undefined = storedLang ? (storedLang as langType) : langs.EN;
-                dispatch(setLanguages(lang));
-            } catch (error) {
-                console.error('Error fetching language:', error);
-            }
-        };
-        const setMode = async function (): Promise<void> {
-            try {
-                const mode = await AsyncStorage.getItem('theme');
-                if (mode) {
-                    switch (mode) {
-                        case "DARK":
-                            dispatch(setDarkMode());
-                            break
-                        case "LIGHT":
-                            dispatch(setLightMode());
-                            break
-                        default:
-                            dispatch(setDarkMode());
-                    }
-                } else {
-                    dispatch(setDarkMode());
-                }
-            } catch (error) {
-                console.error('Error fetching language:', error);
-            }
-        };
-        //First show dynamic mode
-        setMode();
-        //First should be show english
-        fetchLanguage();
-    }, [dispatch]);
+  if (errorMessage) return <Text>{errorMessage}</Text>;
 
-
-    useEffect(() => {
-        setLoading(() => true);
-        getEventList(page)
-    }, []);
-
-    // Top Buttons Filter
-    const topFilteredEvents = useMemo(function () {
-        return FilterService.topFilter(todayEvents, topFilter)
-    }, [topFilter, todayEvents])
-
-
-    //Middle Buttons Filter
-    const bottomFilteredEvents = useMemo(function () {
-        const {eventLists, filters} = FilterService.bottomFilteredEvents(topFilteredEvents, bottomFilter)
-        dispatch(setFilters(filters))
-        dispatch(setUnselectedFilters({
-            filters,
-            filterType: 'updateAll'
-        }))
-        return eventLists
-    }, [topFilteredEvents, bottomFilter])
-
-
-    //Bottom part filter
-    const subFilteredEvents = useMemo(function () {
-        const events = FilterService.subFilter(bottomFilteredEvents, selectedFilters)
-        dispatch(setSubFilteredEvents(events))
-        return events
-    }, [bottomFilteredEvents, selectedFilters]);
-
-    async function getEventList(page: number, count: number = 6) {
-        setLoadMore(() => true);
-        try {
-            const eventService = new EventService();
-            const result = await eventService.toDaysEvents(page, count);
-            const {events, uniqFilters: filterList} = result
-            dispatch(addNewEventLists(events))
-            dispatch(setFilters(filterList))
-            // dispatch(setUnselectedFilters({
-            //         filters: filterList,
-            //         filterType: 'updateAll'
-            //     }))
-            setTodayEvents(prev => [...prev, ...events]);
-            setIsDataEmpty(!events.length)
-        } catch (e: any) {
-            if (e && e.message) {
-                setErrorMessage(e.message);
-            }
-        } finally {
-            setPage(prev => prev + 1)
-            setLoadMore(() => false);
-            setLoading(() => false);
-        }
-    }
-
-
-    const handleScroll = useCallback(function () {
-        if (!isDataEmpty && !loadMore) {
-            getEventList(page)
-        }
-    }, [loadMore, isDataEmpty])
-
-    const renderItem = useCallback(function ({item}: { item: IEventCart }) {
-        return <EventCart event={item}/>
-    }, [])
-    const getItemLayout = useCallback((_: any, index: number) => {
-        const screenWidth = Dimensions.get('window').width;
-        const height = screenWidth / 2
-        return {length: height, offset: height * index, index}
-    }, [])
-
-    const initialNumToRender = useMemo(() => 10, []); // useMemo for optimization
-    const keyExtractor = useCallback((item: any, i: number) => `${i}-${item.id}`, []);
-    const maxToRenderPerBatch = useMemo(() => 10, [subFilteredEvents]); // useMemo for optimization
-    const windowSize = useMemo(() => 21, []); // useMemo for optimization
-
-    if (loading) return (<View style={[todayEventsStyle.loading]}><Loader/></View>);
-    if (errorMessage) return <Text>{errorMessage}</Text>;
-
-    return (
-        <View style={[todayEventsStyle.container, {width: '100%', flex: 1}]}>
-            {!loading && !subFilteredEvents.length ? <NoData/> :
-                <FlashList
-                    {...{
-                        getItemLayout,
-                        initialNumToRender,
-                        maxToRenderPerBatch,
-                        windowSize
-                    }}
-                    estimatedItemSize={todayEvents.length}
-                    estimatedListSize={{height, width}}
-                    refreshing={loadMore}
-                    showsVerticalScrollIndicator={false}
-                    onEndReached={handleScroll}
-                    onEndReachedThreshold={0}
-                    scrollEventThrottle={16}
-                    data={subFilteredEvents}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderItem}
-                />}
-            {(!isDataEmpty && loadMore) && <LottieView
-                autoPlay
-                style={{
-                    top: -30,
-                    width: 200,
-                    height: 100,
-                    backgroundColor: 'transparent',
-                }}
-                source={require('./../../../assets/lottie/load_more.json')}
-            />}
-            <BottomSheetFilters/>
+  return (
+    <>
+      {eventLoading && (
+        <View style={styles.loading}>
+          <Loader />
         </View>
-    );
+      )}
+      {!eventLoading && (
+        <View style={[styles.container, { paddingBottom: height / 3 }]}>
+          {events.length === 0 ? (
+            <NoData />
+          ) : (
+            <EventFlashList {...{ fetchEvents }} />
+          )}
+          {loadMore && (
+            <LottieView
+              autoPlay
+              style={styles.loaderAnimation}
+              source={require("./../../../assets/lottie/load_more.json")}
+            />
+          )}
+        </View>
+      )}
+      <BottomSheetFilters />
+    </>
+  );
 }
 
-const todayEventsStyle = StyleSheet.create({
-    container: {
-        paddingTop: 20,
-        flex: 1,
-        display: "flex",
-        marginTop: 2,
-        rowGap: 5,
-        alignItems: "center",
-        justifyContent: 'space-between',
-        width: "100%",
-    },
-    contentContainer: {
-        flex: 1,
-        padding: 24,
-        backgroundColor: 'grey',
-    },
-    scrollViewContainer: {},
-    scrollViewContent: {
-        flex: 1,
-    },
-    button: {
-        backgroundColor: 'green',
-        width: 90,
-        height: 40,
-    },
-    buttonWrapper: {
-        display: 'flex',
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        columnGap: 5,
-    },
-    loading: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 20,
+    flex: 1,
+    marginTop: 2,
+    rowGap: 5,
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  loading: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loaderAnimation: {
+    top: -30,
+    width: 100,
+    height: 50,
+    backgroundColor: "transparent",
+  },
 });
-export default TodayEvents
+
+export default TodayEvents;
