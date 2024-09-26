@@ -29,7 +29,6 @@ import {
 } from "../../store/reducer/event/eventReducer";
 import { setLoader } from "../../store/reducer/loading/loadingSlice";
 import { setUserList } from "../../store/reducer/user/user";
-import { initialQuery } from "../../constants/query";
 
 export interface IColorScheme {
   bnt_active: string;
@@ -113,8 +112,9 @@ const BottomSheetFilters = React.memo(function () {
     const filters = selectedFilters.length
       ? selectedFilters.map(({ id }) => id)
       : [];
-    dispatch(setQuery({ ...initialQuery, filters }));
-    getEventList({ ...initialQuery, filters });
+    const body = { ...query, filters, page: 1, limit: 6 };
+    dispatch(setQuery(body));
+    getEventList(body);
     setDisabledActionButtons({
       showEventsDisable: true,
       resetFilterDisable: false,

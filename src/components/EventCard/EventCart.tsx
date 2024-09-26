@@ -134,7 +134,6 @@ const style = StyleSheet.create({
     width: 270,
   },
   eventTitle: {
-    textShadowColor: "#6C63FF",
     textShadowOffset: { width: -5, height: 5 },
     textShadowRadius: 5,
     shadowOpacity: 1,

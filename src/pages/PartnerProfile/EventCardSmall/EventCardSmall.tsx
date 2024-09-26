@@ -52,8 +52,7 @@ export default function EventCardSmall(props: EventCardSmall) {
           <Text
             style={[eventCardSmallStyle.title, { color: colors.ACCENT["1"] }]}
           >
-            {title} Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Beatae, fuga.
+            {title}
           </Text>
         </View>
         <View style={[eventCardSmallStyle.dateContainer]}>
