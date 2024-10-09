@@ -267,7 +267,7 @@ const partnerProfileStyle = StyleSheet.create({
   profile: {
     padding: 16,
     width: "100%",
-    height: 132,
+    minHeight: 132,
     borderRadius: 15,
     display: "flex",
     flexDirection: "row",
@@ -288,10 +288,13 @@ const partnerProfileStyle = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
     color: "#64748B",
+    flex: 1, // Make the text element flexible
+    flexShrink: 1,
   },
   addressWrapper: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "wrap",
   },
 });

@@ -254,7 +254,7 @@ const BottomSheetFilters = React.memo(function () {
           />
           <View style={bottomSheetFilter.actionButtonsWrapper}>
             <TouchableOpacity
-              disabled={disabledActionButtons.resetFilterDisable}
+              // disabled={disabledActionButtons.resetFilterDisable}
               style={[
                 { backgroundColor: colorSchemeFilter.bnt_active },
                 bottomSheetFilter.resetButton,
@@ -271,7 +271,7 @@ const BottomSheetFilters = React.memo(function () {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={disabledActionButtons?.showEventsDisable}
+              // disabled={disabledActionButtons?.showEventsDisable}
               onPress={onShowEvent}
               style={[
                 bottomSheetFilter.fetchEvents,
