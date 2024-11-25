@@ -32,7 +32,6 @@ function TodayEvents() {
   const fetchEvents = useCallback(
     async (query: IQuery) => {
       try {
-        console.log("fetchEvents");
         const eventService = new EventService();
         const { events, users } = await eventService.getEventsByFilter(query);
         dispatch(addNewEventLists(events));

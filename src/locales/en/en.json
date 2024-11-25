@@ -18,7 +18,7 @@
   },
   "filters": {
     "select_options": "Select Options",
-    "reset": "Reset filters"
+    "reset": "Reset"
   },
   "tabs": {
     "today": "Today",
