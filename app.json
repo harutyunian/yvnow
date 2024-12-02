@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yvnow",
     "slug": "Yvnow",
-    "version": "1.0.31",
+    "version": "1.0.32",
     "orientation": "portrait",
     "icon": "./assets/logo_yvnow.png",
     "userInterfaceStyle": "light",
@@ -11,10 +11,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
+    "FacebookAppID": "879662667616106",
+    "FacebookDisplayName": "Yvnow",
     "assetBundlePatterns": ["**/*"],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
+        "FacebookAppID": "879662667616106",
+        "FacebookDisplayName": "Yvnow",
         "NSLocationWhenInUseUsageDescription": "We need your location to show you relevant data.",
         "NSLocationAlwaysUsageDescription": "We need your location to show you relevant data.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to show you relevant data."
@@ -25,8 +30,12 @@
       "bundleIdentifier": "com.yvnow.event"
     },
     "android": {
-      "versionCode": 31,
-      "permissions": ["INTERNET", "android.permission.ACCESS_COARSE_LOCATION"],
+      "versionCode": 32,
+      "permissions": [
+        "INTERNET",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.INTERNET"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAsWhPWiIZGBiExSlWcd4hPAQ94mF7zOsE"
@@ -39,10 +48,19 @@
     },
     "plugins": [
       [
+        "expo-facebook",
+        {
+          "userTrackingPermission": false
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "ios": {
             "flipper": true
+          },
+          "android": {
+            "usesCleartextTraffic": true
           }
         }
       ],
